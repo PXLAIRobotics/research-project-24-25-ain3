@@ -1,0 +1,2 @@
+Beschrijvend: Welke beveiligings en authorisatietechnieken kunnen er gebruikt worden om te voorkomen dat de VIBE AI chatbot gevoelige informatie gaat teruggeven in zijn antwoorden naar niet geautoriseerde bezoekers.
+Hoe kunnen 
