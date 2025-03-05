@@ -8,8 +8,8 @@
         </div>
 
         <div class="chat-messages">
-            <div v-for="(msg, index) in messages" :key="index" class="message-bubble">
-                <p>{{ msg }}</p>
+            <div v-for="(msg, index) in messages" :key="index" :class="msg.sender === 'client' ? 'clientMessage' : 'chatbotMessage'">
+                <p>{{ msg.message }}</p>
             </div>
         </div>
 
@@ -31,6 +31,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 
 import standardGif from '@/assets/AI_Soundwave_standard.gif';
 import transitionGif from '@/assets/AI_Soundwave_transition.gif';
@@ -40,10 +41,15 @@ const currentGif = ref(standardGif);
 const inputValue = ref('');
 const messages = ref([]);
 
+
 const transitionDuration = 2500; 
 
-const sendMessage = () => {
+const addMessage = (message, sender) => {
+    messages.value.push({ sender: sender, message: message });
+}
 
+const sendMessage = () => {
+    console.log("sendMessage called");
   currentGif.value = transitionGif;
 
   setTimeout(() => {
@@ -51,8 +57,23 @@ const sendMessage = () => {
   }, transitionDuration); 
 
   if (inputValue.value.trim() !== '') {
-    messages.value.push(inputValue.value);
+    addMessage(inputValue.value, 'client')
+
+    axios.get('http://localhost:8000/pixie', {
+        params: { message: inputValue.value }
+    })
+    .then(response => {
+        console.log(response.data);
+        addMessage(response.data.data, 'chatbot')
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
   }
+
+
+    
+
 
   inputValue.value = '';
 };
@@ -136,19 +157,20 @@ const sendMessage = () => {
 
     .chat-messages {
         position: absolute;
-        right: 30%;
+        left: 27%;
+        width: 46%;
         top: 12%;
         display: flex;
         flex-direction: column;
-        align-items: flex-end;
+        align-items: flex-start;
         justify-content: flex-start;
-        width: 100%;
-        max-height: 500px;
+
+        max-height: 700px;
         overflow-y: auto;
         margin-top: 20px;
     }
 
-    .message-bubble {
+    .clientMessage {
         background-color: #e0e0e0;
         color: black;
         padding: 10px;
@@ -157,6 +179,20 @@ const sendMessage = () => {
         margin: 5px 0;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         word-wrap: break-word;
+        align-self: flex-end;
+    }
+
+    .chatbotMessage {
+        background-color: #282727;
+        color: rgb(235, 235, 235);
+        padding: 10px;
+        border-radius: 15px;
+        max-width: 300px;
+        margin: 5px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        word-wrap: break-word;
+        display: flex;
+
     }
 
 
