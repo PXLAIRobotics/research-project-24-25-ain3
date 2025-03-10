@@ -54,7 +54,6 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: none !important;
 }
 
 #app {
@@ -67,8 +66,6 @@ body {
   flex-direction: column;
   min-height: 100vh;
   background-color: #1e1e1e;
-  margin: 0;
-  padding: 0;
 }
 
 header {
@@ -79,14 +76,11 @@ header {
   padding: 10px 20px;
   width: 100%;
   box-sizing: border-box;
-  border: none;
-  text-align: center;
 }
 
 header h1 {
   margin: 0;
   color: #ffffff;
-  border: none;
 }
 
 .header-logo {
@@ -106,10 +100,6 @@ button {
 }
 
 button:hover {
-  background-color: #190eee;
-}
-
-button.logout {
   background-color: #190eee;
 }
 
@@ -155,7 +145,6 @@ button.logout:hover {
 .sidebar li a.active {
   background-color: #190eee;
   font-weight: bold;
-  border-radius: 5px;
 }
 
 main {
@@ -163,6 +152,5 @@ main {
   padding: 20px;
   background-color: #1e1e1e;
   color: #ffffff;
-  border: none;
 }
 </style>
