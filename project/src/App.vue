@@ -1,11 +1,17 @@
 <script setup>
-    import chatComponent from "./components/chat.vue"
+import AdminPanel from './components/AdminPanel.vue'
 </script>
 
 <template>
-    <chatComponent/>
+  <div id="app">
+    <AdminPanel />
+  </div>
 </template>
 
 <style scoped>
-
+#app {
+  margin: 0;
+  padding: 0;
+  background-color: #1e1e1e;
+}
 </style>
