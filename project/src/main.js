@@ -11,3 +11,8 @@ app.use(createPinia())
 //app.use(router)
 
 app.mount('#app')
+
+import router from './router' // Correctly import the router
+
+createApp(App).use(router).mount('#app')
+

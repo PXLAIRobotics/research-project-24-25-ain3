@@ -1,0 +1,14 @@
+[
+ {
+  "role": "system",
+  "content": "Be concise. Be precise. I would like you to take a deep breath before responding. Always think step by step. "
+ },
+ {
+  "role": "user",
+  "content": "en de corda arena?"
+ },
+ {
+  "role": "assistant",
+  "content": "De Corda Arena is een evenementenlocatie in Nederland, gelegen in het hart van de regio Noord-Brabant. Het is een multifunctionele zaal die vaak wordt gebruikt voor concerten, beurzen, sportevenementen en zakelijke bijeenkomsten. De arena biedt faciliteiten voor zowel grote als kleine evenementen en is goed bereikbaar met het openbaar vervoer. Heb je specifieke vragen over de Corda Arena?"
+ }
+]
