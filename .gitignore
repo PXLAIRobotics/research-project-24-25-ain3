@@ -28,4 +28,5 @@ project/*.sln
 project/*.sw?
 
 project/*.tsbuildinfo
+
 project/node_modules/
