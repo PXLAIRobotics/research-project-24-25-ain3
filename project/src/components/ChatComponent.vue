@@ -68,7 +68,7 @@ const sendMessage = () => {
     </div>
 
     <div class="chatbox">
-      <input v-model="inputValue" class="inputbox" type="text" placeholder="Message Vibe" />
+      <input v-model="inputValue" class="inputbox" type="text" placeholder="Message Vibe" @keyup.enter="sendMessage"/>
       <button class="sendbutton" @click="sendMessage">
         <img src="@/assets/send-icon.png" alt="send icon" class="image-button" />
       </button>
@@ -162,7 +162,7 @@ const sendMessage = () => {
   align-items: flex-start;
   justify-content: flex-start;
   z-index: 1;
-  max-height: 700px;
+  max-height: 500px;
   overflow-y: auto;
   margin-top: 20px;
 }

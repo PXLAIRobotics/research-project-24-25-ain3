@@ -24,8 +24,7 @@ async def say_hello(name: str):
 @app.get("/pixie")
 async def generateResponse(message: str):
     print("Message received:", message)
-    history = []
-    response = chat_completion(message, history)
+    response = chat_completion(message)
     print("Response sent:", response, "\n")
     return {"data": response}
 
