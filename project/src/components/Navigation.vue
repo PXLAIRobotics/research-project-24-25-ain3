@@ -1,30 +1,29 @@
 <script setup>
+import { computed } from 'vue'
+import { useNavList } from '../stores/navList'
+import NavigationItem from './NavigationItem.vue'
 
+const navList = useNavList()
+
+const conversations = computed(() => object.values(navList.conversations))
 </script>
 
 <template>
-<span class="openbtn"></span>
-
-<div class="sidenav">
-    <div>
+    <div class="Navigation">
         <h1>Vibe</h1>
-        <button class="closebtn"></button>
-        <button class="newbtn">New chat</button>
-
-        <h2>Today</h2>
-        <a href="#">Last chat</a>
+        <button class="NewConversation" @click="navList.newConversation">New chat</button>
+        <ul>
+            <NavigationItem
+            v-for="conversation in conversations"
+            :key="conversation.id"
+            :conversation="conversation"/>
+        </ul>
     </div>
-</div>
 </template>
 
 <style scoped>
-/* Button to open nav menu */
-span.openbtn {
-    cursor: pointer;
-}
-
 /* Nav menu */
-.sidenav {
+.Navigation {
     height: 100%;       /* 100% Full-height */
     width: 300px;       /* Decide width */
     position: fixed;    /* Stay in place */
@@ -37,13 +36,13 @@ span.openbtn {
     transition: 0.5s;               /* 0.5 second transition effect to slide in the sidenav */
 }
 
-.sidenav div {
+.Navigation div {
     margin: auto;
     width: 85%;
 }
 
 /* Nav menu button for new chat */
-.sidenav .newbtn {
+.Navigation .newbtn {
     height: 40px;
     width: 120px;
     font-weight: bold;
@@ -56,50 +55,13 @@ span.openbtn {
     margin: 30px 0px 25px 0px;
 }
 
-/* Button to close nav menu */
-.sidenav .closebtn {
-    height: 20px;
-    width: 20px;
-    position: absolute;
-    top: 5px;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-    background: url(../assets/icon.png);
-    border: none;
-}
-
 /* Title */
-.sidenav h1 {
+.Navigation h1 {
     color: white;
     position: absolute;
     top: 10px;
     margin: auto;
     font-size: 45px;
-}
-
-/* Date for older chats */ 
-.sidenav h2 {
-    color: white;
-}
-
-/* Nav menu links */
-.sidenav a {
-    padding: 6px 6px 6px 16px;
-    text-decoration: none;
-    font-size: 20px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-    text-align: left;
-    border-radius: 10px;
-    width: 100%;
-    margin: auto;
-} 
-
-/* Change color when hovering over nav link */
-.sidenav a:hover {
-    color: #f1f1f1;
 }
 
 </style>
