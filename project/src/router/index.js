@@ -1,17 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Import your components for routing
-import Dashboard from '../components/DashboardComponent.vue'
-import Users from '../components/UsersComponent.vue'
-import Settings from '../components/SettingsComponent.vue'
-import Logs from '../components/LogsComponent.vue'
+import DashboardComponent from '../components/DashboardComponent.vue'
+import UsersComponent from '../components/UsersComponent.vue'
+import SettingsComponent from '../components/SettingsComponent.vue'
+import LogsComponent from '../components/LogsComponent.vue'
+import ChatComponent from '../components/ChatComponent.vue'
+import HomePageComponent from '../components/homePage.vue'
+import InterfaceComponent from '../components/InterfaceComponent.vue'
 
 // Define routes
 const routes = [
-  { path: '/', component: Dashboard },
-  { path: '/users', component: Users },
-  { path: '/settings', component: Settings },
-  { path: '/logs', component: Logs },
+  { path: '/dashboard', component: DashboardComponent },
+  { path: '/users', component: UsersComponent },
+  { path: '/settings', component: SettingsComponent },
+  { path: '/logs', component: LogsComponent },
+  { path: '/chat', component: ChatComponent },
+  { path: '/',  component: HomePageComponent },
+  { path: '/interface', name: "interfaceComponent",  component: InterfaceComponent },
 ]
 
 // Create router instance
@@ -20,14 +26,6 @@ const router = createRouter({
   routes,
 })
 
-// Navigation guard to protect routes
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('userToken')
-  if (to.path !== '/login' && !isAuthenticated) {
-    next('/login')
-  } else {
-    next()
-  }
-})
+
 
 export default router

@@ -5,7 +5,7 @@ import NavigationItem from './NavigationItem.vue'
 
 const navList = useNavList()
 
-const conversations = computed(() => object.values(navList.conversations))
+const conversations = computed(() => Object.values(navList.conversations))
 </script>
 
 <template>
@@ -16,7 +16,8 @@ const conversations = computed(() => object.values(navList.conversations))
             <NavigationItem
             v-for="conversation in conversations"
             :key="conversation.id"
-            :conversation="conversation"/>
+            :conversation="conversation"
+            />
         </ul>
     </div>
 </template>

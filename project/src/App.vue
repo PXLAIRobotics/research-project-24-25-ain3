@@ -1,18 +1,15 @@
-<script setup>
-import AdminPanel from './components/AdminPanel.vue'
-import homePage from './components/homePage.vue'
-
-</script>
-
 <template>
-    <div id="app">
-      <AdminPanel />
-    </div>
-    <homePage></homePage>
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
 
-<style scoped>
-
-
-
+<script>
+export default {
+  name: 'App',
+};
 </script>
+
+<style>
+/* Voeg hier je stijlen toe */
+</style>

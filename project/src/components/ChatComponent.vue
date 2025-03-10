@@ -1,35 +1,5 @@
-<template>
-  <div class="container">
-    <div class="title">
-      <h1>Corda</h1>
-      <img class="logo" src="../assets/corda-logo.png" alt="corda logo" />
-      <h1>Arena</h1>
-    </div>
-
-    <div class="chat-messages">
-      <div
-        v-for="(msg, index) in messages"
-        :key="index"
-        :class="msg.sender === 'client' ? 'clientMessage' : 'chatbotMessage'"
-      >
-        <p>{{ msg.message }}</p>
-      </div>
-    </div>
-
-    <div class="circle">
-      <img :src="currentGif" alt="standard soundwave" />
-    </div>
-
-    <div class="chatbox">
-      <input v-model="inputValue" class="inputbox" type="text" placeholder="Message Vibe" />
-      <button class="sendbutton" @click="sendMessage">
-        <img src="@/assets/send-icon.png" alt="send icon" class="image-button" />
-      </button>
-    </div>
-  </div>
-</template>
-
 <script setup>
+import navigationComponent from './Navigation.vue'
 import { ref } from 'vue'
 import axios from 'axios'
 
@@ -75,6 +45,39 @@ const sendMessage = () => {
 }
 </script>
 
+<template>
+  <div class="container">
+    <div class="title">
+      <h1>Corda</h1>
+      <img class="logo" src="../assets/corda-logo.png" alt="corda logo" />
+      <h1>Arena</h1>
+    </div>
+
+    <div class="chat-messages">
+      <div
+        v-for="(msg, index) in messages"
+        :key="index"
+        :class="msg.sender === 'client' ? 'clientMessage' : 'chatbotMessage'"
+      >
+        <p>{{ msg.message }}</p>
+      </div>
+    </div>
+
+    <div class="circle">
+      <img :src="currentGif" alt="standard soundwave" />
+    </div>
+
+    <div class="chatbox">
+      <input v-model="inputValue" class="inputbox" type="text" placeholder="Message Vibe" />
+      <button class="sendbutton" @click="sendMessage">
+        <img src="@/assets/send-icon.png" alt="send icon" class="image-button" />
+      </button>
+    </div>
+  </div>
+</template>
+
+
+
 <style scoped>
 .container {
   display: flex;
@@ -86,7 +89,6 @@ const sendMessage = () => {
 
 .title {
   position: absolute;
-  z-index: -1;
   margin: 5px;
   display: flex;
   flex-direction: row;
@@ -99,7 +101,7 @@ const sendMessage = () => {
 
 .circle {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -159,7 +161,7 @@ const sendMessage = () => {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-
+  z-index: 1;
   max-height: 700px;
   overflow-y: auto;
   margin-top: 20px;
