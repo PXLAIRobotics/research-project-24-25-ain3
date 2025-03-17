@@ -1,5 +1,5 @@
 <script setup>
-import navigationComponent from './Navigation.vue'
+import navigationComponent from './NavigationComponent.vue'
 import { ref } from 'vue'
 import axios from 'axios'
 

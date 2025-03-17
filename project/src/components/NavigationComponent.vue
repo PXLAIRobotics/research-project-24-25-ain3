@@ -6,10 +6,38 @@ import NavigationItem from './NavigationItem.vue'
 const navList = useNavList()
 
 const conversations = computed(() => Object.values(navList.conversations))
+
 </script>
 
 <template>
-    <div class="Navigation">
+    <v-card class="vCard">
+        <v-layout>
+            <v-navigation-drawer expand-on-hover rail >
+                <v-list>
+                    <v-list-item prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="VIBE">
+                        
+                    </v-list-item>
+                </v-list>
+
+                <v-divider></v-divider>
+
+                <v-list density="compact" nav>
+                    <NavigationItem
+                        v-for="conversation in conversations"
+                        :key="conversation.id"
+                        :conversation="conversation"/>
+                    
+                    <v-list-item prepend-icon="mdi-folder" title="My Files" value="myfiles"></v-list-item>
+                    <v-list-item prepend-icon="mdi-account-multiple" title="Shared with me" value="shared"></v-list-item>
+                    <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
+                </v-list>
+                <v-button>
+                    
+                </v-button>
+            </v-navigation-drawer>
+        </v-layout>
+    </v-card>
+    <!-- <div class="Navigation">
         <h1>Vibe</h1>
         <button class="NewConversation" @click="navList.newConversation">New chat</button>
         <ul>
@@ -19,10 +47,18 @@ const conversations = computed(() => Object.values(navList.conversations))
             :conversation="conversation"
             />
         </ul>
-    </div>
+    </div> -->
 </template>
 
 <style scoped>
+.vCard {
+    background-color: #2a2a2a;
+}
+
+v-navigation-drawer{
+    overflow: hidden;
+}
+
 /* Nav menu */
 .Navigation {
     height: 100%;       /* 100% Full-height */

@@ -24,7 +24,8 @@ a,
 @media (min-width: 1024px) {
   body {
     display: flex;
-    align-items: center;
+    align-self: center;
+
   }
 
   #app {
@@ -34,7 +35,6 @@ a,
   }
 
   #app {
-    display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }

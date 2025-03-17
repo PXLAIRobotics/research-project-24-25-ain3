@@ -11,9 +11,9 @@ export const useNavList = defineStore('navList', {
                     title: "Convo1"
                 },
                 today: {
-                    id: "2",
-                    date: "10/03/2025",
-                    title: "Convo2"
+                    id: "1",
+                    date: "Today",
+                    title: "Convo"
                 }
             }
         }
