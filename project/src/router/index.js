@@ -8,6 +8,7 @@ import LogsComponent from '../components/LogsComponent.vue'
 import ChatComponent from '../components/ChatComponent.vue'
 import HomePageComponent from '../components/homePage.vue'
 import InterfaceComponent from '../components/InterfaceComponent.vue'
+import AdminComponent from '../components/AdminPanel.vue'
 
 // Define routes
 const routes = [
@@ -18,6 +19,7 @@ const routes = [
   { path: '/chat', component: ChatComponent },
   { path: '/',  component: HomePageComponent },
   { path: '/interface', name: "interfaceComponent",  component: InterfaceComponent },
+  { path: '/admin', name: "adminComponent",  component: AdminComponent },
 ]
 
 // Create router instance

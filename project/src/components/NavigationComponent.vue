@@ -1,5 +1,7 @@
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router';
+const router = useRouter();
 import { useNavList } from '../stores/navList'
 import NavigationItem from './NavigationItem.vue'
 
@@ -7,15 +9,18 @@ const navList = useNavList()
 
 const conversations = computed(() => Object.values(navList.conversations))
 
+const handleClick = () => {
+  router.push({ name: 'adminComponent' }); 
+};
 </script>
 
 <template>
     <v-card class="vCard">
         <v-layout>
-            <v-navigation-drawer expand-on-hover rail >
+            <v-navigation-drawer floating app expand-on-hover rail >
                 <v-list>
-                    <v-list-item prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="VIBE">
-                        
+                    <v-list-item prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="VIBE" style="height: 56px; display: flex; align-items: center;">
+                        <button prepend-icon="mdi-plus" class="NewConversation" @click="navList.newConversation">Start new chat</button>
                     </v-list-item>
                 </v-list>
 
@@ -27,14 +32,17 @@ const conversations = computed(() => Object.values(navList.conversations))
                         :key="conversation.id"
                         :conversation="conversation"/>
                     
-                    <v-list-item prepend-icon="mdi-folder" title="My Files" value="myfiles"></v-list-item>
-                    <v-list-item prepend-icon="mdi-account-multiple" title="Shared with me" value="shared"></v-list-item>
-                    <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
-                </v-list>
-                <v-button>
                     
-                </v-button>
+                </v-list>
+                
+                <v-list class="adminList">
+                    <v-list-item  >
+                        <button class="adminButton" @click="handleClick">Admin Panel</button>
+                    </v-list-item>
+                </v-list>
+                
             </v-navigation-drawer>
+            
         </v-layout>
     </v-card>
     <!-- <div class="Navigation">
@@ -57,6 +65,33 @@ const conversations = computed(() => Object.values(navList.conversations))
 
 v-navigation-drawer{
     overflow: hidden;
+}
+
+.NewConversation{
+    background-color: #101010;
+    padding: 3px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    margin-top: 4px;
+    border: 1px solid rgb(164, 164, 164);
+}
+
+.adminButton{
+    border: 1px solid rgb(164, 164, 164);
+    background-color: #101010;
+    padding: 3px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    
+}
+
+.adminList{
+    position: absolute;
+    bottom: 0;   
+    margin-left: 45%;
+    margin-bottom: 10px;
 }
 
 /* Nav menu */

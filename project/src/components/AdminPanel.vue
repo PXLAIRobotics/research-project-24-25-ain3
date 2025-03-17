@@ -26,25 +26,23 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'AdminPanel',
-  data() {
-    return {
-      isSidebarVisible: true,
-    }
-  },
-  methods: {
-    toggleSidebar() {
-      this.isSidebarVisible = !this.isSidebarVisible
-    },
-    logout() {
-      localStorage.removeItem('userToken')
-      this.$router.push('/login')
-    },
-  },
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const isSidebarVisible = ref(true)
+const router = useRouter()
+
+function toggleSidebar() {
+  isSidebarVisible.value = !isSidebarVisible.value
+}
+
+function logout() {
+  localStorage.removeItem('userToken')
+  router.push('/login')
 }
 </script>
+
 
 <style>
 html,
