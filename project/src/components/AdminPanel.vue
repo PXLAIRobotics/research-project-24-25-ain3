@@ -1,7 +1,25 @@
 <template>
   <div class="admin-panel">
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <h2>Login</h2>
+        <form @submit.prevent="handleLogin">
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" v-model="email" required />
+          </div>
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" v-model="password" required />
+          </div>
+          <button class="formSubmit" type="submit">Submit</button>
+          <button @click="closeModal">Close</button>
+        </form>
+        
+      </div>
+    </div>
     <header>
-      <img src="../assets/corda-logo.png" alt="Logo" class="header-logo" />
+      <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
       <div>
         <button @click="toggleSidebar">Toggle Sidebar</button>
@@ -27,11 +45,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+
+const email = ref('')
+const password = ref('')
+const showModal = ref(true)
 
 const isSidebarVisible = ref(true)
 const router = useRouter()
+
+const correctEmail = 'admin@example.com' // Replace with your email
+const correctPassword = 'admin123' // Replace with your password
+
+onMounted(() => {
+  // Show the modal on page load
+  showModal.value = true
+})
+
+function handleLogin() {
+  // Check if the email and password are correct
+  if (email.value === correctEmail && password.value === correctPassword) {
+    showModal.value = false // Hide the modal after successful login
+    router.push('/admin') // Redirect to the admin panel page
+  } else {
+    alert('Invalid credentials')
+  }
+}
+
+function closeModal() {
+  router.push({ name: 'interfaceComponent' }); 
+}
 
 function toggleSidebar() {
   isSidebarVisible.value = !isSidebarVisible.value
@@ -41,10 +85,55 @@ function logout() {
   localStorage.removeItem('userToken')
   router.push('/login')
 }
+
+const handleClick = () => {
+  router.push({ name: 'interfaceComponent' }); 
+};
 </script>
 
 
 <style>
+.formSubmit{
+  margin-bottom: 10px;
+}
+form{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #515151;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
 html,
 body {
   margin: 0;
