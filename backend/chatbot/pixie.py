@@ -13,10 +13,15 @@ load_dotenv()
 
 client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
+with open(os.path.join(os.path.dirname(__file__),'campus_data.json'), 'r') as f:
+    campus_info = json.load(f)
 
 system_instruction = {
-    'role': 'system',
+    'role': 'assistant',
+    'campus_info': campus_info,
     'content': 'Be concise. Be precise. '
+                'make the output as clear as possible. '
+                'make the output prettiers and structred. '
                'I would like you to take a deep breath before responding. '
                'Always think step by step. '
 }
