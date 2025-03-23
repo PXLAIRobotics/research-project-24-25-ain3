@@ -1,11 +1,15 @@
-<script setup>
-    import chatComponent from "./components/chat.vue"
-</script>
-
 <template>
-    <chatComponent/>
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
 
-<style scoped>
+<script>
+export default {
+  name: 'App',
+};
+</script>
 
+<style>
+/* Voeg hier je stijlen toe */
 </style>

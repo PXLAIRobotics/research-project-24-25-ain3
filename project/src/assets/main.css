@@ -1,10 +1,8 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
   padding: 2rem;
-  font-weight: normal;
+
 }
 
 a,
@@ -24,12 +22,26 @@ a,
 @media (min-width: 1024px) {
   body {
     display: flex;
-    align-items: center;
+    align-self: center;
+
   }
 
   #app {
+    padding:  0 0 0 0;
 
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #1e1e1e; /* Ensure background color is set */
   }
 }

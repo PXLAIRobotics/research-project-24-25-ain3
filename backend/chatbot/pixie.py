@@ -22,35 +22,32 @@ system_instruction = {
 }
 
 log_filename = None
-previous_history = ''
+history = []
 
 
-def get_new_filename(log_folder):
-    time_stamp = f'{datetime.datetime.now():%y%m%d_%H%M_%S}'
-    return f'{log_folder}{time_stamp}.json'
+def get_log_filename(log_folder):
+    """Per sessie willen we 1 logfile krijgen"""
+    global log_filename
+
+    if log_filename is None:
+        if not os.path.exists(log_folder):
+            os.makedirs(log_folder)
+        time_stamp = f'{datetime.datetime.now():%y%m%d_%H%M_%S}'
+        log_filename = f'{log_folder}{time_stamp}.json'
+    return log_filename
+
 
 
 def store_history(history, log_folder):
-    if not os.path.exists(log_folder):
-        os.makedirs(log_folder)
-
-    global log_filename
-    global previous_history
-
-    current_history = json.dumps(history, indent=1)
-
-    if log_filename is None or not current_history.startswith(previous_history[:-2]):
-        # this is a new thread -> start a new log
-        log_filename = get_new_filename(log_folder)
-
-    log_file = open(log_filename, 'wt')
-    log_file.write(current_history)
-    log_file.close()
-
-    previous_history = current_history
+    """Sla de volledige history op in die ene logfile"""
+    log_file = get_log_filename(log_folder)
+    with open(log_file, 'wt') as f:
+        json.dump(history, f, indent=1)
 
 
-def chat_completion(message, history):
+def chat_completion(message):
+    global history
+
     if system_instruction not in history:
         # prepend system instructions
         history.insert(0, system_instruction)
@@ -81,5 +78,3 @@ def chat_completion(message, history):
     store_history(history, 'logs/')
 
     return partial_message
-
-
