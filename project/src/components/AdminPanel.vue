@@ -12,7 +12,7 @@
             <label for="password">Password</label>
             <input type="password" v-model="password" required />
           </div>
-          <button class="formSubmit" type="submit">Submit</button>
+          <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
           <button @click="closeModal">Close</button>
         </form>
         
@@ -45,18 +45,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
 const showModal = ref(true)
 
+const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 const isSidebarVisible = ref(true)
 const router = useRouter()
 
-const correctEmail = 'admin@example.com' // Replace with your email
-const correctPassword = 'admin123' // Replace with your password
+const correctEmail = 'admin@gmail.com' // Replace with your email
+const correctPassword = 'admin' // Replace with your password
 
 onMounted(() => {
   // Show the modal on page load
@@ -93,6 +94,10 @@ const handleClick = () => {
 
 
 <style>
+.active-submit {
+  color: white;
+}
+
 .formSubmit{
   margin-bottom: 10px;
 }
