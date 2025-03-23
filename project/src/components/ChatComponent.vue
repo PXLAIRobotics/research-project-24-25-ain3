@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { marked } from 'marked';
+
 
 import standardGif from '@/assets/AI_Soundwave_standard.gif'
 import transitionGif from '@/assets/AI_Soundwave_transition.gif'
@@ -17,6 +19,8 @@ const addMessage = (message, sender) => {
 }
 
 const sendMessage = () => {
+
+  
   console.log('sendMessage called')
   currentGif.value = transitionGif
 
@@ -24,19 +28,42 @@ const sendMessage = () => {
     currentGif.value = thinkingGif
   }, transitionDuration)
 
+
+
   if (inputValue.value.trim() !== '') {
     addMessage(inputValue.value, 'client')
 
+    const typingMessage = { sender: 'chatbot', message: '...' };
+    messages.value.push(typingMessage);
+
+    const userMessage = inputValue.value;
+    inputValue.value = '';
+
+
     axios
       .get('http://localhost:8000/pixie', {
-        params: { message: inputValue.value },
+        params: { message: userMessage },
       })
       .then((response) => {
-        console.log(response.data)
-        addMessage(response.data.data, 'chatbot')
+
+        const index = messages.value.findIndex(msg => msg.message === '...');
+        if (index !== -1) {
+          messages.value.splice(index, 1);
+        }
+
+        const chatbotMessage = marked(response.data.data);
+
+        addMessage(chatbotMessage, 'chatbot');
       })
       .catch((error) => {
         console.error('Error:', error)
+
+        const index = messages.value.findIndex(msg => msg.message === '...');
+        if (index !== -1) {
+          messages.value.splice(index, 1);
+        }
+
+        addMessage('Er is een fout opgetreden. Probeer het later opnieuw.', 'chatbot');
       })
   }
 
@@ -58,7 +85,7 @@ const sendMessage = () => {
         :key="index"
         :class="msg.sender === 'client' ? 'clientMessage' : 'chatbotMessage'"
       >
-        <p>{{ msg.message }}</p>
+        <p v-html="msg.message"></p>
       </div>
     </div>
 
@@ -189,4 +216,8 @@ const sendMessage = () => {
   word-wrap: break-word;
   display: flex;
 }
+
+
+
+
 </style>
