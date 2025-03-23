@@ -1,0 +1,38 @@
+{
+    "campus_name": "Corda",
+    "events": {
+        "academic": [
+            {
+                "name": "Research Symposium",
+                "date": "2025-04-10",
+                "description": "A symposium showcasing student research."
+            }
+        ],
+        "cultural": [
+            {
+                "name": "Cultural Fest",
+                "date": "2025-05-20",
+                "description": "A festival celebrating diverse cultures."
+            }
+        ],
+        "workshops": [
+            {
+                "name": "AI Workshop",
+                "date": "2025-03-25",
+                "description": "A workshop on artificial intelligence."
+            }
+        ],
+        "social": [
+            {
+                "name": "Spring Gala",
+                "date": "2025-04-15",
+                "description": "A social gathering for students."
+            }
+        ]
+    },
+    "address": "123 Campus Road, University Town",
+    "contact": {
+        "email": "info@university.edu",
+        "phone": "+1234567890"
+    }
+}

@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from chatbot.pixie import chat_completion
+import json
+import os
 
 app = FastAPI()
 
@@ -12,14 +14,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
 
 @app.get("/pixie")
 async def generateResponse(message: str):
@@ -28,5 +24,4 @@ async def generateResponse(message: str):
     response = chat_completion(message, history)
     print("Response sent:", response, "\n")
     return {"data": response}
-
 
