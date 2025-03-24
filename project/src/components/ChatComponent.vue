@@ -105,6 +105,8 @@ const sendMessage = () => {
 
 
 <style scoped>
+
+
 .container {
   display: flex;
   flex-direction: column;
@@ -179,6 +181,7 @@ const sendMessage = () => {
 }
 
 .chat-messages {
+
   position: absolute;
   left: 27%;
   width: 46%;
@@ -191,6 +194,9 @@ const sendMessage = () => {
   max-height: 500px;
   overflow-y: auto;
   margin-top: 20px;
+  
+  list-style-type: disc;
+
 }
 
 .clientMessage {
@@ -199,7 +205,7 @@ const sendMessage = () => {
   padding: 10px;
   border-radius: 15px;
   max-width: 300px;
-  margin: 5px 0;
+  margin: 5px 10px 0 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   word-wrap: break-word;
   align-self: flex-end;
@@ -211,11 +217,18 @@ const sendMessage = () => {
   padding: 10px;
   border-radius: 15px;
   max-width: 300px;
-  margin: 5px 0;
+  margin: 5px 0 0px 30px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   word-wrap: break-word;
   display: flex;
 }
+
+
+
+:deep(.chat-messages ul) {
+    padding-left: 40px !important;
+}
+
 
 
 
