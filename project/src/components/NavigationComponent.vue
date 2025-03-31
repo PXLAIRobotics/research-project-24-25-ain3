@@ -23,9 +23,8 @@ const handleClick = () => {
         <v-layout>
             <v-navigation-drawer floating app>
                 <v-list>
-                    <v-list-item prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="VIBE" style="height: 56px; display: flex; align-items: center;">
-
-                        <button prepend-icon="mdi-plus" class="NewConversation" @click="newConversation">Start new chat</button>
+                    <v-list-item prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="" style="height: 56px; display: flex; align-items: center;">
+                      <span class="vibeTitle">VIBE</span>
                     </v-list-item>
                 </v-list>
 
@@ -43,6 +42,7 @@ const handleClick = () => {
                 <v-list class="adminList">
                     <v-list-item  >
                         <button class="adminButton" @click="handleClick">Admin Panel</button>
+                        <button class="NewConversation" @click="newConversation">New Chat</button>
                     </v-list-item>
                 </v-list>
 
@@ -72,38 +72,59 @@ v-navigation-drawer{
     overflow: hidden;
 }
 
-.NewConversation {
-    background-color: #101010;
-    padding: 3px;
-    padding-left: 8px;
-    padding-right: 8px;
-    border-radius: 10px;
-    margin-top: 4px;
-    border: 1px solid rgb(164, 164, 164);
-    width: 120px; /* Set a fixed width */
-    text-align: center; /* Ensure text stays centered */
-    white-space: nowrap; /* Prevent text wrapping */
-}
-
-.adminButton {
-    border: 1px solid rgb(164, 164, 164);
-    background-color: #101010;
-    padding: 3px;
-    padding-left: 8px;
-    padding-right: 8px;
-    border-radius: 10px;
-    width: 120px; /* Set a fixed width */
-    text-align: center; /* Ensure text stays centered */
+.vibeTitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-right: 10px; /* Add spacing between the title and the button */
     white-space: nowrap; /* Prevent text wrapping */
 }
 
 .adminList {
     position: absolute;
-    bottom: 10px; /* Adjust as needed for spacing */
+    bottom: 10px; /* Keep the buttons at the bottom */
     width: 100%; /* Ensure it spans the width of the container */
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.adminList v-list-item {
+    display: flex;
+    gap: 10px; /* Add spacing between the buttons */
+    justify-content: center;
+}
+
+.NewConversation {
+    color: #ffffff;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #680eee;
+    text-align: center;
+    white-space: nowrap;
+    max-width: 45%;
+}
+
+.NewConversation:hover {
+    background-color: #45087e;
+}
+
+.adminButton {
+    color: #ffffff;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #680eee;
+    text-align: center;
+    white-space: nowrap;
+    max-width: 48%;
+}
+
+.adminButton:hover {
+    background-color: #45087e;
 }
 /* Nav menu */
 .Navigation {
