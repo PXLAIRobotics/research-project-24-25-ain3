@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { marked } from 'marked';
+
 
 import standardGif from '@/assets/output-onlinegiftools.gif'
 import transitionGif from '@/assets/transition-transparent.gif'
@@ -17,6 +19,8 @@ const addMessage = (message, sender) => {
 }
 
 const sendMessage = () => {
+
+  
   console.log('sendMessage called')
   currentGif.value = transitionGif
 
@@ -24,19 +28,42 @@ const sendMessage = () => {
     currentGif.value = thinkingGif
   }, transitionDuration)
 
+
+
   if (inputValue.value.trim() !== '') {
     addMessage(inputValue.value, 'client')
 
+    const typingMessage = { sender: 'chatbot', message: '...' };
+    messages.value.push(typingMessage);
+
+    const userMessage = inputValue.value;
+    inputValue.value = '';
+
+
     axios
       .get('http://localhost:8000/pixie', {
-        params: { message: inputValue.value },
+        params: { message: userMessage },
       })
       .then((response) => {
-        console.log(response.data)
-        addMessage(response.data.data, 'chatbot')
+
+        const index = messages.value.findIndex(msg => msg.message === '...');
+        if (index !== -1) {
+          messages.value.splice(index, 1);
+        }
+
+        const chatbotMessage = marked(response.data.data);
+
+        addMessage(chatbotMessage, 'chatbot');
       })
       .catch((error) => {
         console.error('Error:', error)
+
+        const index = messages.value.findIndex(msg => msg.message === '...');
+        if (index !== -1) {
+          messages.value.splice(index, 1);
+        }
+
+        addMessage('Er is een fout opgetreden. Probeer het later opnieuw.', 'chatbot');
       })
   }
 
@@ -58,7 +85,7 @@ const sendMessage = () => {
         :key="index"
         :class="msg.sender === 'client' ? 'clientMessage' : 'chatbotMessage'"
       >
-        <p>{{ msg.message }}</p>
+        <p v-html="msg.message"></p>
       </div>
     </div>
 
@@ -78,6 +105,8 @@ const sendMessage = () => {
 
 
 <style scoped>
+
+
 .container {
   display: flex;
   flex-direction: column;
@@ -152,6 +181,7 @@ const sendMessage = () => {
 }
 
 .chat-messages {
+
   position: absolute;
   left: 27%;
   width: 46%;
@@ -164,6 +194,9 @@ const sendMessage = () => {
   max-height: 500px;
   overflow-y: auto;
   margin-top: 20px;
+  
+  list-style-type: disc;
+
 }
 
 .clientMessage {
@@ -172,7 +205,7 @@ const sendMessage = () => {
   padding: 10px;
   border-radius: 15px;
   max-width: 300px;
-  margin: 5px 0;
+  margin: 5px 10px 0 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   word-wrap: break-word;
   align-self: flex-end;
@@ -184,9 +217,20 @@ const sendMessage = () => {
   padding: 10px;
   border-radius: 15px;
   max-width: 300px;
-  margin: 5px 0;
+  margin: 5px 0 0px 30px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   word-wrap: break-word;
   display: flex;
 }
+
+
+
+:deep(.chat-messages ul) {
+    padding-left: 40px !important;
+}
+
+
+
+
+
 </style>
