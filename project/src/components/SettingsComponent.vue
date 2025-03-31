@@ -187,7 +187,7 @@ button.submit-btn {
 }
 
 button.submit-btn:hover {
-  background-color: #0f08a5;
+  background-color: #45087e;
 }
 
 button.submit-btn.success {
@@ -251,7 +251,7 @@ button.clear-logs-btn:hover {
 }
 
 .confirm-btn:hover {
-  background-color: #0f08a5;
+  background-color: #45087e;
 }
 
 .cancel-btn {

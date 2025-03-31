@@ -22,7 +22,6 @@
       <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
       <div>
-        <button @click="toggleSidebar">Toggle Sidebar</button>
         <button class="logout" @click="logout">Logout</button>
       </div>
     </header>
@@ -71,19 +70,17 @@ const isSidebarVisible = ref(true)
 const activePanel = ref('dashboard');
 const router = useRouter()
 
-const correctEmail = 'admin@gmail.com' // Replace with your email
-const correctPassword = 'admin' // Replace with your password
+const correctEmail = 'admin@gmail.com'
+const correctPassword = 'admin'
 
 onMounted(() => {
-  // Show the modal on page load
   showModal.value = true
 })
 
 function handleLogin() {
-  // Check if the email and password are correct
   if (email.value === correctEmail && password.value === correctPassword) {
-    showModal.value = false // Hide the modal after successful login
-    router.push('/admin') // Redirect to the admin panel page
+    showModal.value = false
+    router.push('/admin')
   } else {
     alert('Invalid credentials')
   }
@@ -91,10 +88,6 @@ function handleLogin() {
 
 function closeModal() {
   router.push({ name: 'interfaceComponent' });
-}
-
-function toggleSidebar() {
-  isSidebarVisible.value = !isSidebarVisible.value
 }
 
 function logout() {

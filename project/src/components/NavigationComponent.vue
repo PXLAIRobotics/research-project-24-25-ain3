@@ -14,16 +14,17 @@ const newConversation = () =>{
 }
 
 const handleClick = () => {
-  router.push({ name: 'adminComponent' }); 
+  router.push({ name: 'adminComponent' });
 };
 </script>
 
 <template>
     <v-card class="vCard">
         <v-layout>
-            <v-navigation-drawer floating app expand-on-hover rail >
+            <v-navigation-drawer floating app>
                 <v-list>
                     <v-list-item prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="VIBE" style="height: 56px; display: flex; align-items: center;">
+
                         <button prepend-icon="mdi-plus" class="NewConversation" @click="newConversation">Start new chat</button>
                     </v-list-item>
                 </v-list>
@@ -35,18 +36,18 @@ const handleClick = () => {
                         v-for="conversation in conversations"
                         :key="conversation.id"
                         :conversation="conversation"/>
-                    
-                    
+
+
                 </v-list>
-                
+
                 <v-list class="adminList">
                     <v-list-item  >
                         <button class="adminButton" @click="handleClick">Admin Panel</button>
                     </v-list-item>
                 </v-list>
-                
+
             </v-navigation-drawer>
-            
+
         </v-layout>
     </v-card>
     <!-- <div class="Navigation">
@@ -71,7 +72,7 @@ v-navigation-drawer{
     overflow: hidden;
 }
 
-.NewConversation{
+.NewConversation {
     background-color: #101010;
     padding: 3px;
     padding-left: 8px;
@@ -79,25 +80,31 @@ v-navigation-drawer{
     border-radius: 10px;
     margin-top: 4px;
     border: 1px solid rgb(164, 164, 164);
+    width: 120px; /* Set a fixed width */
+    text-align: center; /* Ensure text stays centered */
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
-.adminButton{
+.adminButton {
     border: 1px solid rgb(164, 164, 164);
     background-color: #101010;
     padding: 3px;
     padding-left: 8px;
     padding-right: 8px;
     border-radius: 10px;
-    
+    width: 120px; /* Set a fixed width */
+    text-align: center; /* Ensure text stays centered */
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
-.adminList{
+.adminList {
     position: absolute;
-    bottom: 0;   
-    margin-left: 45%;
-    margin-bottom: 10px;
+    bottom: 10px; /* Adjust as needed for spacing */
+    width: 100%; /* Ensure it spans the width of the container */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-
 /* Nav menu */
 .Navigation {
     height: 100%;       /* 100% Full-height */

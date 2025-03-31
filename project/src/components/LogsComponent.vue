@@ -24,6 +24,7 @@
           <tr v-for="log in logs" :key="log.id">
             <td>{{ log.id }}</td>
             <td>{{ new Date(log.timestamp).toLocaleString() }}</td>
+            <td>{{ log.level }}</td>
             <td>{{ log.message }}</td>
           </tr>
         </tbody>
