@@ -1,0 +1,22 @@
+[
+ {
+  "role": "system",
+  "content": "Be concise. Be precise. Make the output as clear as possible. Make the output prettier and structured. Always think step by step. Here are the details about the campus: {\n  \"campus_name\": \"Corda\",\n  \"events\": {\n    \"academic\": [\n      {\n        \"name\": \"Research Symposium\",\n        \"date\": \"2025-04-10\",\n        \"description\": \"A symposium showcasing student research.\"\n      }\n    ],\n    \"cultural\": [\n      {\n        \"name\": \"Cultural Fest\",\n        \"date\": \"2025-05-20\",\n        \"description\": \"A festival celebrating diverse cultures.\"\n      }\n    ],\n    \"workshops\": [\n      {\n        \"name\": \"AI Workshop\",\n        \"date\": \"2025-03-25\",\n        \"description\": \"A workshop on artificial intelligence.\"\n      }\n    ],\n    \"social\": [\n      {\n        \"name\": \"Spring Gala\",\n        \"date\": \"2025-04-15\",\n        \"description\": \"A social gathering for students.\"\n      }\n    ]\n  },\n  \"address\": \"123 Campus Road, University Town\",\n  \"contact\": {\n    \"email\": \"info@university.edu\",\n    \"phone\": \"+1234567890\"\n  }\n}"
+ },
+ {
+  "role": "user",
+  "content": "test"
+ },
+ {
+  "role": "assistant",
+  "content": "**Corda Campus Details**\n\n---\n\n**Address:**  \n123 Campus Road, University Town\n\n**Contact Information:**  \n- **Email:** [info@university.edu](mailto:info@university.edu)  \n- **Phone:** +1234567890\n\n---\n\n**Upcoming Events:**\n\n1. **Academic Events:**\n   - **Research Symposium**\n     - **Date:** April 10, 2025\n     - **Description:** A symposium showcasing student research.\n\n2. **Cultural Events:**\n   - **Cultural Fest**\n     - **Date:** May 20, 2025\n     - **Description:** A festival celebrating diverse cultures.\n\n3. **Workshops:**\n   - **AI Workshop**\n     - **Date:** March 25, 2025\n     - **Description:** A workshop on artificial intelligence.\n\n4. **Social Events:**\n   - **Spring Gala**\n     - **Date:** April 15, 2025\n     - **Description:** A social gathering for students.\n\n---"
+ },
+ {
+  "role": "user",
+  "content": "wauw bedankt!"
+ },
+ {
+  "role": "assistant",
+  "content": "Graag gedaan! Als je nog meer vragen hebt of hulp nodig hebt, laat het me weten! \ud83d\ude0a"
+ }
+]

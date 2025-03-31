@@ -30,10 +30,10 @@
     <div class="main-content">
       <div class="sidebar" :class="{ hidden: !isSidebarVisible }">
         <ul>
-          <li><router-link to="/" active-class="active">Dashboard</router-link></li>
-          <li><router-link to="/users" active-class="active">Users</router-link></li>
-          <li><router-link to="/settings" active-class="active">Settings</router-link></li>
-          <li><router-link to="/reports" active-class="active">Logs</router-link></li>
+          <li><router-link to=" " active-class="active">Dashboard</router-link></li>
+          <li><router-link to=" " active-class="active">Users</router-link></li>
+          <li><router-link to=" " active-class="active">Settings</router-link></li>
+          <li><router-link to=" " active-class="active">Logs</router-link></li>
         </ul>
       </div>
 
@@ -84,7 +84,7 @@ function toggleSidebar() {
 
 function logout() {
   localStorage.removeItem('userToken')
-  router.push('/login')
+  router.push('/')
 }
 
 const handleClick = () => {
