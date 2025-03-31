@@ -9,6 +9,10 @@ const navList = useNavList()
 
 const conversations = computed(() => Object.values(navList.conversations))
 
+const newConversation = () =>{
+    window.location.reload();
+}
+
 const handleClick = () => {
   router.push({ name: 'adminComponent' }); 
 };
@@ -20,7 +24,7 @@ const handleClick = () => {
             <v-navigation-drawer floating app expand-on-hover rail >
                 <v-list>
                     <v-list-item prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="VIBE" style="height: 56px; display: flex; align-items: center;">
-                        <button prepend-icon="mdi-plus" class="NewConversation" @click="navList.newConversation">Start new chat</button>
+                        <button prepend-icon="mdi-plus" class="NewConversation" @click="newConversation">Start new chat</button>
                     </v-list-item>
                 </v-list>
 

@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from chatbot.pixie import chat_completion
+from pydantic import BaseModel
+from chatbot.pathplanning import calculate_path
 import json
 import os
 
@@ -8,10 +10,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"], 
 )
 
 
@@ -23,4 +25,14 @@ async def generateResponse(message: str):
     response = chat_completion(message)
     print("Response sent:", response, "\n")
     return {"data": response}
+
+
+class PathRequest(BaseModel):
+    start: str
+    destination: str
+
+@app.post("/find-path/")
+def find_path(request: PathRequest):
+    path = calculate_path(request.start, request.destination)
+    return {"path": path}
 

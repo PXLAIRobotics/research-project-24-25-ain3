@@ -1,11 +1,12 @@
 import datetime
 import json
 import os
-
+from chatbot.pathplanning import calculate_path
 import gradio as gr
 import tiktoken
 from dotenv import load_dotenv
 import openai
+import re
 
 
 
@@ -72,28 +73,45 @@ def chat_completion(message):
     print("Sending to API:", json.dumps(history, indent=2))
 
     try:
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=history,
-            extra_headers={
-                "HTTP-Referer": "https://pxl-research.be/",
-                "X-Title": "PXL Smart ICT"
-            }
-        )
+        # Controleer of het bericht om padinformatie vraagt
+        if "pad" in message or "route" in message:
+            # Zoek naar de combinatie "van <start> naar <bestemming>"
+            match = re.search(r"(pad van|route van)\s+([a-zA-Z0-9\s]+)\s+(naar)\s+([a-zA-Z0-9\s]+)", message)
+        
+            if match:
+                start = match.group(2).strip()  # Startlocatie
+                destination = match.group(4).strip()  # Bestemming
+
+                # Bereken het pad
+                path_info = calculate_path(start, destination)
+
+                # Maak een mooie reactie
+                response = f"Het pad van {start} naar {destination} is als volgt: {path_info['path']}.\n" \
+                        f"De totale afstand is {path_info['total_distance']}."
+                return response
+            else:
+                return "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht."
+        else:
+            # Standaard ChatGPT reactie
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=history,
+                extra_headers={
+                    "HTTP-Referer": "https://pxl-research.be/",
+                    "X-Title": "PXL Smart ICT"
+                }
+            ).choices[0].message.content
+
     except openai.OpenAIError as e:
         print(f"OpenAI API error: {e}")
-        return "There was an error retrieving the response from OpenAI."
+        return "Er is een fout opgetreden bij het ophalen van het antwoord van OpenAI."
 
-    # Extract response
-    partial_message = response.choices[0].message.content if response.choices else "No response received."
+    # Voeg de reactie van de chatbot toe aan de geschiedenis
+    history.append({"role": "assistant", "content": response})
 
-    # Append response to history
-    history.append({"role": "assistant", "content": partial_message})
-
-    # Store in log file
+    # Bewaar de geschiedenis in een logbestand
     store_history(history, "logs/")
 
-    return partial_message
+    return response
 
 
