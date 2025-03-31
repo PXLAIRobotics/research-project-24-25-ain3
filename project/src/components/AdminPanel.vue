@@ -257,7 +257,10 @@ main {
   padding: 20px;
   background-color: #1e1e1e;
   color: #ffffff;
+  overflow-y: auto; /* Enable vertical scrolling */
+  height: calc(100vh - 60px); /* Adjust this height if needed */
 }
+
 
 .dashboard-view {
   display: grid;

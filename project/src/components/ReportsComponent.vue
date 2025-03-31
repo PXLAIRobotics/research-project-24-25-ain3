@@ -90,6 +90,8 @@ onMounted(() => {
   flex-grow: 1;        /* Ensures the table takes available space */
   overflow-y: auto;    /* Allows vertical scrolling for long content */
   margin-top: 20px;
+  max-height: 400px; /* Adjust this height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .reports-table {
