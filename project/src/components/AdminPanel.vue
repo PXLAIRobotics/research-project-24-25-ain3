@@ -15,30 +15,39 @@
           <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
           <button @click="closeModal">Close</button>
         </form>
-        
+
       </div>
     </div>
     <header>
       <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
       <div>
-        <button @click="toggleSidebar">Toggle Sidebar</button>
-        <button @click="logout">Logout</button>
+        <button class="logout" @click="logout">Logout</button>
       </div>
     </header>
 
     <div class="main-content">
       <div class="sidebar" :class="{ hidden: !isSidebarVisible }">
         <ul>
-          <li><router-link to="/" active-class="active">Dashboard</router-link></li>
-          <li><router-link to="/users" active-class="active">Users</router-link></li>
-          <li><router-link to="/settings" active-class="active">Settings</router-link></li>
-          <li><router-link to="/reports" active-class="active">Logs</router-link></li>
+          <button @click="activePanel = 'dashboard'">Dashboard</button>
+          <button @click="activePanel = 'users'">Users</button>
+          <button @click="activePanel = 'settings'">Settings</button>
+          <button @click="activePanel = 'logs'">Logs</button>
+          <button @click="activePanel = 'reports'">Reports</button>
         </ul>
       </div>
 
       <main>
-        <router-view></router-view>
+        <div v-if="activePanel === 'dashboard'" class="dashboard-view">
+          <UsersComponent />
+          <SettingsComponent />
+          <LogsComponent />
+          <ReportsComponent />
+        </div>
+        <UsersComponent v-else-if="activePanel === 'users'" class="expanded" />
+        <SettingsComponent v-else-if="activePanel === 'settings'" class="expanded" />
+        <LogsComponent v-else-if="activePanel === 'logs'" class="expanded" />
+        <ReportsComponent v-else-if="activePanel === 'reports'" class="expanded" />
       </main>
     </div>
   </div>
@@ -47,6 +56,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import UsersComponent from '../components/UsersComponent.vue';
+import SettingsComponent from '../components/SettingsComponent.vue';
+import LogsComponent from '../components/LogsComponent.vue';
+import ReportsComponent from '../components/ReportsComponent.vue';
 
 const email = ref('')
 const password = ref('')
@@ -54,6 +67,7 @@ const showModal = ref(true)
 
 const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 const isSidebarVisible = ref(true)
+const activePanel = ref('dashboard');
 const router = useRouter()
 
 const correctEmail = 'admin@gmail.com' // Replace with your email
@@ -75,11 +89,7 @@ function handleLogin() {
 }
 
 function closeModal() {
-  router.push({ name: 'interfaceComponent' }); 
-}
-
-function toggleSidebar() {
-  isSidebarVisible.value = !isSidebarVisible.value
+  router.push({ name: 'interfaceComponent' });
 }
 
 function logout() {
@@ -88,7 +98,7 @@ function logout() {
 }
 
 const handleClick = () => {
-  router.push({ name: 'interfaceComponent' }); 
+  router.push({ name: 'interfaceComponent' });
 };
 </script>
 
@@ -182,7 +192,6 @@ header h1 {
 }
 
 button {
-  background-color: #190eee;
   color: #ffffff;
   padding: 10px 15px;
   border: none;
@@ -192,10 +201,10 @@ button {
 }
 
 button:hover {
-  background-color: #190eee;
+  background-color: #680eee;
 }
 
-button.logout:hover {
+.logout:hover {
   background-color: red;
 }
 
@@ -219,30 +228,65 @@ button.logout:hover {
 .sidebar ul {
   list-style-type: none;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.sidebar li {
-  padding: 15px;
+.sidebar button {
+  width: 90%;
   text-align: center;
-}
-
-.sidebar li a {
-  color: #ffffff;
-  text-decoration: none;
-  display: block;
+  padding: 12px;
+  color: white;
+  border: none;
+  cursor: pointer;
   border-radius: 5px;
 }
 
-.sidebar li a:hover,
-.sidebar li a.active {
-  background-color: #190eee;
-  font-weight: bold;
+.sidebar button:hover {
+  background-color: #680eee;
 }
+
 
 main {
   flex-grow: 1;
   padding: 20px;
   background-color: #1e1e1e;
   color: #ffffff;
+  overflow-y: auto; /* Enable vertical scrolling */
 }
+
+.dashboard-view {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+  grid-template-rows: auto;
+}
+
+.expanded {
+  grid-column: span 2;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.dashboard-view > * {
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.expanded {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 </style>
