@@ -1,5 +1,5 @@
 <template>
-  <div>Hallo</div>
+  <div>LogsComponent</div>
 </template>
 <script setup></script>
 <style scoped></style>

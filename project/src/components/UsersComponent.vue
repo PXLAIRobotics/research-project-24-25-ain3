@@ -26,6 +26,8 @@ const users = ref([
 <style scoped>
 .users-component {
   background-color: #2c2c2c;
+  width: 100%;
+  height: 100%;
   padding: 20px;
   border-radius: 10px;
   color: #ffffff;

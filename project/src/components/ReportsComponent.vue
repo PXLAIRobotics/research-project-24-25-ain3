@@ -68,6 +68,9 @@ onMounted(() => {
   border-radius: 10px;
   color: white;
   width: 100%;
+  height: 100%;  /* Ensures it takes up full height */
+  display: flex;
+  flex-direction: column;
 }
 
 .reports-panel h2 {
@@ -84,14 +87,14 @@ onMounted(() => {
 }
 
 .reports-table-container {
-  max-height: 400px;
-  overflow-y: auto;
+  flex-grow: 1;        /* Ensures the table takes available space */
+  overflow-y: auto;    /* Allows vertical scrolling for long content */
+  margin-top: 20px;
 }
 
 .reports-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
 }
 
 .reports-table th, .reports-table td {
@@ -124,4 +127,5 @@ onMounted(() => {
 .reports-table td a:hover {
   text-decoration: underline;
 }
+
 </style>

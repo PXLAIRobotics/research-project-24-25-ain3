@@ -103,6 +103,9 @@ function handleSubmit() {
   border-radius: 10px;
   color: white;
   width: 100%;
+  max-width: 100%; /* Ensure it does not get restricted */
+  flex-grow: 1; /* Allow it to grow if inside a flex container */
+  overflow: visible; /* Ensure the content can overflow */
 }
 
 .settings-panel h2 {
@@ -172,7 +175,7 @@ function handleSubmit() {
 }
 
 button.submit-btn {
-  background-color: #190eee;
+  background-color: #680eee;
   color: white;
   padding: 12px 20px;
   border: none;

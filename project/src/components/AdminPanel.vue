@@ -15,13 +15,14 @@
           <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
           <button @click="closeModal">Close</button>
         </form>
-
       </div>
     </div>
+
     <header>
       <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
       <div>
+        <button @click="toggleSidebar">Toggle Sidebar</button>
         <button class="logout" @click="logout">Logout</button>
       </div>
     </header>
@@ -92,6 +93,10 @@ function closeModal() {
   router.push({ name: 'interfaceComponent' });
 }
 
+function toggleSidebar() {
+  isSidebarVisible.value = !isSidebarVisible.value
+}
+
 function logout() {
   localStorage.removeItem('userToken')
   router.push('/login')
@@ -102,16 +107,15 @@ const handleClick = () => {
 };
 </script>
 
-
 <style>
 .active-submit {
   color: white;
 }
 
-.formSubmit{
+.formSubmit {
   margin-bottom: 10px;
 }
-form{
+form {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -219,6 +223,7 @@ button:hover {
   color: #ffffff;
   padding-top: 20px;
   transition: transform 0.3s ease;
+  flex-shrink: 0;
 }
 
 .sidebar.hidden {
@@ -247,13 +252,11 @@ button:hover {
   background-color: #680eee;
 }
 
-
 main {
   flex-grow: 1;
   padding: 20px;
   background-color: #1e1e1e;
   color: #ffffff;
-  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .dashboard-view {
@@ -261,32 +264,36 @@ main {
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 20px;
   grid-template-rows: auto;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.dashboard-view > * {
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .expanded {
   grid-column: span 2;
   width: 100%;
   height: 100%;
-  max-width: 100%;
   max-height: 100%;
   overflow: hidden;
 }
 
-.dashboard-view > * {
-  max-width: 100%;
-  max-height: 100%;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60%;
+  }
 }
 
-.expanded {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%;
+  }
 
+  .dashboard-view {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

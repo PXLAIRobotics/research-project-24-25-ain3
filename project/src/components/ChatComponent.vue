@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-import standardGif from '@/assets/AI_Soundwave_standard.gif'
-import transitionGif from '@/assets/AI_Soundwave_transition.gif'
-import thinkingGif from '@/assets/AI_Soundwave_thinking.gif'
+import standardGif from '@/assets/output-onlinegiftools.gif'
+import transitionGif from '@/assets/transition-transparent.gif'
+import thinkingGif from '@/assets/thinking-transparent.gif'
 
 const currentGif = ref(standardGif)
 const inputValue = ref('')
