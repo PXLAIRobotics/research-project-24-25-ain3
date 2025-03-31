@@ -52,10 +52,9 @@ def get_log_filename(log_folder):
 
 
 def store_history(history, log_folder):
-    """Save conversation history to a log file."""
     log_file = get_log_filename(log_folder)
-    with open(log_file, 'wt') as f:
-        json.dump(history, f, indent=1)
+    with open(log_file, 'w', encoding='utf-8') as f:
+        json.dump(history, f, indent=4, ensure_ascii=False)
 
 
 def chat_completion(message):
@@ -72,7 +71,7 @@ def chat_completion(message):
     print("Sending to API:", json.dumps(history, indent=2))
 
     try:
-        # Call OpenAI API
+        # OpenAI API aanroepen
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=history,
@@ -81,19 +80,45 @@ def chat_completion(message):
                 "X-Title": "PXL Smart ICT"
             }
         )
+        
+        # Haal het gegenereerde antwoord op
+        response_message = response.choices[0].message.content if response.choices else "No response received."
+        
+        # Voeg de response toe aan de history met response_code 200 (OK)
+        history.append({
+            "role": "assistant",
+            "content": response_message,
+            "response_code": 200
+        })
+
     except openai.OpenAIError as e:
-        print(f"OpenAI API error: {e}")
-        return "There was an error retrieving the response from OpenAI."
+        error_message = str(e)
+        status_code = "unknown"
 
-    # Extract response
-    partial_message = response.choices[0].message.content if response.choices else "No response received."
+        # Haal statuscode uit string
+        if "Error code: " in error_message:
+            try:
+                status_code = int(error_message.split("Error code: ")[1].split(" - ")[0])
+            except ValueError:
+                status_code = "unknown"
 
-    # Append response to history
-    history.append({"role": "assistant", "content": partial_message})
+        # Haal message uit string
+        if "'message':" in error_message:
+            try:
+                message_start = error_message.index("'message':") + 11
+                message_end = error_message.index("',", message_start)
+                error_message = error_message[message_start:message_end]
+            except ValueError:
+                pass
 
-    # Store in log file
+        # Voeg error toe aan history met response_code
+        history.append({
+            "role": "error",
+            "content": error_message,
+            "response_code": status_code
+        })
+
+    # Opslaan in logbestand
     store_history(history, "logs/")
 
-    return partial_message
-
-
+    return response_message if 'response_message' in locals() else "Er is een fout opgetreden."

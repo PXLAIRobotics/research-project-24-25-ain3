@@ -15,8 +15,6 @@ app.add_middleware(
 )
 
 
-
-
 @app.get("/pixie")
 async def generateResponse(message: str):
     print("Message received:", message)
@@ -24,3 +22,16 @@ async def generateResponse(message: str):
     print("Response sent:", response, "\n")
     return {"data": response}
 
+@app.get("/logs")
+async def getLogs():
+    logs_data = []
+    print("Request received")
+    
+    for log in os.listdir("logs"):  # List all files in the "logs" directory
+        if log.endswith(".json"):  # Only process JSON log files
+            with open(os.path.join("logs", log), "r") as f:
+                log_content = json.load(f)
+                logs_data.append(log_content)
+                print("Sending logs")
+
+    return {"logs": logs_data}

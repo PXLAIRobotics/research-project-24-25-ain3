@@ -33,7 +33,7 @@
           <li><router-link to="/" active-class="active">Dashboard</router-link></li>
           <li><router-link to="/users" active-class="active">Users</router-link></li>
           <li><router-link to="/settings" active-class="active">Settings</router-link></li>
-          <li><router-link to="/reports" active-class="active">Logs</router-link></li>
+          <li><router-link to="/logs" active-class="active">Logs</router-link></li>
         </ul>
       </div>
 
