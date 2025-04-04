@@ -27,12 +27,3 @@ async def generateResponse(message: str):
     return {"data": response}
 
 
-class PathRequest(BaseModel):
-    start: str
-    destination: str
-
-@app.post("/find-path/")
-def find_path(request: PathRequest):
-    path = calculate_path(request.start, request.destination)
-    return {"path": path}
-

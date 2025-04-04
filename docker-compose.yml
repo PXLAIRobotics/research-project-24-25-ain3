@@ -9,6 +9,8 @@ services:
       - ENV=production
     depends_on:
       - frontend
+    networks:
+      - app_network
 
   frontend:
     build: ./project
@@ -19,4 +21,10 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+    networks:
+      - app_network
     command: ["npm", "run", "dev", "--", "--host"]
+
+networks:
+  app_network:
+    driver: bridge
