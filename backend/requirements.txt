@@ -5,3 +5,4 @@ tiktoken
 dotenv
 openai
 networkx
+psycopg2-binary

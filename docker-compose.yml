@@ -7,8 +7,13 @@ services:
       - ./backend:/app
     environment:
       - ENV=production
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=mydatabase
+      - DATABASE_USER=myuser
+      - DATABASE_PASSWORD=mypassword
     depends_on:
-      - frontend
+      - postgres
 
   frontend:
     build: ./project
@@ -20,3 +25,18 @@ services:
     environment:
       - NODE_ENV=development
     command: ["npm", "run", "dev", "--", "--host"]
+
+  postgres:
+    image: ankane/pgvector
+    container_name: my_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
