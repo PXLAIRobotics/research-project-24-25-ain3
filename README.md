@@ -53,7 +53,7 @@ Voel je vrij om de repository te forken, wijzigingen aan te brengen en pull requ
 
 
 ## Erkenningen
-- **PXLAI Robotics** voor het bieden van het kader en mentorschap voor dit project.
+- **PXLAI Robotics, Sam & Sam** voor het bieden van het kader en mentorschap voor dit project.
 - De bijdragers die dit project mogelijk hebben gemaakt:  
   - @SenneReekmansPXL  
   - @AbdulrahmanAkilPXL  
