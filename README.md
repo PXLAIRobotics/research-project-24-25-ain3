@@ -34,20 +34,15 @@ Het project bestaat uit een Vue.js frontend en een Python backend, samen met Doc
     ```
 
 2. Docker Instellen:
-Om de volledige applicatie in Docker-containers te draaien, gebruik Docker Compose:
-
-```bash
-docker-compose up --build
-```
+   Om de volledige applicatie in Docker-containers te draaien, gebruik Docker Compose:
+   
+   ```bash
+   docker-compose up --build
+   ```
 
 3. Toegang tot de Applicatie:
-Zodra de containers draaien, kun je de frontend bereiken via je browser op http://localhost:5173.
-
-De backend API is bereikbaar op poort 8000.
-
-
-## Hoe bij te dragen
-Voel je vrij om de repository te forken, wijzigingen aan te brengen en pull requests te maken. Bijdragen zijn welkom om de padvind-algoritmes te verbeteren, de frontendinterface te verbeteren of de containerconfiguratie te optimaliseren.
+   Zodra de containers draaien, kun je de frontend bereiken via je browser op http://localhost:5173.
+   De backend API is bereikbaar op poort 8000.
 
 
 ## Erkenningen
