@@ -7,10 +7,11 @@ Dit project maakt deel uit van het Researchproject van team 3 voor het academie 
 Het project bestaat uit een Vue.js frontend en een Python backend, samen met Docker voor een efficiënte ontwikkeling en implementatie.
 
 ## Kenmerken
-- **Pathplanning**: Geavanceerde padvind-algoritmes die geoptimaliseerde navigatie binnen een gedefinieerde omgeving mogelijk maken.
 - **Vue.js Frontend**: Een dynamische gebruikersinterface gebouwd met Vue.js, die een interactieve manier biedt om padvindresultaten op te vragen.
 - **Python Backend**: Een FastAPI backend die padvindverzoeken verwerkt en integreert met de frontend.
 - **Dockerized Applicatie**: De gehele applicatie is gecontaineriseerd voor eenvoudige implementatie en schaalbaarheid.
+- **Model**: Gebaseerd op gpt-4o-mini.
+- **Pathplanning**: Geavanceerde padvind-algoritmes die geoptimaliseerde navigatie binnen een gedefinieerde omgeving mogelijk maken.
 
 ## Gebruikte Technologieën
 - **Frontend**: Vue.js, JavaScript, CSS, HTML
@@ -31,25 +32,8 @@ Het project bestaat uit een Vue.js frontend en een Python backend, samen met Doc
    git clone https://github.com/PXLAIRobotics/research-project-24-25-ain3.git
    cd research-project-24-25-ain3
     ```
-2. Backend Instellen:
 
-Navigeer naar de backend-directory en installeer de afhankelijkheden:
-
-```bash
-cd backend
-pip install -r requirements.txt
-```
-
-3. Frontend Instellen:
-
-Navigeer naar de frontend-directory en installeer de afhankelijkheden:
-
-```bash
-cd frontend
-npm install
-```
-
-4. Docker Instellen:
+2. Docker Instellen:
 
 Om de volledige applicatie in Docker-containers te draaien, gebruik Docker Compose:
 
@@ -57,7 +41,7 @@ Om de volledige applicatie in Docker-containers te draaien, gebruik Docker Compo
 docker-compose up --build
 ```
 
-5. Toegang tot de Applicatie:
+3. Toegang tot de Applicatie:
 
 Zodra de containers draaien, kun je de frontend bereiken via je browser op http://localhost:5173.
 
