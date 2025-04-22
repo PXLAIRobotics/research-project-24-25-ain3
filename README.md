@@ -1,5 +1,5 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/vvTTilrq)
-# Research Project 24-25: AI & Padplanning
+# Research Project 24-25: Team 3
 
 ## Overzicht
 Dit project maakt deel uit van het Researchproject van team 3 voor het academie jaar 2024-2025. Het doel van het project is om VIBE een ai gestuurde assistent te maken met geavanceerde padplanning-algoritmes en deze te integreren in een functionele applicatie met behulp van moderne webtechnologieën en containerisatie.
