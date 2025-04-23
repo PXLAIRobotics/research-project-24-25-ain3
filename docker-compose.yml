@@ -13,7 +13,11 @@ services:
       - DATABASE_USER=myuser
       - DATABASE_PASSWORD=mypassword
     depends_on:
+      - frontend
+    networks:
+      - app_network
       - postgres
+
 
   frontend:
     build: ./project
@@ -24,6 +28,13 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+    networks:
+      - app_network
+    command: ["npm", "run", "dev", "--", "--host"]
+
+networks:
+  app_network:
+    driver: bridge
     command: ["npm", "run", "dev", "--", "--host"]
 
   postgres:

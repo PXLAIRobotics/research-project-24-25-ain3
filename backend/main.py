@@ -77,3 +77,4 @@ class PathRequest(BaseModel):
 def find_path(request: PathRequest):
     path = calculate_path(request.start, request.destination)
     return {"path": path}
+
