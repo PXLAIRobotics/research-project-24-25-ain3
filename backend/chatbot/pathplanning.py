@@ -57,7 +57,7 @@ def calculate_path(start, destination):
         total_distance += edge_weight
     
     path_string = " -> ".join(path)
-    return {"path": path_string, "total_distance": str(total_distance) + " meters"}
+    return {"path": path_string, "total_distance": str(total_distance) + " meter"}
 
 
 result = calculate_path("Bushalte", "Corda 9")

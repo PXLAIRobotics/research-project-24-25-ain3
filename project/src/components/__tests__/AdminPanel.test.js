@@ -3,13 +3,10 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vitest'
 import AdminPanel from '@/components/AdminPanel.vue'
 
-// Maak een dummy router met een push functie
 const dummyRouter = { push: vi.fn() }
 
-// Mock de vue-router module zodat useRouter() de dummyRouter retourneert
 vi.mock('vue-router', () => ({
   useRouter: () => dummyRouter,
-  // Stub de router componenten zodat deze geen problemen geven
   RouterLink: { template: '<div><slot /></div>' },
   RouterView: { template: '<div><slot /></div>' }
 }))
@@ -38,12 +35,10 @@ describe('AdminPanel.vue)', () => {
   it('verbergt de modal bij succesvolle login en navigeert naar /admin', async () => {
     const wrapper = mount(AdminPanel)
 
-    // Vul de juiste inloggegevens in
     await wrapper.find('input[type="email"]').setValue('admin@gmail.com')
     await wrapper.find('input[type="password"]').setValue('admin')
     await wrapper.find('form').trigger('submit.prevent')
 
-    // Controleer dat de modal verborgen is en dat router.push is aangeroepen
     expect(wrapper.vm.showModal).toBe(false)
     expect(dummyRouter.push).toHaveBeenCalledWith('/admin')
   })
@@ -63,7 +58,6 @@ describe('AdminPanel.vue)', () => {
     localStorage.setItem('userToken', 'dummy')
     const wrapper = mount(AdminPanel)
 
-    // Zoek de Logout-knop op basis van de tekst
     const logoutBtn = wrapper.findAll('button').find(btn => btn.text().trim() === 'Logout')
     expect(logoutBtn.exists()).toBe(true)
     await logoutBtn.trigger('click')

@@ -18,6 +18,10 @@ const addMessage = (message, sender) => {
   messages.value.push({ sender: sender, message: message })
 }
 
+const routeMessage = () =>{
+  inputValue.value = `Wat is de route van [Huidige locatie] naar [Eindbestemming]`;
+}
+
 const sendMessage = () => {
 
   
@@ -73,11 +77,14 @@ const sendMessage = () => {
 
 <template>
   <div class="container">
-    <div class="title">
-      <h1>Corda</h1>
-      <img class="logo" src="../assets/corda-logo.png" alt="corda logo" />
-      <h1>Arena</h1>
-    </div>
+    <header>
+      <div class="title">
+        <h1>Corda</h1>
+        <img class="logo" src="../assets/corda-logo.png" alt="corda logo" />
+        <h1>Arena</h1>
+      </div>
+    </header>
+    
 
     <div class="chat-messages">
       <div
@@ -94,6 +101,7 @@ const sendMessage = () => {
     </div>
 
     <div class="chatbox">
+      <button class="routeButton" @click="routeMessage">Route Vragen</button>
       <input v-model="inputValue" class="inputbox" type="text" placeholder="Message Vibe" @keyup.enter="sendMessage"/>
       <button class="sendbutton" @click="sendMessage">
         <img src="@/assets/send-icon.png" alt="send icon" class="image-button" />
@@ -106,21 +114,29 @@ const sendMessage = () => {
 
 <style scoped>
 
+header{
+  display: flex;
+  justify-content: center;  /* Center children horizontally */
+  align-items: center;      /* Center children vertically */
+  background-color: #212121;
+  position: absolute;
+  top: 0;
+  width: 100%;              /* Make header span full width */
+  padding: 10px 0;
+  z-index: 0;
+}
 
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: black;
+  background-color: #333333;
   height: 100%;
 }
 
 .title {
-  position: absolute;
-  margin: 5px;
   display: flex;
   flex-direction: row;
-  top: 0;
 }
 .logo {
   width: 70px;
@@ -148,9 +164,10 @@ const sendMessage = () => {
   position: absolute;
   display: flex;
   flex-direction: row;
-  width: 40%;
+  width: 45%;
   margin: 20px;
   bottom: 20px;
+  height: 50px;
 }
 
 .chatbox img {
@@ -161,7 +178,7 @@ const sendMessage = () => {
   background-color: #e0e0e0;
   width: 100%;
   border-radius: 20px;
-  padding: 10px;
+  padding: 0 0 0 15px;
   border: none;
   color: black;
 }
@@ -171,13 +188,14 @@ const sendMessage = () => {
 }
 
 .sendbutton {
+
   background-color: transparent;
   border: none;
 }
 
 .sendbutton img {
-  height: 30px;
-  width: 30px;
+  height: 40px;
+  width: 40px;
 }
 
 .chat-messages {
@@ -223,14 +241,19 @@ const sendMessage = () => {
   display: flex;
 }
 
-
-
 :deep(.chat-messages ul) {
     padding-left: 40px !important;
 }
 
+.routeButton{
+  background-color: #e0e0e0;
+  margin-right: 20px;
+  color: black;
+  padding: 0 10px 0 10px;
+  width: 180px;
+  border-radius: 20px;
+  height: 45px;
+  margin-top: px;
 
-
-
-
+}
 </style>

@@ -36,7 +36,6 @@ describe('ChatComponent', () => {
   });
 
   it('toont een foutmelding als de API faalt', async () => {
-    // Overschrijf mock implementatie voor zodat de promise faalt
     axios.get.mockRejectedValue(new Error('Netwerkfout'));
 
     const wrapper = mount(ChatComponent);
