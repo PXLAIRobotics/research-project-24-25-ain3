@@ -1,4 +1,17 @@
 services:
+  postgres:
+    image: ankane/pgvector
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
   backend:
     build: ./backend
     ports:
@@ -14,9 +27,9 @@ services:
       - DATABASE_PASSWORD=mypassword
     depends_on:
       - frontend
+      - postgres
     networks:
       - app_network
-      - postgres
 
 
   frontend:
@@ -35,19 +48,6 @@ services:
 networks:
   app_network:
     driver: bridge
-    command: ["npm", "run", "dev", "--", "--host"]
-
-  postgres:
-    image: ankane/pgvector
-    container_name: my_postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:
