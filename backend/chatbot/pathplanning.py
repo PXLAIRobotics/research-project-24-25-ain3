@@ -60,5 +60,3 @@ def calculate_path(start, destination):
     return {"path": path_string, "total_distance": str(total_distance) + " meter"}
 
 
-result = calculate_path("Bushalte", "Corda 9")
-print(result)
