@@ -21,14 +21,30 @@ def get_database_connection():
 def create_table_if_not_exists(conn):
     """Create the 'events' table if it does not exist."""
     cursor = conn.cursor()
+    cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS events (
-        id SERIAL PRIMARY KEY,
-        event_name TEXT NOT NULL,   
-        event_date DATE NOT NULL,
-        event_description TEXT,
-        embedding float8[]
+            id SERIAL PRIMARY KEY,
+            event_name TEXT NOT NULL,
+            event_date DATE NOT NULL,
+            event_description TEXT,
+            embedding VECTOR(1536) -- Ensure the embedding column is of type VECTOR
         );
+    """)
+
+
+    cursor.execute("""
+        DO $$
+        BEGIN
+            IF EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_name = 'events' AND column_name = 'embedding' AND data_type != 'vector'
+            ) THEN
+                ALTER TABLE events DROP COLUMN embedding;
+                ALTER TABLE events ADD COLUMN embedding VECTOR(1536);
+            END IF;
+        END $$;
     """)
 
     conn.commit()
@@ -51,14 +67,50 @@ def insert_events(events, conn):
             event_date = event["date"]
             event_description = event["description"]
             
+            # Generate the embedding as a list of floats
             embedding = get_embedding(event_description)
-            embedding_array = list(map(float, embedding)) 
-            embedding_sql_array = AsIs(f"ARRAY[{', '.join(map(str, embedding_array))}]")
 
+
+            # Insert the event into the database
             cursor.execute("""
                 INSERT INTO events (event_name, event_date, event_description, embedding)
                 VALUES (%s, %s, %s, %s)
-            """, (event_name, event_date, event_description, embedding_sql_array))
+            """, (event_name, event_date, event_description, embedding))
+
     
     conn.commit()
     cursor.close()
+
+def search_similar_event(message, conn):
+    """Search for the most similar event in the database based on the message embedding."""
+    try:
+        print("Generating embedding for the message...")
+        embedding = get_embedding(message)  # Embedding is already a list of floats
+        print("Embedding generated successfully.")
+
+        print("Executing database query...")
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, event_name, event_date, event_description, 
+                   embedding <-> %s::vector AS distance
+            FROM events
+            ORDER BY distance ASC
+            LIMIT 1;
+        """, (embedding,))
+        result = cursor.fetchone()
+        cursor.close()
+
+        if result:
+            print("Query successful. Returning result.")
+            return {
+                "id": result[0],
+                "event_name": result[1],
+                "event_date": result[2],
+                "event_description": result[3],
+                "distance": result[4]
+            }
+        print("No matching events found.")
+        return None
+    except Exception as e:
+        print(f"Error in search_similar_event: {e}")
+        raise

@@ -31,8 +31,7 @@ system_instruction = {
     "content": (
         "Be concise. Be precise. Make the output as clear as possible. "
         "Make the output prettier and structured. Always think step by step. "
-        "Here are the details about the campus: "
-        f"{json.dumps(campus_info, indent=2)}"
+        "only give information about events if the ask for it."
     )
 }
 
@@ -59,6 +58,8 @@ def store_history(history, log_folder):
         json.dump(history, f, indent=1)
 
 
+from database import get_database_connection, search_similar_event
+
 def chat_completion(message):
     global history
 
@@ -73,6 +74,9 @@ def chat_completion(message):
     print("Sending to API:", json.dumps(history, indent=2))
 
     try:
+        conn = get_database_connection()
+        similar_event = search_similar_event(message, conn)
+        conn.close()
         # Controleer of het bericht om padinformatie vraagt
         if "pad" in message or "route" in message:
             try :
@@ -95,6 +99,12 @@ def chat_completion(message):
                 return response
         else:
             # Standaard ChatGPT reactie
+            if similar_event:
+                history.append({
+                    "role": "system",
+                    "content": f"Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {similar_event}"
+                })
+
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=history,
@@ -115,5 +125,4 @@ def chat_completion(message):
     store_history(history, "logs/")
 
     return response
-
 
