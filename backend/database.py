@@ -3,6 +3,8 @@ import numpy as np
 import json
 from openai import OpenAI
 import os
+from psycopg2.extensions import AsIs
+
 
 client = OpenAI(api_key="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")
 
@@ -12,7 +14,7 @@ def get_database_connection():
         dbname=os.getenv("DATABASE_NAME", "mydatabase"),
         user=os.getenv("DATABASE_USER", "myuser"),
         password=os.getenv("DATABASE_PASSWORD", "mypassword"),
-        host=os.getenv("DATABASE_HOST", "localhost"),
+        host=os.getenv("DATABASE_HOST", "postgres"),
         port=os.getenv("DATABASE_PORT", "5432")
     )
 
@@ -44,6 +46,7 @@ def create_table_if_not_exists(conn):
             END IF;
         END $$;
     """)
+
     conn.commit()
     cursor.close()
 
@@ -58,7 +61,7 @@ def get_embedding(text):
 def insert_events(events, conn):
     """Insert events into the database."""
     cursor = conn.cursor()
-    for category, event_list in events.items():
+    for event_list in events.values():
         for event in event_list:
             event_name = event["name"]
             event_date = event["date"]
@@ -67,11 +70,13 @@ def insert_events(events, conn):
             # Generate the embedding as a list of floats
             embedding = get_embedding(event_description)
 
+
             # Insert the event into the database
             cursor.execute("""
                 INSERT INTO events (event_name, event_date, event_description, embedding)
                 VALUES (%s, %s, %s, %s)
             """, (event_name, event_date, event_description, embedding))
+
     
     conn.commit()
     cursor.close()

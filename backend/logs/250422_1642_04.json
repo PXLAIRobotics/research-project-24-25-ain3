@@ -1,0 +1,30 @@
+[
+ {
+  "role": "system",
+  "content": "Be concise. Be precise. Make the output as clear as possible. Make the output prettier and structured. Always think step by step. Here are the details about the campus: {\n  \"campus_name\": \"Corda\",\n  \"events\": {\n    \"academic\": [\n      {\n        \"name\": \"Research Symposium\",\n        \"date\": \"2025-04-10\",\n        \"description\": \"A symposium showcasing student research.\"\n      }\n    ],\n    \"cultural\": [\n      {\n        \"name\": \"Cultural Fest\",\n        \"date\": \"2025-05-20\",\n        \"description\": \"A festival celebrating diverse cultures.\"\n      }\n    ],\n    \"workshops\": [\n      {\n        \"name\": \"AI Workshop\",\n        \"date\": \"2025-03-25\",\n        \"description\": \"A workshop on artificial intelligence.\"\n      }\n    ],\n    \"social\": [\n      {\n        \"name\": \"Spring Gala\",\n        \"date\": \"2025-04-15\",\n        \"description\": \"A social gathering for students.\"\n      }\n    ]\n  },\n  \"address\": \"123 Campus Road, University Town\",\n  \"contact\": {\n    \"email\": \"info@university.edu\",\n    \"phone\": \"+1234567890\"\n  }\n}"
+ },
+ {
+  "role": "user",
+  "content": "Wat is de route van Bushalte naar corda 8"
+ },
+ {
+  "role": "user",
+  "content": "Wat is de route van Bushalte naar Corda 8"
+ },
+ {
+  "role": "user",
+  "content": "Ik bij bij Bushalte hoe ga ik naar Corda 8"
+ },
+ {
+  "role": "assistant",
+  "content": "Hier is een stapsgewijze route van de bushalte naar Corda 8:\n\n1. **Vertrek van de Bushalte**:\n   - Zoek de uitgang van de bushalte en ga naar de straat.\n\n2. **Loop naar Corda**:\n   - Ga in de richting van de campus en volg het pad naar de ingang van het Corda-gebouw.\n\n3. **Navigeren binnen de Campus**:\n   - Zodra je bij de campus bent, zoek je naar de bewegwijzering die naar Corda 8 leidt.\n\n4. **Aankomst bij Corda 8**:\n   - Volg de bordjes totdat je bij Corda 8 aankomt.\n\n**Adres Campus**:\n- 123 Campus Road, University Town\n\nVoor meer assistentie kun je contact opnemen:\n- **Email**: info@university.edu\n- **Telefoon**: +1234567890\n\nVeilige reis!"
+ },
+ {
+  "role": "user",
+  "content": "Hoe ga ik van Corda 1 naar Corda 5"
+ },
+ {
+  "role": "assistant",
+  "content": "Hier is de route van Corda 1 naar Corda 5:\n\n1. **Vertrek bij Corda 1**:\n   - Verlaat het gebouw Corda 1 via de hoofdingang.\n\n2. **Navigeer naar het midden van de Campus**:\n   - Volg het hoofdpad dat door de campus loopt.\n\n3. **Zoek naar Corda 5**:\n   - Let op de bewegwijzering of volg andere studenten naar Corda 5.\n\n4. **Aankomst bij Corda 5**:\n   - Zodra je Corda 5 hebt bereikt, kun je naar binnen gaan.\n\nMocht je vragen hebben, neem gerust contact op met de campus administratie!"
+ }
+]

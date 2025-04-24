@@ -1,10 +1,14 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
 from chatbot.pathplanning import calculate_path
-from database import get_database_connection, create_table_if_not_exists, insert_events
+from database import get_database_connection, create_table_if_not_exists, insert_events, get_embedding
 import json
+import numpy as np
+from psycopg2.extensions import AsIs
+
+
 
 app = FastAPI()
 
@@ -69,11 +73,31 @@ async def generateResponse(message: str):
     print("Response sent:", response, "\n")
     return {"data": response}
 
-class PathRequest(BaseModel):
-    start: str
-    destination: str
+class Event(BaseModel):
+    name: str
+    date: str  # In 'YYYY-MM-DD' formaat
+    description: str
 
-@app.post("/find-path/")
-def find_path(request: PathRequest):
-    path = calculate_path(request.start, request.destination)
-    return {"path": path}
+@app.post("/events")
+def add_event(event: Event):
+    try:
+        conn = get_database_connection()
+        create_table_if_not_exists(conn)
+
+        embedding = get_embedding(event.description)
+        embedding_array = list(map(float, embedding))
+        embedding_array = AsIs(f"ARRAY[{', '.join(map(str, embedding_array))}]")
+
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO events (event_name, event_date, event_description, embedding)
+            VALUES (%s, %s, %s, %s)
+        """, (event.name, event.date, event.description, embedding_array))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return {"status": "success", "event": event}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

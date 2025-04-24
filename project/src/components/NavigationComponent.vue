@@ -65,6 +65,7 @@ const handleClick = () => {
 <style scoped>
 .vCard {
     background-color: #2a2a2a;
+    z-index: 1;
 }
 
 v-navigation-drawer{
