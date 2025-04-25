@@ -32,6 +32,7 @@
           <button @click="activePanel = 'dashboard'">Dashboard</button>
           <button @click="activePanel = 'users'">Users</button>
           <button @click="activePanel = 'settings'">Settings</button>
+          <button @click="activePanel = 'all_events'">All Events</button>
           <button @click="activePanel = 'logs'">Logs</button>
           <button @click="activePanel = 'event adder'">event adder</button>
         </ul>
@@ -47,6 +48,8 @@
         <UsersComponent v-else-if="activePanel === 'users'" class="expanded" />
         <SettingsComponent v-else-if="activePanel === 'settings'" class="expanded" />
         <LogsComponent v-else-if="activePanel === 'logs'" class="expanded" />
+        <ReportsComponent v-else-if="activePanel === 'reports'" class="expanded" />
+        <AllEventsComponent v-else-if="activePanel === 'all_events'" class="expanded" />
         <addeventsComponent v-else-if="activePanel === 'event adder'" class="expanded" />
       </main>
     </div>
@@ -59,6 +62,8 @@ import { useRouter } from 'vue-router'
 import UsersComponent from '../components/UsersComponent.vue';
 import SettingsComponent from '../components/SettingsComponent.vue';
 import LogsComponent from '../components/LogsComponent.vue';
+import ReportsComponent from '../components/ReportsComponent.vue';
+import AllEventsComponent from '../components/AllEventsComponent.vue';
 import addeventsComponent from './addeventsComponent.vue';
 
 const email = ref('')

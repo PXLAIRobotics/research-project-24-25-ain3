@@ -14,7 +14,7 @@ def get_database_connection():
         dbname=os.getenv("DATABASE_NAME", "mydatabase"),
         user=os.getenv("DATABASE_USER", "myuser"),
         password=os.getenv("DATABASE_PASSWORD", "mypassword"),
-        host=os.getenv("DATABASE_HOST", "postgres"),
+        host=os.getenv("DATABASE_HOST", "localhost"),
         port=os.getenv("DATABASE_PORT", "5432")
     )
 
@@ -28,38 +28,28 @@ def create_table_if_not_exists(conn):
             event_name TEXT NOT NULL,
             event_date DATE NOT NULL,
             event_description TEXT,
-            embedding VECTOR(1536) -- Ensure the embedding column is of type VECTOR
+            embedding VECTOR(1536)
         );
     """)
-
-
-    cursor.execute("""
-        DO $$
-        BEGIN
-            IF EXISTS (
-                SELECT 1
-                FROM information_schema.columns
-                WHERE table_name = 'events' AND column_name = 'embedding' AND data_type != 'vector'
-            ) THEN
-                ALTER TABLE events DROP COLUMN embedding;
-                ALTER TABLE events ADD COLUMN embedding VECTOR(1536);
-            END IF;
-        END $$;
-    """)
-
     conn.commit()
     cursor.close()
 
 def get_embedding(text):
     """Generate an embedding for the given text."""
-    response = client.embeddings.create(
-        input=text,
-        model="text-embedding-ada-002"
-    )
-    return response.data[0].embedding
+    try:
+        response = client.embeddings.create(
+            input=text,
+            model="text-embedding-ada-002"
+        )
+        embedding = response.data[0].embedding
+        print(f"Generated embedding (first 5 values): {embedding[:5]}")
+        return list(embedding)
+    except Exception as e:
+        print(f"Error generating embedding: {e}")
+        return None
 
 def insert_events(events, conn):
-    """Insert events into the database."""
+    """Insert events into the database with embeddings."""
     cursor = conn.cursor()
     for category, event_list in events.items():
         for event in event_list:
@@ -68,6 +58,9 @@ def insert_events(events, conn):
             event_description = event.description
 
             embedding = get_embedding(event_description)
+            if embedding is None:
+                print(f"Skipping insert for event '{event_name}' due to missing embedding.")
+                continue
 
             cursor.execute("""
                 INSERT INTO events (event_name, event_date, event_description, embedding)
@@ -77,18 +70,19 @@ def insert_events(events, conn):
     conn.commit()
     cursor.close()
 
-
 def search_similar_event(message, conn):
     """Search for the most similar event in the database based on the message embedding."""
     try:
         print("Generating embedding for the message...")
-        embedding = get_embedding(message)  # Embedding is already a list of floats
-        print("Embedding generated successfully.")
+        embedding = get_embedding(message)
+        if embedding is None:
+            print("Failed to generate embedding for search.")
+            return None
 
-        print("Executing database query...")
         cursor = conn.cursor()
+        print("Executing database query...")
         cursor.execute("""
-            SELECT id, event_name, event_date, event_description, 
+            SELECT id, event_name, event_date, event_description,
                    embedding <-> %s::vector AS distance
             FROM events
             ORDER BY distance ASC
@@ -106,19 +100,18 @@ def search_similar_event(message, conn):
                 "event_description": result[3],
                 "distance": result[4]
             }
+
         print("No matching events found.")
         return None
     except Exception as e:
         print(f"Error in search_similar_event: {e}")
         raise
 
-
-
 def clear_event_table(conn):
     """Delete all records from the events table."""
     try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM events;")  # Deletes all rows in the events table
+        cursor.execute("DELETE FROM events;")
         conn.commit()
         cursor.close()
         print("Event table cleared successfully.")
