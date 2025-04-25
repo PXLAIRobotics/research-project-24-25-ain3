@@ -3,6 +3,7 @@
     <img
       src="../assets/output-onlinegiftools.gif"
       alt="Clickable Image"
+
       @click="handleClick"
       class="clickable-image"
     >

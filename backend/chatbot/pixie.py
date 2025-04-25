@@ -31,8 +31,7 @@ system_instruction = {
     "content": (
         "Be concise. Be precise. Make the output as clear as possible. "
         "Make the output prettier and structured. Always think step by step. "
-        "Here are the details about the campus: "
-        f"{json.dumps(campus_info, indent=2)}"
+        "only give information about events if the ask for it."
     )
 }
 
@@ -59,6 +58,8 @@ def store_history(history, log_folder):
         json.dump(history, f, indent=1)
 
 
+from database import get_database_connection, search_similar_event
+
 def chat_completion(message):
     global history
 
@@ -73,26 +74,37 @@ def chat_completion(message):
     print("Sending to API:", json.dumps(history, indent=2))
 
     try:
+        conn = get_database_connection()
+        similar_event = search_similar_event(message, conn)
+        conn.close()
         # Controleer of het bericht om padinformatie vraagt
         if "pad" in message or "route" in message:
-            # Zoek naar de combinatie "van <start> naar <bestemming>"
-            match = re.search(r"(pad van|route van)\s+([a-zA-Z0-9\s]+)\s+(naar)\s+([a-zA-Z0-9\s]+)", message)
+            try :
+                # Zoek naar de combinatie "van <start> naar <bestemming>"
+                match = re.search(r"(pad van|route van)\s+([a-zA-Z0-9\s]+)\s+(naar)\s+([a-zA-Z0-9\s]+)", message)
         
-            if match:
-                start = match.group(2).strip()  # Startlocatie
-                destination = match.group(4).strip()  # Bestemming
+                if match:
+                    start = match.group(2).strip()  # Startlocatie
+                    destination = match.group(4).strip()  # Bestemming
 
-                # Bereken het pad
-                path_info = calculate_path(start, destination)
+                    # Bereken het pad
+                    path_info = calculate_path(start, destination)
 
-                # Maak een mooie reactie
-                response = f"Het pad van {start} naar {destination} is als volgt: {path_info['path']}.\n" \
-                        f"De totale afstand is {path_info['total_distance']}."
+                    # Maak een mooie reactie
+                    response = f"Het pad van {start} naar {destination} is als volgt: {path_info['path']}.\n" \
+                            f"De totale afstand is {path_info['total_distance']}."
+                    return response
+            except:
+                response = "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht. \nHier is een lijst met alle mogelijke locaties Corda 1, Corda 2, Corda 3, Corda 4, Corda 5, Corda 6, Corda 7, Corda 8, Corda 9, Corda A, Corda B, Corda C, Corda D, Corda bar, Bushalte, Treinstation"
                 return response
-            else:
-                return "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht."
         else:
             # Standaard ChatGPT reactie
+            if similar_event:
+                history.append({
+                    "role": "system",
+                    "content": f"Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {similar_event}"
+                })
+
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=history,
@@ -113,5 +125,4 @@ def chat_completion(message):
     store_history(history, "logs/")
 
     return response
-
 

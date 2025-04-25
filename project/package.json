@@ -16,6 +16,8 @@
 
     "preview": "vite preview",
 
+    "test": "vitest",
+
     "test:unit": "vitest",
 
     "lint": "eslint . --fix",
