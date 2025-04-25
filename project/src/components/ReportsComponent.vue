@@ -1,38 +1,38 @@
 <template>
-  <div class="logs-panel">
-    <h2>System Logs</h2>
+  <div class="reports-panel">
+    <h2>User Reports</h2>
 
     <div v-if="loading" class="loading-state">
-      <p>Loading logs...</p>
+      <p>Loading reports...</p>
     </div>
 
     <div v-if="error" class="error-state">
       <p>{{ error }}</p>
     </div>
 
-    <div v-if="logs.length > 0" class="logs-table-container">
-      <table class="logs-table">
+    <div v-if="reports.length > 0" class="reports-table-container">
+      <table class="reports-table">
         <thead>
           <tr>
-            <th>Log ID</th>
-            <th>Timestamp</th>
-            <th>Log Level</th>
-            <th>Message</th>
+            <th>Report ID</th>
+            <th>User ID</th>
+            <th>Report Date</th>
+            <th>Details</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="log in logs" :key="log.id">
-            <td>{{ log.id }}</td>
-            <td>{{ new Date(log.timestamp).toLocaleString() }}</td>
-            <td>{{ log.level }}</td>
-            <td>{{ log.message }}</td>
+          <tr v-for="report in reports" :key="report.id">
+            <td>{{ report.id }}</td>
+            <td>{{ report.userId }}</td>
+            <td>{{ new Date(report.date).toLocaleDateString() }}</td>
+            <td>{{ report.details }}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div v-if="logs.length === 0 && !loading" class="no-logs-state">
-      <p>No logs available.</p>
+    <div v-if="reports.length === 0 && !loading" class="no-reports-state">
+      <p>No reports available.</p>
     </div>
   </div>
 </template>
@@ -41,28 +41,28 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
-const logs = ref([]);
+const reports = ref([]);
 const loading = ref(true);
 const error = ref(null);
 
-const fetchLogs = async () => {
+const fetchReports = async () => {
   try {
-    const response = await axios.get(''); // Replace with your logs API URL
-    logs.value = response.data;
+    const response = await axios.get('');
+    reports.value = response.data;
   } catch (error) {
-    error.value = 'Failed to load logs.';
+    error.value = 'Failed to load reports.';
   } finally {
     loading.value = false;
   }
 };
 
 onMounted(() => {
-  fetchLogs();
+  fetchReports();
 });
 </script>
 
 <style scoped>
-.logs-panel {
+.reports-panel {
   background-color: #2c2c2c;
   padding: 20px;
   border-radius: 10px;
@@ -73,60 +73,61 @@ onMounted(() => {
   flex-direction: column;
 }
 
-.logs-panel h2 {
+.reports-panel h2 {
   margin-bottom: 20px;
   font-size: 1.5em;
 }
 
 .loading-state,
 .error-state,
-.no-logs-state {
+.no-reports-state {
   text-align: center;
   margin-top: 20px;
   font-size: 1.2em;
 }
 
-.logs-table-container {
+.reports-table-container {
   flex-grow: 1;        /* Ensures the table takes available space */
   overflow-y: auto;    /* Allows vertical scrolling for long content */
   margin-top: 20px;
-  max-height: 400px;
-  overflow-y: auto;
+  max-height: 400px; /* Adjust this height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
-.logs-table {
+.reports-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.logs-table th, .logs-table td {
+.reports-table th, .reports-table td {
   padding: 12px;
   border: 1px solid #444;
   text-align: left;
 }
 
-.logs-table th {
+.reports-table th {
   background-color: #333;
 }
 
-.logs-table tbody tr:nth-child(even) {
+.reports-table tbody tr:nth-child(even) {
   background-color: #2c2c2c;
 }
 
-.logs-table tbody tr:hover {
+.reports-table tbody tr:hover {
   background-color: #444;
 }
 
-.logs-table td {
+.reports-table td {
   color: #ccc;
 }
 
-.logs-table td a {
+.reports-table td a {
   color: #680eee;
   text-decoration: none;
 }
 
-.logs-table td a:hover {
+.reports-table td a:hover {
   text-decoration: underline;
 }
+
 </style>
