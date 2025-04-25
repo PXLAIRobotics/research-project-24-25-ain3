@@ -3,11 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
 from chatbot.pathplanning import calculate_path
-from database import get_database_connection, create_table_if_not_exists, insert_events, get_embedding
+from database import get_database_connection, create_table_if_not_exists, insert_events, get_embedding, clear_event_table
 import json
 import numpy as np
 from psycopg2.extensions import AsIs
-
+from typing import Dict, List
 
 
 app = FastAPI()
@@ -20,50 +20,13 @@ app.add_middleware(
     allow_headers=["*"], 
 )
 
-# Load JSON data
-json_data = '''
-{
-    "campus_name": "Corda",
-    "events": {
-        "academic": [
-            {
-                "name": "Research Symposium",
-                "date": "2025-04-10",       
-                "description": "A symposium showcasing student research."
-            }
-        ],
-        "cultural": [
-            {
-                "name": "Cultural Fest",
-                "date": "2025-05-20",
-                "description": "A festival celebrating diverse cultures."
-            }
-        ],
-        "workshops": [
-            {
-                "name": "AI Workshop",
-                "date": "2025-03-25",
-                "description": "A workshop on artificial intelligence."
-            }
-        ],
-        "social": [
-            {
-                "name": "Spring Gala",
-                "date": "2025-04-15",
-                "description": "A social gathering for students."
-            }
-        ]
-    }
-}
-'''
-data = json.loads(json_data)
+
 
 @app.on_event("startup")
 def startup_event():
     """Initialize the database and insert events on app startup."""
     conn = get_database_connection()
     create_table_if_not_exists(conn)
-    insert_events(data["events"], conn)
     conn.close()
 
 @app.get("/pixie")
@@ -75,29 +38,35 @@ async def generateResponse(message: str):
 
 class Event(BaseModel):
     name: str
-    date: str  # In 'YYYY-MM-DD' formaat
+    date: str  # In 'YYYY-MM-DD' format
     description: str
 
+class EventRequest(BaseModel):
+    campus_name: str
+    events: Dict[str, List[Event]]
+    
 @app.post("/events")
-def add_event(event: Event):
+def add_event(request: EventRequest):
     try:
         conn = get_database_connection()
         create_table_if_not_exists(conn)
 
-        embedding = get_embedding(event.description)
-        embedding_array = list(map(float, embedding))
-        embedding_array = AsIs(f"ARRAY[{', '.join(map(str, embedding_array))}]")
-
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO events (event_name, event_date, event_description, embedding)
-            VALUES (%s, %s, %s, %s)
-        """, (event.name, event.date, event.description, embedding_array))
+        insert_events(request.events, conn)
 
         conn.commit()
-        cursor.close()
         conn.close()
 
-        return {"status": "success", "event": event}
+        return {"status": "success", "campus": request.campus_name, "events": request.events}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/delete-events")
+def delete_events():
+    try:
+        conn = get_database_connection()
+        clear_event_table(conn)
+        conn.commit()
+        conn.close()
+        return {"status": "success", "message": "Events table cleared."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

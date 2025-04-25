@@ -61,25 +61,22 @@ def get_embedding(text):
 def insert_events(events, conn):
     """Insert events into the database."""
     cursor = conn.cursor()
-    for event_list in events.values():
+    for category, event_list in events.items():
         for event in event_list:
-            event_name = event["name"]
-            event_date = event["date"]
-            event_description = event["description"]
-            
-            # Generate the embedding as a list of floats
+            event_name = event.name
+            event_date = event.date
+            event_description = event.description
+
             embedding = get_embedding(event_description)
 
-
-            # Insert the event into the database
             cursor.execute("""
                 INSERT INTO events (event_name, event_date, event_description, embedding)
                 VALUES (%s, %s, %s, %s)
             """, (event_name, event_date, event_description, embedding))
 
-    
     conn.commit()
     cursor.close()
+
 
 def search_similar_event(message, conn):
     """Search for the most similar event in the database based on the message embedding."""
@@ -114,3 +111,16 @@ def search_similar_event(message, conn):
     except Exception as e:
         print(f"Error in search_similar_event: {e}")
         raise
+
+
+
+def clear_event_table(conn):
+    """Delete all records from the events table."""
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM events;")  # Deletes all rows in the events table
+        conn.commit()
+        cursor.close()
+        print("Event table cleared successfully.")
+    except Exception as e:
+        print(f"Error clearing event table: {e}")
