@@ -45,6 +45,30 @@ class EventRequest(BaseModel):
     campus_name: str
     events: Dict[str, List[Event]]
     
+@app.get("/allEvents")
+def get_events():
+    try:
+        conn = get_database_connection()
+        create_table_if_not_exists(conn)
+
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, event_name, event_date, event_description FROM events")
+        rows = cursor.fetchall()
+
+        events = []
+        for row in rows:
+            events.append({
+                "id": row[0],
+                "event_name": row[1],
+                "event_date": row[2],
+                "event_description": row[3]
+            })
+
+        conn.close()
+        return {"status": "success", "events": events}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/events")
 def add_event(request: EventRequest):
     try:

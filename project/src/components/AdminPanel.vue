@@ -32,6 +32,7 @@
           <button @click="activePanel = 'dashboard'">Dashboard</button>
           <button @click="activePanel = 'users'">Users</button>
           <button @click="activePanel = 'settings'">Settings</button>
+          <button @click="activePanel = 'all_events'">All Events</button>
           <button @click="activePanel = 'logs'">Logs</button>
           <button @click="activePanel = 'reports'">Reports</button>
         </ul>
@@ -48,6 +49,7 @@
         <SettingsComponent v-else-if="activePanel === 'settings'" class="expanded" />
         <LogsComponent v-else-if="activePanel === 'logs'" class="expanded" />
         <ReportsComponent v-else-if="activePanel === 'reports'" class="expanded" />
+        <AllEventsComponent v-else-if="activePanel === 'all_events'" class="expanded" />
       </main>
     </div>
   </div>
@@ -60,7 +62,7 @@ import UsersComponent from '../components/UsersComponent.vue';
 import SettingsComponent from '../components/SettingsComponent.vue';
 import LogsComponent from '../components/LogsComponent.vue';
 import ReportsComponent from '../components/ReportsComponent.vue';
-
+import AllEventsComponent from '../components/AllEventsComponent.vue';
 const email = ref('')
 const password = ref('')
 const showModal = ref(true)
