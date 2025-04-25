@@ -1,8 +1,9 @@
 <template>
   <div class="centered-container">
-    <img 
-      src="../assets/AI_Soundwave_standard.gif" 
-      alt="Clickable Image" 
+    <img
+      src="../assets/output-onlinegiftools.gif"
+      alt="Clickable Image"
+
       @click="handleClick"
       class="clickable-image"
     >
@@ -15,19 +16,20 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const handleClick = () => {
-  router.push({ name: 'interfaceComponent' }); 
+  router.push({ name: 'interfaceComponent' });
 };
 
 </script>
 
 <style scoped>
 .centered-container {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .clickable-image {
-  cursor: pointer; 
+  cursor: pointer;
 }
 </style>

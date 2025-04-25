@@ -1,0 +1,54 @@
+[
+ {
+  "role": "system",
+  "content": "Be concise. Be precise. Make the output as clear as possible. Make the output prettier and structured. Always think step by step. Here are the details about the campus: {\n  \"campus_name\": \"Corda\",\n  \"events\": {\n    \"academic\": [\n      {\n        \"name\": \"Research Symposium\",\n        \"date\": \"2025-04-10\",\n        \"description\": \"A symposium showcasing student research.\"\n      }\n    ],\n    \"cultural\": [\n      {\n        \"name\": \"Cultural Fest\",\n        \"date\": \"2025-05-20\",\n        \"description\": \"A festival celebrating diverse cultures.\"\n      }\n    ],\n    \"workshops\": [\n      {\n        \"name\": \"AI Workshop\",\n        \"date\": \"2025-03-25\",\n        \"description\": \"A workshop on artificial intelligence.\"\n      }\n    ],\n    \"social\": [\n      {\n        \"name\": \"Spring Gala\",\n        \"date\": \"2025-04-15\",\n        \"description\": \"A social gathering for students.\"\n      }\n    ]\n  },\n  \"address\": \"123 Campus Road, University Town\",\n  \"contact\": {\n    \"email\": \"info@university.edu\",\n    \"phone\": \"+1234567890\"\n  }\n}"
+ },
+ {
+  "role": "user",
+  "content": "Hallo"
+ },
+ {
+  "role": "assistant",
+  "content": "Hello! How can I assist you today?"
+ },
+ {
+  "role": "user",
+  "content": "Kan je me wat meer info geven over de corda campus"
+ },
+ {
+  "role": "assistant",
+  "content": "Natuurlijk! Hier is de informatie over de Corda-campus:\n\n### Corda Campus\n\n**Adres:**  \n123 Campus Road, University Town\n\n**Contact:**  \n- **E-mail:** info@university.edu  \n- **Telefoon:** +1234567890  \n\n### Evenementen\n\n#### Academische Evenementen\n- **Onderzoekssymposium**\n  - **Datum:** 10 april 2025\n  - **Omschrijving:** Een symposium ter presentatie van studentenonderzoek.\n\n#### Culturele Evenementen\n- **Culturele Fest**\n  - **Datum:** 20 mei 2025\n  - **Omschrijving:** Een festival ter viering van diverse culturen.\n\n#### Workshops\n- **AI Workshop**\n  - **Datum:** 25 maart 2025\n  - **Omschrijving:** Een workshop over kunstmatige intelligentie.\n\n#### Sociale Evenementen\n- **Lente Gala**\n  - **Datum:** 15 april 2025\n  - **Omschrijving:** Een sociale bijeenkomst voor studenten.\n\nAls je meer informatie nodig hebt of specifieke vragen hebt, laat het me weten!"
+ },
+ {
+  "role": "user",
+  "content": "Kan je me de aankomende evenementen weergeven?"
+ },
+ {
+  "role": "assistant",
+  "content": "Zeker! Hier zijn de aankomende evenementen op de Corda-campus:\n\n### Aankomende Evenementen\n\n#### **1. AI Workshop**\n- **Datum:** 25 maart 2025\n- **Omschrijving:** Een workshop over kunstmatige intelligentie.\n\n#### **2. Lente Gala**\n- **Datum:** 15 april 2025\n- **Omschrijving:** Een sociale bijeenkomst voor studenten.\n\n#### **3. Onderzoekssymposium**\n- **Datum:** 10 april 2025\n- **Omschrijving:** Een symposium ter presentatie van studentenonderzoek.\n\n#### **4. Culturele Fest**\n- **Datum:** 20 mei 2025\n- **Omschrijving:** Een festival ter viering van diverse culturen.\n\nAls je verdere vragen hebt of meer details nodig hebt over een specifiek evenement, laat het me weten!"
+ },
+ {
+  "role": "user",
+  "content": "Geef me de evenementen in april"
+ },
+ {
+  "role": "assistant",
+  "content": "Hier zijn de evenementen op de Corda-campus die in april plaatsvinden:\n\n### Evenementen in April\n\n#### **1. Lente Gala**\n- **Datum:** 15 april 2025\n- **Omschrijving:** Een sociale bijeenkomst voor studenten.\n\n#### **2. Onderzoekssymposium**\n- **Datum:** 10 april 2025\n- **Omschrijving:** Een symposium ter presentatie van studentenonderzoek.\n\nAls je meer informatie wilt over deze evenementen, laat het me gerust weten!"
+ },
+ {
+  "role": "user",
+  "content": "Wie is donald trump"
+ },
+ {
+  "role": "assistant",
+  "content": "Donald Trump is een Amerikaanse ondernemer, televisiepersoonlijkheid en politician. Hier zijn enkele kernpunten over hem:\n\n### Basisinformatie\n- **Volledige naam:** Donald John Trump\n- **Geboortedatum:** 14 juni 1946\n- **Geboorteplaats:** Queens, New York City, VS\n\n### Carri\u00e8re\n- **Ondernemer:** Begon zijn carri\u00e8re in de vastgoedontwikkeling en bouwde een bedrijf op dat zich richtte op onroerend goed, hotels en casino's.\n- **Televisie:** Bekend als de host van de realityshow \"The Apprentice.\"\n- **Politiek:** Lid van de Republikeinse Partij.\n\n### Politieke Loopbaan\n- **President van de Verenigde Staten:** Diende van 20 januari 2017 tot 20 januari 2021.\n- **Belangrijkste beleid:** Be\u00efnvloedde binnenlandse en buitenlandse politiek, met nadruk op immigratie, handel en gezondheid.\n\n### Persoonlijke Leven\n- **Gezin:** Trump is meerdere keren getrouwd en heeft vijf kinderen. \n\nAls je meer specifieke informatie wilt, laat het me weten!"
+ },
+ {
+  "role": "user",
+  "content": "Dankjewel"
+ },
+ {
+  "role": "assistant",
+  "content": "Graag gedaan! Als je nog verdere vragen hebt of meer informatie nodig hebt, laat het me weten. Fijne dag! \ud83d\ude0a"
+ }
+]
