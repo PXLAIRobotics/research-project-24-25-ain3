@@ -5,6 +5,7 @@ const router = useRouter();
 import { useNavList } from '../stores/navList'
 import NavigationItem from './NavigationItem.vue'
 
+
 const navList = useNavList()
 
 const conversations = computed(() => Object.values(navList.conversations))

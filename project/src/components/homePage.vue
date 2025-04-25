@@ -1,7 +1,7 @@
 <template>
   <div class="centered-container">
     <img
-      src="../assets/output-onlinegiftools.gif"
+      src="../assets/AI_Soundwave_standard.gif"
       alt="Clickable Image"
 
       @click="handleClick"
