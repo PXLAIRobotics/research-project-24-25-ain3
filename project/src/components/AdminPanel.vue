@@ -33,7 +33,7 @@
           <button @click="activePanel = 'users'">Users</button>
           <button @click="activePanel = 'settings'">Settings</button>
           <button @click="activePanel = 'logs'">Logs</button>
-          <button @click="activePanel = 'reports'">Reports</button>
+          <button @click="activePanel = 'event adder'">event adder</button>
         </ul>
       </div>
 
@@ -42,12 +42,12 @@
           <UsersComponent />
           <SettingsComponent />
           <LogsComponent />
-          <ReportsComponent />
+          <addeventsComponent />
         </div>
         <UsersComponent v-else-if="activePanel === 'users'" class="expanded" />
         <SettingsComponent v-else-if="activePanel === 'settings'" class="expanded" />
         <LogsComponent v-else-if="activePanel === 'logs'" class="expanded" />
-        <ReportsComponent v-else-if="activePanel === 'reports'" class="expanded" />
+        <addeventsComponent v-else-if="activePanel === 'event adder'" class="expanded" />
       </main>
     </div>
   </div>
@@ -59,7 +59,7 @@ import { useRouter } from 'vue-router'
 import UsersComponent from '../components/UsersComponent.vue';
 import SettingsComponent from '../components/SettingsComponent.vue';
 import LogsComponent from '../components/LogsComponent.vue';
-import ReportsComponent from '../components/ReportsComponent.vue';
+import addeventsComponent from './addeventsComponent.vue';
 
 const email = ref('')
 const password = ref('')
