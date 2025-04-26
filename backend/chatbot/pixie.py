@@ -78,25 +78,21 @@ def chat_completion(message):
         similar_event = search_similar_event(message, conn)
         conn.close()
         # Controleer of het bericht om padinformatie vraagt
-        if "pad" in message or "route" in message:
-            try :
-                # Zoek naar de combinatie "van <start> naar <bestemming>"
-                match = re.search(r"(pad van|route van)\s+([a-zA-Z0-9\s]+)\s+(naar)\s+([a-zA-Z0-9\s]+)", message)
-        
-                if match:
-                    start = match.group(2).strip()  # Startlocatie
-                    destination = match.group(4).strip()  # Bestemming
+        if "pad" in message.lower() or "route" in message.lower():
+            match = re.search(r"\b(?:pad|route)\s+van\s+([\w\s]+?)\s+naar\s+([\w\s]+)", message, re.IGNORECASE)
+            
+            if match:
+                start = match.group(1).strip()
+                destination = match.group(2).strip()
 
-                    # Bereken het pad
-                    path_info = calculate_path(start, destination)
+                # Bereken het pad
+                path_info = calculate_path(start, destination)
 
-                    # Maak een mooie reactie
-                    response = f"Het pad van {start} naar {destination} is als volgt: {path_info['path']}.\n" \
-                            f"De totale afstand is {path_info['total_distance']}."
-                    
-            except:
+                response = f"Het pad van {path_info['start_node']} naar {path_info['destination_node']} is als volgt: {path_info['path']}.\n" \
+                f"De totale afstand is {path_info['total_distance']}."
+            else:
                 response = "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht. \nHier is een lijst met alle mogelijke locaties Corda 1, Corda 2, Corda 3, Corda 4, Corda 5, Corda 6, Corda 7, Corda 8, Corda 9, Corda A, Corda B, Corda C, Corda D, Corda bar, Bushalte, Treinstation"
-                
+                        
         else:
             # Standaard ChatGPT reactie
             if similar_event:

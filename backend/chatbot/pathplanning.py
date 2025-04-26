@@ -49,14 +49,26 @@ def heuristic(source, destination):
 
 # A* algoritme voor pathfinding
 def calculate_path(start, destination):
-    path = nx.astar_path(G, source=start, target=destination, weight="weight", heuristic=heuristic)
+    # Mapping van lowercase naar echte node namen
+    location_mapping = {loc.lower(): loc for loc in G.nodes}
+
+    start_normalized = start.lower().strip()
+    destination_normalized = destination.lower().strip()
+
+    if start_normalized not in location_mapping or destination_normalized not in location_mapping:
+        raise ValueError("Onbekende locatie.")
+
+    start_node = location_mapping[start_normalized]
+    destination_node = location_mapping[destination_normalized]
+
+    path = nx.astar_path(G, source=start_node, target=destination_node, weight="weight", heuristic=heuristic)
 
     total_distance = 0
     for i in range(len(path) - 1):
         edge_weight = G[path[i]][path[i + 1]]["weight"]
         total_distance += edge_weight
-    
+
     path_string = " -> ".join(path)
-    return {"path": path_string, "total_distance": str(total_distance) + " meter"}
 
-
+    # Return netjes geformatteerd: echte nodes (start_node en destination_node)
+    return {"path": path_string, "total_distance": str(total_distance) + " meter", "start_node": start_node, "destination_node": destination_node}
