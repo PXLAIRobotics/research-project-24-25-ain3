@@ -1,14 +1,17 @@
 import datetime
 import json
 import os
-
+import re
 import gradio as gr
 import tiktoken
 from dotenv import load_dotenv
 import openai
 
+from chatbot.pathplanning import calculate_path
+from database import get_database_connection, search_similar_event
 
 
+# Load environment variables
 load_dotenv()
 
 api_key = os.getenv('OPENAI_API_KEY')
@@ -30,8 +33,7 @@ system_instruction = {
     "content": (
         "Be concise. Be precise. Make the output as clear as possible. "
         "Make the output prettier and structured. Always think step by step. "
-        "Here are the details about the campus: "
-        f"{json.dumps(campus_info, indent=2)}"
+        "only give information about events if the ask for it."
     )
 }
 
@@ -47,11 +49,12 @@ def get_log_filename(log_folder):
         if not os.path.exists(log_folder):
             os.makedirs(log_folder)
         time_stamp = f'{datetime.datetime.now():%y%m%d_%H%M_%S}'
-        log_filename = f'{log_folder}{time_stamp}.json'
+        log_filename = os.path.join(log_folder, f'{time_stamp}.json')
     return log_filename
 
 
 def store_history(history, log_folder):
+    """Save conversation history to a log file."""
     log_file = get_log_filename(log_folder)
     with open(log_file, 'w', encoding='utf-8') as f:
         json.dump(history, f, indent=4, ensure_ascii=False)
@@ -71,23 +74,50 @@ def chat_completion(message):
     print("Sending to API:", json.dumps(history, indent=2))
 
     try:
-        # OpenAI API aanroepen
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=history,
-            extra_headers={
-                "HTTP-Referer": "https://pxl-research.be/",
-                "X-Title": "PXL Smart ICT"
-            }
-        )
+        conn = get_database_connection()
+        similar_event = search_similar_event(message, conn)
+        conn.close()
+        # Controleer of het bericht om padinformatie vraagt
+        if "pad" in message or "route" in message:
+            try :
+                # Zoek naar de combinatie "van <start> naar <bestemming>"
+                match = re.search(r"(pad van|route van)\s+([a-zA-Z0-9\s]+)\s+(naar)\s+([a-zA-Z0-9\s]+)", message)
         
-        # Haal het gegenereerde antwoord op
-        response_message = response.choices[0].message.content if response.choices else "No response received."
-        
+                if match:
+                    start = match.group(2).strip()  # Startlocatie
+                    destination = match.group(4).strip()  # Bestemming
+
+                    # Bereken het pad
+                    path_info = calculate_path(start, destination)
+
+                    # Maak een mooie reactie
+                    response = f"Het pad van {start} naar {destination} is als volgt: {path_info['path']}.\n" \
+                            f"De totale afstand is {path_info['total_distance']}."
+                    
+            except:
+                response = "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht. \nHier is een lijst met alle mogelijke locaties Corda 1, Corda 2, Corda 3, Corda 4, Corda 5, Corda 6, Corda 7, Corda 8, Corda 9, Corda A, Corda B, Corda C, Corda D, Corda bar, Bushalte, Treinstation"
+                
+        else:
+            # Standaard ChatGPT reactie
+            if similar_event:
+                history.append({
+                    "role": "system",
+                    "content": f"Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {similar_event}"
+                })
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=history,
+                extra_headers={
+                    "HTTP-Referer": "https://pxl-research.be/",
+                    "X-Title": "PXL Smart ICT"
+                }
+            ).choices[0].message.content
+
         # Voeg de response toe aan de history met response_code 200 (OK)
         history.append({
             "role": "assistant",
-            "content": response_message,
+            "content": response,
             "response_code": 200
         })
 
@@ -118,7 +148,7 @@ def chat_completion(message):
             "response_code": status_code
         })
 
-    # Opslaan in logbestand
+    # Bewaar de geschiedenis in een logbestand
     store_history(history, "logs/")
 
-    return response_message if 'response_message' in locals() else "Er is een fout opgetreden."
+    return response

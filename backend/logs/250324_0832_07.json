@@ -50,5 +50,101 @@
  {
   "role": "assistant",
   "content": "### Informatie over Corda Campus\n\n**Corda Campus** is een uitnodigende onderwijs- en ontmoetingsplek die studenten en de gemeenschap ondersteunt in hun leer- en ontwikkelingsbehoeften. De campus richt zich op academische excellence, culturele diversiteit en sociale interactie.\n\n#### Locatie\n- **Adres:** 123 Campus Road, University Town\n\n#### Contactgegevens\n- **E-mail:** [info@university.edu](mailto:info@university.edu)\n- **Telefoon:** +1234567890\n\n---\n\n### Aankomende Evenementen\n\n#### Academische Evenementen\n- **Research Symposium**\n  - **Datum:** 10 april 2025\n  - **Beschrijving:** Een gelegenheid voor studenten om hun onderzoekswerk te presenteren en te bespreken.\n\n#### Culturele Evenementen\n- **Cultural Fest**\n  - **Datum:** 20 mei 2025\n  - **Beschrijving:** Een viering van diverse culturen, met eten, muziek en kunst.\n\n#### Workshops\n- **AI Workshop**\n  - **Datum:** 25 maart 2025\n  - **Beschrijving:** Een workshop die focust op de fundamenten van kunstmatige intelligentie.\n\n#### Sociale Evenementen\n- **Spring Gala**\n  - **Datum:** 15 april 2025\n  - **Beschrijving:** Een feestelijke gelegenheid voor studenten om elkaar te ontmoeten en relaties op te bouwen.\n\n---\n\n### Kenmerken van Corda Campus\n- **Inclusiviteit:** Bevordering van een omgeving waar iedereen zich welkom voelt, ongeacht achtergrond.\n- **Professionele Ontwikkeling:** Mogelijkheden voor studenten om vaardigheden te ontwikkelen via workshops en evenementen.\n- **Ondersteuning:** Hulp en begeleiding voor studenten in hun academische en sociale reis.\n\n### Meer Informatie\nVoor details over specifieke evenementen of initiatieven, kun je contact opnemen via de bovenstaande gegevens of kijken op de offici\u00eble website van de campus."
+ },
+ {
+  "role": "user",
+  "content": "geef me alle evenementen"
+ },
+ {
+  "role": "assistant",
+  "content": "### Evenementen op Corda Campus\n\n#### Academische Evenementen\n1. **Research Symposium**\n   - **Datum:** 10 april 2025\n   - **Beschrijving:** Een symposium waar studenten hun onderzoeksprojecten presenteren.\n\n#### Culturele Evenementen\n2. **Cultural Fest**\n   - **Datum:** 20 mei 2025\n   - **Beschrijving:** Een festival dat verschillende culturen viert door muziek, dans en ander kunst.\n\n#### Workshops\n3. **AI Workshop**\n   - **Datum:** 25 maart 2025\n   - **Beschrijving:** Een workshop gericht op het verkennen van kunstmatige intelligentie en zijn toepassingen.\n\n#### Sociale Evenementen\n4. **Spring Gala**\n   - **Datum:** 15 april 2025\n   - **Beschrijving:** Een feestelijke sociale bijeenkomst voor studenten om te netwerken en met elkaar in contact te komen.\n\n---\n\n### Samenvatting\n- **Total:** 4 evenementen\n- **Datas:** Tussen 25 maart en 20 mei 2025\n\nVoor meer informatie over elk evenement kun je contact opnemen met de campus via de eerder vermelde contactgegevens."
+ },
+ {
+  "role": "user",
+  "content": "geef me alleen de evenementen van april"
+ },
+ {
+  "role": "assistant",
+  "content": "### Evenementen in April op Corda Campus\n\n1. **Research Symposium**\n   - **Datum:** 10 april 2025\n   - **Beschrijving:** Een symposium waar studenten hun onderzoeksprojecten presenteren.\n\n2. **Spring Gala**\n   - **Datum:** 15 april 2025\n   - **Beschrijving:** Een feestelijke sociale bijeenkomst voor studenten om te netwerken en met elkaar in contact te komen.\n\n---\n\n**Totale Evenementen in April:** 2"
+ },
+ {
+  "role": "user",
+  "content": "geef me de info over de corda campus"
+ },
+ {
+  "role": "assistant",
+  "content": "### Corda Campus Informatie\n\n**Corda Campus** is een educatieve en sociale omgeving die gericht is op het ondersteunen van studenten en de gemeenschap. De campus biedt een scala aan evenementen en activiteiten die de academische en sociale ontwikkeling bevorderen.\n\n#### Locatie\n- **Adres:** 123 Campus Road, University Town\n\n#### Contactinformatie\n- **E-mail:** [info@university.edu](mailto:info@university.edu)\n- **Telefoon:** +1234567890\n\n---\n\n### Aankomende Evenementen\n\n#### Academisch\n- **Research Symposium**\n  - **Datum:** 10 april 2025\n  - **Beschrijving:** Een gelegenheid voor studenten om hun onderzoekswerk te presenteren.\n\n#### Cultureel\n- **Cultural Fest**\n  - **Datum:** 20 mei 2025\n  - **Beschrijving:** Festival dat verschillende culturen viert met eten, muziek en kunst.\n\n#### Workshops\n- **AI Workshop**\n  - **Datum:** 25 maart 2025\n  - **Beschrijving:** Workshop over de principes van kunstmatige intelligentie.\n\n#### Sociaal\n- **Spring Gala**\n  - **Datum:** 15 april 2025\n  - **Beschrijving:** Formele sociale bijeenkomst voor studenten om te netwerken en contacten te leggen.\n\n---\n\n### Kenmerken\n- **Inclusiviteit:** Bevordert een diverse en verwelkomende omgeving.\n- **Professionele Ontwikkeling:** Biedt workshops en evenementen voor vaardigheidsontwikkeling.\n- **Ondersteuning:** Hulp voor studenten in hun academische en sociale reis.\n\n### Meer Informatie\nVoor vragen of aanvullende informatie kun je contact opnemen via de eerder vermelde gegevens."
+ },
+ {
+  "role": "user",
+  "content": "hallo"
+ },
+ {
+  "role": "assistant",
+  "content": "Hallo! Hoe kan ik je helpen?"
+ },
+ {
+  "role": "user",
+  "content": "kan je mij meer info geven over de corda campus"
+ },
+ {
+  "role": "assistant",
+  "content": "### Corda Campus Informatie\n\nCorda Campus is een innovatieve en ondersteunende onderwijsomgeving. De campus richt zich op zowel academische groei als culturele en sociale interactie. \n\n#### Locatie\n- **Adres:** 123 Campus Road, University Town\n\n#### Contactgegevens\n- **E-mail:** [info@university.edu](mailto:info@university.edu)\n- **Telefoon:** +1234567890\n\n---\n\n### Aankomende Evenementen\n\n#### Academische Evenementen\n- **Research Symposium**\n  - **Datum:** 10 april 2025\n  - **Beschrijving:** Een platform voor studenten om hun onderzoeksprojecten te presenteren.\n\n#### Culturele Evenementen\n- **Cultural Fest**\n  - **Datum:** 20 mei 2025\n  - **Beschrijving:** Een diversiteitsfestival met muziek, kunst en culinaire hoogstandjes.\n\n#### Workshops\n- **AI Workshop**\n  - **Datum:** 25 maart 2025\n  - **Beschrijving:** Een workshop gericht op kunstmatige intelligentie en zijn toepassingen.\n\n#### Sociale Evenementen\n- **Spring Gala**\n  - **Datum:** 15 april 2025\n  - **Beschrijving:** Een sociale gelegenheid voor studenten om te netwerken en met elkaar in contact te komen.\n\n---\n\n### Kenmerken van Corda Campus\n- **Inclusiviteit:** Een omgeving die diversiteit en culturele uitwisseling bevordert.\n- **Professionele Ontwikkeling:** Mogelijkheden voor vaardigheden ontwikkeling en netwerkvorming.\n- **Ondersteuning:** Hulp en begeleiding voor studenten in hun academische en sociale trajecten.\n\n### Meer Informatie\nVoor meer informatie kun je contact opnemen via de vermelde gegevens of de offici\u00eble website van Corda Campus bezoeken."
+ },
+ {
+  "role": "user",
+  "content": "geef me de algemene info over de corda campus"
+ },
+ {
+  "role": "assistant",
+  "content": "### Algemene Informatie over Corda Campus\n\n**Corda Campus** is een educatieve en sociale hub, speciaal ontworpen om studenten en de bredere gemeenschap te ondersteunen in hun leerprocessen en interacties. De campus biedt een verscheidenheid aan evenementen, workshops en activiteiten die gericht zijn op kennisdeling, culturele uitwisseling en netwerken.\n\n#### Locatie\n- **Adres:** 123 Campus Road, University Town\n\n#### Contactinformatie\n- **E-mail:** [info@university.edu](mailto:info@university.edu)\n- **Telefoon:** +1234567890\n\n---\n\n### Kenmerken van Corda Campus\n- **Toegankelijkheid:** Een inclusieve ruimte voor studenten van diverse achtergronden.\n- **Onderwijs:** Focus op academische groei met een scala aan workshops en seminars.\n- **Cultuur:** Evenementen die culturele diversiteit vieren en bevorderen.\n- **Netwerk:** Mogelijkheden voor studenten om verbinding te maken met elkaar en professionals uit de industrie.\n\n### Missie\nCorda Campus streeft ernaar een stimulerende omgeving te bieden waarin studenten kunnen groeien, leren en interageren met de gemeenschap.\n\n### Meer Informatie\nVoor specifieke vragen of voor meer gedetailleerde informatie, neem contact op via de eerder vermelde gegevens of bezoek de offici\u00eble website van Corda Campus."
+ },
+ {
+  "role": "user",
+  "content": "welke evenementen zijn er"
+ },
+ {
+  "role": "assistant",
+  "content": "### Evenementen op Corda Campus\n\n#### 1. Academische Evenementen\n- **Research Symposium**\n  - **Datum:** 10 april 2025\n  - **Beschrijving:** Een gelegenheid voor studenten om hun onderzoeksprojecten te presenteren en feedback te ontvangen.\n\n#### 2. Culturele Evenementen\n- **Cultural Fest**\n  - **Datum:** 20 mei 2025\n  - **Beschrijving:** Een festival dat verschillende culturen viert met muziek, dans en gastronomische ervaringen.\n\n#### 3. Workshops\n- **AI Workshop**\n  - **Datum:** 25 maart 2025\n  - **Beschrijving:** Een interactieve workshop die de basisprincipes en toepassingen van kunstmatige intelligentie verkent.\n\n#### 4. Sociale Evenementen\n- **Spring Gala**\n  - **Datum:** 15 april 2025\n  - **Beschrijving:** Een formele bijeenkomst waarbij studenten de kans krijgen om te netwerken en sociale connecties te maken.\n\n---\n\n### Samenvatting\n- **Totaal aantal evenementen:** 4\n- **Datas:** Van 25 maart tot 20 mei 2025\n\nVoor meer informatie over specifieke evenementen kun je contact opnemen via de eerder vermelde gegevens."
+ },
+ {
+  "role": "user",
+  "content": "ik wil alleen de evenementen van april"
+ },
+ {
+  "role": "assistant",
+  "content": "### Evenementen in April op Corda Campus\n\n1. **Research Symposium**\n   - **Datum:** 10 april 2025\n   - **Beschrijving:** Een gelegenheid voor studenten om hun onderzoeksprojecten te presenteren.\n\n2. **Spring Gala**\n   - **Datum:** 15 april 2025\n   - **Beschrijving:** Een feestelijke sociale bijeenkomst voor studenten om te netwerken en met elkaar in contact te komen.\n\n---\n\n**Totale Evenementen in April:** 2"
+ },
+ {
+  "role": "user",
+  "content": "Hoe gaat het?"
+ },
+ {
+  "role": "assistant",
+  "content": "Het gaat goed, bedankt! Hoe kan ik je helpen vandaag?"
+ },
+ {
+  "role": "user",
+  "content": "geef de algemene info van de corda campus"
+ },
+ {
+  "role": "assistant",
+  "content": "### Algemene Informatie over Corda Campus\n\n**Corda Campus** is een innovatieve en educatieve omgeving die studenten ondersteunt in hun leer- en sociale ontwikkeling. De campus biedt diverse mogelijkheden voor academische groei, culturele uitwisseling en sociale interactie.\n\n#### Locatie\n- **Adres:** 123 Campus Road, University Town\n\n#### Contactinformatie\n- **E-mail:** [info@university.edu](mailto:info@university.edu)\n- **Telefoon:** +1234567890\n\n---\n\n### Kenmerken van Corda Campus\n- **Inclusieve Gemeenschap:** Een omgeving die diversiteit en samenwerking bevordert.\n- **Onderwijs en Workshops:** Het aanbod bevat workshops en evenementen gericht op academische en professionele vaardigheden.\n- **Culturele Evenementen:** Evenementen die culturele diversiteit vieren door middel van kunst, muziek en gastronomie.\n- **Netwerkmogelijkheden:** Platforms voor studenten om verbinding te maken met medestudenten, alumni en industrieprofessionals.\n\n### Missie\nCorda Campus heeft als doel een stimulerende ruimte te cre\u00ebren waar studenten kunnen leren, groeien en verbindingen kunnen maken.\n\n### Meer Informatie\nVoor verdere vragen of specifieke informatie kun je contact opnemen via de opgegeven gegevens of de offici\u00eble website van Corda Campus bezoeken."
+ },
+ {
+  "role": "user",
+  "content": "welke evenementen zijn er"
+ },
+ {
+  "role": "assistant",
+  "content": "### Evenementen op Corda Campus\n\n#### 1. Academische Evenementen\n- **Research Symposium**\n  - **Datum:** 10 april 2025\n  - **Beschrijving:** Een gelegenheid voor studenten om hun onderzoeksprojecten te presenteren en feedback te ontvangen.\n\n#### 2. Culturele Evenementen\n- **Cultural Fest**\n  - **Datum:** 20 mei 2025\n  - **Beschrijving:** Een festival dat verschillende culturen viert met muziek, dans en gastronomische ervaringen.\n\n#### 3. Workshops\n- **AI Workshop**\n  - **Datum:** 25 maart 2025\n  - **Beschrijving:** Een interactieve workshop die de basisprincipes en toepassingen van kunstmatige intelligentie verkent.\n\n#### 4. Sociale Evenementen\n- **Spring Gala**\n  - **Datum:** 15 april 2025\n  - **Beschrijving:** Een formele bijeenkomst waarbij studenten de kans krijgen om te netwerken en sociale connecties te maken.\n\n---\n\n### Samenvatting\n- **Totaal aantal evenementen:** 4\n- **Datas:** Van 25 maart tot 20 mei 2025 \n\nVoor meer informatie over specifieke evenementen kun je contact opnemen via de eerder vermelde gegevens."
+ },
+ {
+  "role": "user",
+  "content": "welke evenementen zijn er in april"
+ },
+ {
+  "role": "assistant",
+  "content": "### Evenementen in April op Corda Campus\n\n1. **Research Symposium**\n   - **Datum:** 10 april 2025\n   - **Beschrijving:** Een gelegenheid voor studenten om hun onderzoeksprojecten te presenteren.\n\n2. **Spring Gala**\n   - **Datum:** 15 april 2025\n   - **Beschrijving:** Een feestelijke sociale bijeenkomst voor studenten om te netwerken en met elkaar in contact te komen.\n\n---\n\n**Totaal aantal evenementen in april:** 2"
  }
 ]
