@@ -1,15 +1,17 @@
 import datetime
 import json
 import os
-from chatbot.pathplanning import calculate_path
+import re
 import gradio as gr
 import tiktoken
 from dotenv import load_dotenv
 import openai
-import re
+
+from chatbot.pathplanning import calculate_path
+from database import get_database_connection, search_similar_event
 
 
-
+# Load environment variables
 load_dotenv()
 
 api_key = os.getenv('OPENAI_API_KEY')
@@ -47,18 +49,16 @@ def get_log_filename(log_folder):
         if not os.path.exists(log_folder):
             os.makedirs(log_folder)
         time_stamp = f'{datetime.datetime.now():%y%m%d_%H%M_%S}'
-        log_filename = f'{log_folder}{time_stamp}.json'
+        log_filename = os.path.join(log_folder, f'{time_stamp}.json')
     return log_filename
 
 
 def store_history(history, log_folder):
     """Save conversation history to a log file."""
     log_file = get_log_filename(log_folder)
-    with open(log_file, 'wt') as f:
-        json.dump(history, f, indent=1)
+    with open(log_file, 'w', encoding='utf-8') as f:
+        json.dump(history, f, indent=4, ensure_ascii=False)
 
-
-from database import get_database_connection, search_similar_event
 
 def chat_completion(message):
     global history
@@ -78,25 +78,21 @@ def chat_completion(message):
         similar_event = search_similar_event(message, conn)
         conn.close()
         # Controleer of het bericht om padinformatie vraagt
-        if "pad" in message or "route" in message:
-            try :
-                # Zoek naar de combinatie "van <start> naar <bestemming>"
-                match = re.search(r"(pad van|route van)\s+([a-zA-Z0-9\s]+)\s+(naar)\s+([a-zA-Z0-9\s]+)", message)
-        
-                if match:
-                    start = match.group(2).strip()  # Startlocatie
-                    destination = match.group(4).strip()  # Bestemming
+        if "pad" in message.lower() or "route" in message.lower():
+            match = re.search(r"\b(?:pad|route)\s+van\s+([\w\s]+?)\s+naar\s+([\w\s]+)", message, re.IGNORECASE)
+            
+            if match:
+                start = match.group(1).strip()
+                destination = match.group(2).strip()
 
-                    # Bereken het pad
-                    path_info = calculate_path(start, destination)
+                # Bereken het pad
+                path_info = calculate_path(start, destination)
 
-                    # Maak een mooie reactie
-                    response = f"Het pad van {start} naar {destination} is als volgt: {path_info['path']}.\n" \
-                            f"De totale afstand is {path_info['total_distance']}."
-                    return response
-            except:
+                response = f"Het pad van {path_info['start_node']} naar {path_info['destination_node']} is als volgt: {path_info['path']}.\n" \
+                f"De totale afstand is {path_info['total_distance']}."
+            else:
                 response = "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht. \nHier is een lijst met alle mogelijke locaties Corda 1, Corda 2, Corda 3, Corda 4, Corda 5, Corda 6, Corda 7, Corda 8, Corda 9, Corda A, Corda B, Corda C, Corda D, Corda bar, Bushalte, Treinstation"
-                return response
+                        
         else:
             # Standaard ChatGPT reactie
             if similar_event:
@@ -114,15 +110,41 @@ def chat_completion(message):
                 }
             ).choices[0].message.content
 
-    except openai.OpenAIError as e:
-        print(f"OpenAI API error: {e}")
-        return "Er is een fout opgetreden bij het ophalen van het antwoord van OpenAI."
+        # Voeg de response toe aan de history met response_code 200 (OK)
+        history.append({
+            "role": "assistant",
+            "content": response,
+            "response_code": 200
+        })
 
-    # Voeg de reactie van de chatbot toe aan de geschiedenis
-    history.append({"role": "assistant", "content": response})
+    except openai.OpenAIError as e:
+        error_message = str(e)
+        status_code = "unknown"
+
+        # Haal statuscode uit string
+        if "Error code: " in error_message:
+            try:
+                status_code = int(error_message.split("Error code: ")[1].split(" - ")[0])
+            except ValueError:
+                status_code = "unknown"
+
+        # Haal message uit string
+        if "'message':" in error_message:
+            try:
+                message_start = error_message.index("'message':") + 11
+                message_end = error_message.index("',", message_start)
+                error_message = error_message[message_start:message_end]
+            except ValueError:
+                pass
+
+        # Voeg error toe aan history met response_code
+        history.append({
+            "role": "error",
+            "content": error_message,
+            "response_code": status_code
+        })
 
     # Bewaar de geschiedenis in een logbestand
     store_history(history, "logs/")
 
     return response
-

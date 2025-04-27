@@ -6,6 +6,7 @@ from chatbot.pathplanning import calculate_path
 from database import get_database_connection, create_table_if_not_exists, insert_events, get_embedding, clear_event_table
 import json
 import numpy as np
+import os
 from psycopg2.extensions import AsIs
 from typing import Dict, List
 
@@ -94,3 +95,34 @@ def delete_events():
         return {"status": "success", "message": "Events table cleared."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/logs")
+async def getLogs():
+    logs_data = []
+    print("Request received")
+    
+    for log in os.listdir("logs"):  # List all files in the "logs" directory
+        if log.endswith(".json"):  # Only process JSON log files
+            with open(os.path.join("logs", log), "r") as f:
+                log_content = json.load(f)
+                logs_data.append(log_content)
+                print("Sending logs")
+
+    return {"logs": logs_data}
+
+@app.post("/clear-logs")
+async def clearLogs():
+    logs_folder = "logs"
+    try:
+        # Loop through all files in the logs folder
+        for log_file in os.listdir(logs_folder):
+            file_path = os.path.join(logs_folder, log_file)
+            if log_file.endswith(".json") and os.path.isfile(file_path):
+                os.remove(file_path)  # Delete the log file
+        
+        print("All log files cleared.")
+        return {"message": "Logs cleared successfully."}
+    
+    except Exception as e:
+        print("Error clearing logs:", e)
+        raise HTTPException(status_code=500, detail="Failed to clear logs.")
