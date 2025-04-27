@@ -33,7 +33,9 @@ system_instruction = {
     "content": (
         "Be concise. Be precise. Make the output as clear as possible. "
         "Make the output prettier and structured. Always think step by step. "
-        "only give information about events if the ask for it."
+        "Only give information about events if explicitly asked. "
+        "If asked about campus corda details, provide the following information: "
+        "Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500."
     )
 }
 
