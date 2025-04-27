@@ -62,7 +62,7 @@ import { useRouter } from 'vue-router'
 import UsersComponent from '../components/UsersComponent.vue';
 import SettingsComponent from '../components/SettingsComponent.vue';
 import LogsComponent from '../components/LogsComponent.vue';
-//import ReportsComponent from '../components/ReportsComponent.vue';
+
 import AllEventsComponent from '../components/AllEventsComponent.vue';
 import addeventsComponent from './addeventsComponent.vue';
 

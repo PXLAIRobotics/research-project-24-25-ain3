@@ -6,7 +6,7 @@
       <!-- Idle Timeout Setting -->
       <div class="input-group">
         <label for="idle-timeout">Idle Timeout (in seconds)</label>
-        <input type="range" id="idle-timeout" v-model="idleTimeout" min="1" max="300" />
+        <input type="range" id="idle-timeout" v-model="idleTimeout" min="120" max="300" />
         <span>{{ idleTimeout }} seconds</span>
       </div>
 
@@ -15,15 +15,6 @@
         <label for="filters" class="switch">
           Enable Filters
           <input type="checkbox" id="filters" v-model="filtersEnabled" />
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <!-- Dark Mode/Light Mode (Slider Checkbox) -->
-      <div class="input-group">
-        <label for="dark-mode" class="switch">
-          Enable Dark Mode
-          <input type="checkbox" id="dark-mode" v-model="darkMode" />
           <span class="slider"></span>
         </label>
       </div>
@@ -41,23 +32,51 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-const idleTimeout = ref(60); // Default to 60 seconds
-const filtersEnabled = ref(true); // Default to enabled
-const darkMode = ref(true); // Default to dark mode
-const isSavedSuccessfully = ref(false);
-const showClearLogsConfirmation = ref(false);
-const clearLogsSuccess = ref(false);
+// Saved values
+const savedIdleTimeout = ref(120);
+const savedFiltersEnabled = ref(true);
 
-// Function to handle the submit action for saving settings
+// Editable fields (linked to UI)
+const idleTimeout = ref(savedIdleTimeout.value);
+const filtersEnabled = ref(savedFiltersEnabled.value);
+
+// UI state
+const isSavedSuccessfully = ref(false);
+
+// Save settings function
 function handleSubmit() {
-  // Simulate saving the settings (e.g., API call or localStorage)
+  // Save current UI values into saved values
+  savedIdleTimeout.value = idleTimeout.value;
+  savedFiltersEnabled.value = filtersEnabled.value;
+
+  // Save to localStorage
+  localStorage.setItem('idleTimeout', savedIdleTimeout.value);
+  localStorage.setItem('filtersEnabled', savedFiltersEnabled.value);
+
+  // Show success
   isSavedSuccessfully.value = true;
 
-  // Reset the success state after 3 seconds
+  // Reset after 3 seconds
   setTimeout(() => {
     isSavedSuccessfully.value = false;
   }, 3000);
 }
+
+// Load saved settings from localStorage if they exist
+if (localStorage.getItem('idleTimeout')) {
+  const storedTimeout = parseInt(localStorage.getItem('idleTimeout'), 10);
+  savedIdleTimeout.value = storedTimeout;
+  idleTimeout.value = storedTimeout;
+}
+
+if (localStorage.getItem('filtersEnabled')) {
+  const storedFiltersEnabled = localStorage.getItem('filtersEnabled') === 'true';
+  savedFiltersEnabled.value = storedFiltersEnabled;
+  filtersEnabled.value = storedFiltersEnabled;
+}
+
+
+
 </script>
 
 <style scoped>
