@@ -6,7 +6,7 @@
       <!-- Idle Timeout Setting -->
       <div class="input-group">
         <label for="idle-timeout">Idle Timeout (in seconds)</label>
-        <input type="range" id="idle-timeout" v-model="idleTimeout" min="120" max="300" />
+        <input type="range" id="idle-timeout" v-model="idleTimeout" min="15" max="300" step="5" />
         <span>{{ idleTimeout }} seconds</span>
       </div>
 
