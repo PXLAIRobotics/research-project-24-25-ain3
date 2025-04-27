@@ -28,19 +28,6 @@
         </label>
       </div>
 
-      <!-- Clear Logs Button -->
-      <div class="input-group">
-        <button type="button" @click="promptClearLogs" class="clear-logs-btn">Clear Logs</button>
-        <div v-if="showClearLogsConfirmation" class="confirmation">
-          <p>Are you sure you want to clear the logs?</p>
-          <div class="confirmation-buttons">
-            <button @click="clearLogs" class="confirm-btn">Yes</button>
-            <button @click="cancelClearLogs" class="cancel-btn">No</button>
-          </div>
-        </div>
-        <p v-if="clearLogsSuccess" class="success-message">Logs cleared successfully!</p>
-      </div>
-
       <!-- Save Settings Button -->
       <button type="submit" class="submit-btn" :class="{'success': isSavedSuccessfully}">
         <span v-if="isSavedSuccessfully" class="checkmark">✔</span>
@@ -52,6 +39,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 
 const idleTimeout = ref(60); // Default to 60 seconds
 const filtersEnabled = ref(true); // Default to enabled
@@ -59,30 +47,6 @@ const darkMode = ref(true); // Default to dark mode
 const isSavedSuccessfully = ref(false);
 const showClearLogsConfirmation = ref(false);
 const clearLogsSuccess = ref(false);
-
-// Function to prompt for clearing logs
-function promptClearLogs() {
-  showClearLogsConfirmation.value = true;
-}
-
-// Function to cancel clearing logs
-function cancelClearLogs() {
-  showClearLogsConfirmation.value = false;
-}
-
-// Function to handle "Clear Logs" button click
-function clearLogs() {
-  // Simulate clearing logs (this could be clearing from local storage or an API)
-  clearLogsSuccess.value = true;
-
-  // Reset success state after 3 seconds
-  setTimeout(() => {
-    clearLogsSuccess.value = false;
-  }, 3000);
-
-  // Close confirmation box after success
-  showClearLogsConfirmation.value = false;
-}
 
 // Function to handle the submit action for saving settings
 function handleSubmit() {
@@ -207,66 +171,4 @@ span.checkmark {
   margin-right: 10px;
 }
 
-button.clear-logs-btn {
-  background-color: #c23c3c;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-button.clear-logs-btn:hover {
-  background-color: #9a2929;
-}
-
-.confirmation {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 5px;
-  color: white;
-  margin-top: 10px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.confirmation-buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-}
-
-.confirm-btn,
-.cancel-btn {
-  background-color: #680eee;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.confirm-btn:hover {
-  background-color: #45087e;
-}
-
-.cancel-btn {
-  background-color: #c23c3c;
-}
-
-.cancel-btn:hover {
-  background-color: #9a2929;
-}
-
-.success-message {
-  color: #28a745;
-  font-weight: bold;
-  margin-top: 10px;
-  text-align: center;
-  font-size: 1.1em;
-}
 </style>

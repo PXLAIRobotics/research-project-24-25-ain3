@@ -109,3 +109,20 @@ async def getLogs():
                 print("Sending logs")
 
     return {"logs": logs_data}
+
+@app.post("/clear-logs")
+async def clearLogs():
+    logs_folder = "logs"
+    try:
+        # Loop through all files in the logs folder
+        for log_file in os.listdir(logs_folder):
+            file_path = os.path.join(logs_folder, log_file)
+            if log_file.endswith(".json") and os.path.isfile(file_path):
+                os.remove(file_path)  # Delete the log file
+        
+        print("All log files cleared.")
+        return {"message": "Logs cleared successfully."}
+    
+    except Exception as e:
+        print("Error clearing logs:", e)
+        raise HTTPException(status_code=500, detail="Failed to clear logs.")
