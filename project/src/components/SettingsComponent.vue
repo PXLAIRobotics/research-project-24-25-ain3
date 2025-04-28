@@ -19,6 +19,7 @@
         </label>
       </div>
 
+
       <!-- Save Settings Button -->
       <button type="submit" class="submit-btn" :class="{'success': isSavedSuccessfully}">
         <span v-if="isSavedSuccessfully" class="checkmark">✔</span>
@@ -74,9 +75,6 @@ if (localStorage.getItem('filtersEnabled')) {
   savedFiltersEnabled.value = storedFiltersEnabled;
   filtersEnabled.value = storedFiltersEnabled;
 }
-
-
-
 </script>
 
 <style scoped>

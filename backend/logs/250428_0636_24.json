@@ -1,0 +1,33 @@
+[
+    {
+        "role": "system",
+        "content": "Be concise. Be precise. Make the output as clear as possible. Make the output prettier and structured. Always think step by step. Only give information about events if explicitly asked. If asked about campus corda details, provide the following information: Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500."
+    },
+    {
+        "role": "user",
+        "content": "Wat is de route van corda 1 naar bushalte"
+    },
+    {
+        "role": "assistant",
+        "content": "Het pad van Corda 1 naar Bushalte is als volgt: Corda 1 -> Corda 2 -> Corda 3 -> Corda 4 -> Corda 5 -> Bushalte.\nDe totale afstand is 332 meter.",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "Wat is de route van Corda 7 naar Bushalte"
+    },
+    {
+        "role": "assistant",
+        "content": "Het pad van Corda 7 naar Bushalte is als volgt: Corda 7 -> Corda bar -> Corda 4 -> Corda 5 -> Bushalte.\nDe totale afstand is 447 meter.",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "wat is de route van corda 7 naar treinstation"
+    },
+    {
+        "role": "assistant",
+        "content": "Het pad van Corda 7 naar Treinstation is als volgt: Corda 7 -> Corda bar -> Corda 4 -> Corda 5 -> Treinstation.\nDe totale afstand is 575 meter.",
+        "response_code": 200
+    }
+]

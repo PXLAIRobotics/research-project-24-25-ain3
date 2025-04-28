@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
 from chatbot.pathplanning import calculate_path
-from database import get_database_connection, create_table_if_not_exists, insert_events, get_embedding, clear_event_table
+from database import get_database_connection, create_table_if_not_exists, insert_events, get_embedding, clear_event_table, delete_event
 import json
 import numpy as np
 import os
@@ -85,14 +85,22 @@ def add_event(request: EventRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/delete-events")
-def delete_events():
+
+class DeleteEventRequest(BaseModel):
+    name: str
+    
+@app.post("/delete-event")
+async def delete_event(request: DeleteEventRequest):
     try:
         conn = get_database_connection()
-        clear_event_table(conn)
+        cursor = conn.cursor()
+
+        # Verwijder het event met de juiste naam
+        cursor.execute("DELETE FROM events WHERE event_name = %s", (request.name,))
         conn.commit()
         conn.close()
-        return {"status": "success", "message": "Events table cleared."}
+
+        return {"status": "success", "message": f"Event '{request.name}' deleted."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     

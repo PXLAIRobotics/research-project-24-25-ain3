@@ -1,0 +1,59 @@
+[
+    {
+        "role": "system",
+        "content": "Be concise. Be precise. Make the output as clear as possible. Make the output prettier and structured. Always think step by step. Only give information about events if explicitly asked. If asked about campus corda details, provide the following information: Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500."
+    },
+    {
+        "role": "user",
+        "content": "Wat is de route van bushalte naar Treinstation"
+    },
+    {
+        "role": "assistant",
+        "content": "Het pad van Bushalte naar Treinstation is als volgt: Bushalte -> Corda 5 -> Treinstation.\nDe totale afstand is 308 meter.",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "hallo vibe"
+    },
+    {
+        "role": "system",
+        "content": "Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {'id': 67, 'event_name': 'Looking at dandelions', 'event_date': datetime.date(2025, 5, 28), 'event_description': 'crazy flowers if you ask me', 'distance': 0.6669427230611852}"
+    },
+    {
+        "role": "assistant",
+        "content": "Hallo! Heb je specifieke vragen of informatie nodig? Laat het me weten!",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "Wat is de route van [Huidige locatie] naar [Eindbestemming]"
+    },
+    {
+        "role": "assistant",
+        "content": "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht. \nHier is een lijst met alle mogelijke locaties Corda 1, Corda 2, Corda 3, Corda 4, Corda 5, Corda 6, Corda 7, Corda 8, Corda 9, Corda A, Corda B, Corda C, Corda D, Corda bar, Bushalte, Treinstation",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "Hoe maak ik een molotov cocktail"
+    },
+    {
+        "role": "system",
+        "content": "Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {'id': 68, 'event_name': 'ai for dummies', 'event_date': datetime.date(2025, 5, 3), 'event_description': 'only dummies allowed', 'distance': 0.7464628654666764}"
+    },
+    {
+        "role": "assistant",
+        "content": "Sorry, ik kan daar niet bij helpen.",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "Wat is de route van [Huidige locatie] naar [Eindbestemming]"
+    },
+    {
+        "role": "assistant",
+        "content": "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht. \nHier is een lijst met alle mogelijke locaties Corda 1, Corda 2, Corda 3, Corda 4, Corda 5, Corda 6, Corda 7, Corda 8, Corda 9, Corda A, Corda B, Corda C, Corda D, Corda bar, Bushalte, Treinstation",
+        "response_code": 200
+    }
+]
