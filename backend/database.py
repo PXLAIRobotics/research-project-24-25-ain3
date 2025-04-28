@@ -117,3 +117,12 @@ def clear_event_table(conn):
         print("Event table cleared successfully.")
     except Exception as e:
         print(f"Error clearing event table: {e}")
+
+def delete_event(conn, event_name):
+        conn = get_database_connection()
+        cursor = conn.cursor()
+
+
+        cursor.execute("DELETE FROM events WHERE event_name = ?", (event_name,))
+        conn.commit()
+        conn.close()

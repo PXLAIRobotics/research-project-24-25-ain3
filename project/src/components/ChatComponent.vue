@@ -12,6 +12,7 @@ const currentGif = ref(standardGif)
 const inputValue = ref('')
 const messages = ref([])
 
+
 const transitionDuration = 2500
 
 const addMessage = (message, sender) => {
@@ -158,6 +159,7 @@ header{
 
 .circle img {
   height: 500px;
+  opacity: 0.5;
 }
 
 .chatbox {
@@ -256,4 +258,5 @@ header{
   margin-top: px;
 
 }
+
 </style>
