@@ -24,7 +24,7 @@ const handleClick = () => {
         <v-layout>
             <v-navigation-drawer floating app>
                 <v-list>
-                    <v-list-item prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="" style="height: 56px; display: flex; align-items: center;">
+                    <v-list-item @click="handleClick" prepend-avatar="https://srcwap.com/wp-content/uploads/2022/08/abstract-user-flat-4.png" title="" class="vibe">
                       <span class="vibeTitle">VIBE</span>
                     </v-list-item>
                 </v-list>
@@ -36,13 +36,10 @@ const handleClick = () => {
                         v-for="conversation in conversations"
                         :key="conversation.id"
                         :conversation="conversation"/>
-
-
                 </v-list>
 
                 <v-list class="adminList">
-                    <v-list-item  >
-                        <button class="adminButton" @click="handleClick">Admin Panel</button>
+                    <v-list-item>
                         <button class="NewConversation" @click="newConversation">New Chat</button>
                     </v-list-item>
                 </v-list>
@@ -65,6 +62,13 @@ const handleClick = () => {
 </template>
 
 <style scoped>
+.vibe {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+}
+
 .vCard {
     background-color: #2a2a2a;
     z-index: 1;
@@ -95,39 +99,25 @@ v-navigation-drawer{
     display: flex;
     gap: 10px; /* Add spacing between the buttons */
     justify-content: center;
+    width: 100%;
 }
 
 .NewConversation {
     color: #ffffff;
-    padding: 10px 15px;
+    padding: 10px 65px;
     border: none;
     cursor: pointer;
     border-radius: 5px;
     background-color: #680eee;
     text-align: center;
     white-space: nowrap;
-    max-width: 45%;
+    max-width: 100%;
 }
 
 .NewConversation:hover {
     background-color: #45087e;
 }
 
-.adminButton {
-    color: #ffffff;
-    padding: 10px 15px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    background-color: #680eee;
-    text-align: center;
-    white-space: nowrap;
-    max-width: 48%;
-}
-
-.adminButton:hover {
-    background-color: #45087e;
-}
 /* Nav menu */
 .Navigation {
     height: 100%;       /* 100% Full-height */

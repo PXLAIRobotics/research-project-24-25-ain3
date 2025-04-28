@@ -32,11 +32,11 @@
       <div class="sidebar" :class="{ hidden: !isSidebarVisible }">
         <ul>
           <button @click="activePanel = 'dashboard'">Dashboard</button>
-          <button @click="activePanel = 'users'">Users</button>
+          <button @click="activePanel = 'users'">Admins</button>
           <button @click="activePanel = 'settings'">Settings</button>
           <button @click="activePanel = 'all_events'">All Events</button>
-          <button @click="activePanel = 'logs'">Logs</button>
-          <button @click="activePanel = 'event adder'">Event adder</button>
+          <button @click="activePanel = 'event adder'">Add Events</button>
+          <button @click="activePanel = 'logs'">System Logs</button>
         </ul>
       </div>
 
