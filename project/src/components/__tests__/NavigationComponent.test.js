@@ -37,9 +37,10 @@ vi.mock('@/stores/navList', () => ({
           plugins: [router],
         },
       })
-  
-      await wrapper.find('.adminButton').trigger('click')
-  
+    
+      // Zoek de 'vibe' class of gebruik de juiste selector
+      await wrapper.find('.vibe').trigger('click')
+    
       expect(router.push).toHaveBeenCalledWith({ name: 'adminComponent' })
     })
   
