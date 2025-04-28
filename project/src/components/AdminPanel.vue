@@ -1,6 +1,6 @@
 <template>
-  <div class="admin-panel">
-    <div v-if="showModal" class="modal">
+  <div v-if="showModal" class="login-panel">
+    <div class="modal">
       <div class="modal-content">
         <h2>Login</h2>
         <form @submit.prevent="handleLogin">
@@ -17,8 +17,10 @@
         </form>
       </div>
     </div>
+  </div>
 
-    <header>
+  <div v-if="!showModal" class="admin-panel">
+    <header >
       <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
       <div>
@@ -34,7 +36,7 @@
           <button @click="activePanel = 'settings'">Settings</button>
           <button @click="activePanel = 'all_events'">All Events</button>
           <button @click="activePanel = 'logs'">Logs</button>
-          <button @click="activePanel = 'event adder'">event adder</button>
+          <button @click="activePanel = 'event adder'">Event adder</button>
         </ul>
       </div>
 
@@ -163,6 +165,13 @@ body {
 #app {
   width: 100%;
   height: 100%;
+}
+
+.login-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #333333;
 }
 
 .admin-panel {
