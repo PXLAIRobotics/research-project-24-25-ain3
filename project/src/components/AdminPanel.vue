@@ -34,7 +34,7 @@
           <button @click="activePanel = 'settings'">Settings</button>
           <button @click="activePanel = 'all_events'">All Events</button>
           <button @click="activePanel = 'logs'">Logs</button>
-          <button @click="activePanel = 'event adder'">event adder</button>
+          <button @click="activePanel = 'event adder'">Event adder</button>
         </ul>
       </div>
 
