@@ -194,7 +194,7 @@ th {
   background-color: #2c2c2c;
   font-weight: bold;
   position: sticky;
-  top: 0;
+  top: 45px;
   z-index: 2;
 }
 
