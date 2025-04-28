@@ -13,7 +13,7 @@
       <!-- Filters Enable/Disable (Slider Checkbox) -->
       <div class="input-group">
         <label for="filters" class="switch">
-          Enable Filters
+          Enable Filters (In Development)
           <input type="checkbox" id="filters" v-model="filtersEnabled" />
           <span class="slider"></span>
         </label>
