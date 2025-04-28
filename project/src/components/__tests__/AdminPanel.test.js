@@ -57,11 +57,18 @@ describe('AdminPanel.vue)', () => {
   it('logout verwijdert de token uit localStorage en roept router.push("/") aan', async () => {
     localStorage.setItem('userToken', 'dummy')
     const wrapper = mount(AdminPanel)
-
-    const logoutBtn = wrapper.findAll('button').find(btn => btn.text().trim() === 'Logout')
+  
+    // Simuleer succesvolle login zodat de admin panel zichtbaar is
+    await wrapper.find('input[type="email"]').setValue('admin@gmail.com')
+    await wrapper.find('input[type="password"]').setValue('admin')
+    await wrapper.find('form').trigger('submit.prevent')
+  
+    // Nu bestaat de logout knop
+    const logoutBtn = wrapper.find('button.logout')  // specifiek via class 'logout' zoeken
     expect(logoutBtn.exists()).toBe(true)
+  
     await logoutBtn.trigger('click')
-
+  
     expect(localStorage.getItem('userToken')).toBe(null)
     expect(dummyRouter.push).toHaveBeenCalledWith('/')
   })
