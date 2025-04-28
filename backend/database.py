@@ -97,9 +97,8 @@ def search_similar_event(message, conn):
                 "id": result[0],
                 "event_name": result[1],
                 "event_date": result[2],
-                "event_description": result[3],
-                "distance": result[4]
-            }
+                "event_description": result[3] 
+                   }
 
         print("No matching events found.")
         return None
