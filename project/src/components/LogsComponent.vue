@@ -148,6 +148,7 @@ onMounted(() => {
   background: #2c2c2c;
   color: white;
   position: relative;
+  border-radius: 10px;
 }
 
 h2 {
