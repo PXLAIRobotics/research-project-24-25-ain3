@@ -7,10 +7,10 @@ const navList = useNavList()
 </script>
 
 <template>
-  <v-list-item 
-    
-    class="NavigationItem" 
-    :value="conversation.id" 
+  <v-list-item
+
+    class="NavigationItem"
+    :value="conversation.id"
     @click="navList.openConversation(conversation.id)"
   >
     <!-- Prepend Icon (Fixed Issue) -->
@@ -18,8 +18,8 @@ const navList = useNavList()
       <v-icon>mdi-message-outline</v-icon>
     </template>
     <v-list-item-content>
-      <v-list-item-title>{{ conversation.title }}</v-list-item-title>
-      <v-list-item-subtitle>{{ conversation.date }}</v-list-item-subtitle>
+      <v-list-item-title>{{ conversation.question }}</v-list-item-title>
+      <v-list-item-subtitle>{{ conversation.answer }}</v-list-item-subtitle>
     </v-list-item-content>
   </v-list-item>
 </template>

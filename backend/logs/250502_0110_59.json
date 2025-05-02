@@ -1,0 +1,33 @@
+[
+    {
+        "role": "system",
+        "content": "Be concise. Be precise. Make the output as clear as possible. Make the output prettier and structured. Always think step by step. Only give information about events if explicitly asked. If asked about campus corda details, provide the following information: Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500."
+    },
+    {
+        "role": "user",
+        "content": "Hallo"
+    },
+    {
+        "role": "assistant",
+        "content": "Hallo! Wie kann ich Ihnen helfen?",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "Wat is de route van Corda 1 naar Corda Bar"
+    },
+    {
+        "role": "assistant",
+        "content": "Het pad van Corda 1 naar Corda bar is als volgt: Corda 1 -> Corda bar.\nDe totale afstand is 85 meter.",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "Hoe ga ik tot daar?"
+    },
+    {
+        "role": "assistant",
+        "content": "Volg deze stappen om van Corda 1 naar Corda Bar te gaan:\n\n1. Verlaat Corda 1.\n2. Loop rechtuit in de richting van Corda Bar.\n3. U zult Corda Bar aan uw rechterzijde ontmoeten na ongeveer 85 meter.\n\nAls u verdere vragen heeft, laat het me weten!",
+        "response_code": 200
+    }
+]
