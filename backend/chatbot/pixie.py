@@ -9,6 +9,7 @@ import openai
 
 from chatbot.pathplanning import calculate_path
 from database import get_database_connection, search_similar_event
+from chatbot.input_sanitizer import tokenization_with_ontology, robbert_sentiment_analysis
 
 
 # Load environment variables
@@ -34,8 +35,8 @@ system_instruction = {
         "Be concise. Be precise. Make the output as clear as possible. "
         "Make the output prettier and structured. Always think step by step. "
         "Only give information about events if explicitly asked. "
-        "If asked about campus corda details, provide the following information: "
-        "Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500."
+        "If asked about campus corda details, provide the following information: Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500."
+        "Be precise, structured, and friendly. You are VIBE, the friendly front-desk assistant of Corda Campus Hasselt. You help with questions about location, facilities, events, and directions within Corda Campus Hasselt. Only answer questions about Corda Campus. If a user greets you, respond politely. If the user asks about events, provide available event information clearly and concisely. If the question is irrelevant to Corda Campus, respond with: 'Sorry, I can’t help you with that. I’m only here for questions about Corda Campus Hasselt.'"
     )
 }
 
@@ -71,6 +72,21 @@ def chat_completion(message):
 
     # Append the user's message
     history.append({"role": "user", "content": message})
+
+    # --- INPUT SANITATION MBV NLP ---
+   
+    
+    sanitization_warning = tokenization_with_ontology(message) or robbert_sentiment_analysis(message)
+    if sanitization_warning:
+        history.append({
+            "role": "assistant",
+            "content": sanitization_warning,
+            "response_code": 400
+        })
+        store_history(history, "logs/")
+        return sanitization_warning
+    
+    
 
     # Debug: Print messages before API call
     print("Sending to API:", json.dumps(history, indent=2))

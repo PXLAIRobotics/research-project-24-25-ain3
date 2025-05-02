@@ -7,9 +7,8 @@ from database import get_database_connection, create_table_if_not_exists, insert
 import json
 import numpy as np
 import os
-from psycopg2.extensions import AsIs
 from typing import Dict, List
-
+from chatbot.input_sanitizer import topic_modelling
 
 app = FastAPI()
 
@@ -34,8 +33,11 @@ def startup_event():
 async def generateResponse(message: str):
     print("Message received:", message)
     response = chat_completion(message)
+    bad_topic_warning = topic_modelling(message)
+    if bad_topic_warning:
+        return {"data": response, "endChat": bad_topic_warning} 
     print("Response sent:", response, "\n")
-    return {"data": response}
+    return {"data": response, "endChat": ""}
 
 class Event(BaseModel):
     name: str
