@@ -6,3 +6,7 @@ dotenv
 openai
 networkx
 psycopg2-binary
+textblob
+scikit-learn
+torch
+transformers

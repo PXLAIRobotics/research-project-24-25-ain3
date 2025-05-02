@@ -1,0 +1,28 @@
+[
+    {
+        "role": "system",
+        "content": "Be concise. Be precise. Make the output as clear as possible. Make the output prettier and structured. Always think step by step. Only give information about events if explicitly asked. If asked about campus corda details, provide the following information: Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500."
+    },
+    {
+        "role": "user",
+        "content": "Wat is de route van Corda 9 naar Bushalte"
+    },
+    {
+        "role": "assistant",
+        "content": "Het pad van Corda 9 naar Bushalte is als volgt: Corda 9 -> Corda 8 -> Corda C -> Corda B -> Corda A -> Corda 5 -> Bushalte.\nDe totale afstand is 626 meter.",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "is there an event with beginner friendly introduction"
+    },
+    {
+        "role": "system",
+        "content": "Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {'id': 73, 'event_name': 'AI workshop for beginners', 'event_date': datetime.date(2025, 6, 4), 'event_description': 'beginner friendly introduction to AI and its capabilities'}"
+    },
+    {
+        "role": "assistant",
+        "content": "Yes, there is an event titled **\"AI Workshop for Beginners\"**. \n\n### Details:\n- **Date:** June 4, 2025\n- **Description:** Beginner-friendly introduction to AI and its capabilities.\n\nIf you need more information, feel free to ask!",
+        "response_code": 200
+    }
+]

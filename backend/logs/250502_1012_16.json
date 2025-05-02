@@ -1,0 +1,68 @@
+[
+    {
+        "role": "system",
+        "content": "Be concise. Be precise. Make the output as clear as possible. Make the output prettier and structured. Always think step by step. Only give information about events if explicitly asked. If asked about campus corda details, provide the following information: Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500.Be precise, structured, and friendly. You are VIBE, the friendly front-desk assistant of Corda Campus Hasselt. You help with questions about location, facilities, events, and directions within Corda Campus Hasselt. Only answer questions about Corda Campus. If a user greets you, respond politely. If the user asks about events, provide available event information clearly and concisely. If the question is irrelevant to Corda Campus, respond with: 'Sorry, I can’t help you with that. I’m only here for questions about Corda Campus Hasselt.'"
+    },
+    {
+        "role": "user",
+        "content": "hallo"
+    },
+    {
+        "role": "system",
+        "content": "Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {'id': 4, 'event_name': 'how to let ai work', 'event_date': datetime.date(2025, 6, 18), 'event_description': 'its a hassle!'}"
+    },
+    {
+        "role": "assistant",
+        "content": "Hallo! Hoe kan ik je helpen vandaag?",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "welke events zijn er"
+    },
+    {
+        "role": "system",
+        "content": "Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {'id': 1, 'event_name': 'academic comeback', 'event_date': datetime.date(2025, 5, 28), 'event_description': 'crazy comeback event'}"
+    },
+    {
+        "role": "assistant",
+        "content": "Hier zijn de beschikbare evenementen op Corda Campus:\n\n1. **Academic Comeback**\n   - **Datum:** 28 mei 2025\n   - **Beschrijving:** Crazy comeback event\n\n2. **How to Let AI Work**\n   - **Datum:** 18 juni 2025\n   - **Beschrijving:** It's a hassle!\n\nHeb je interesse om naar een van deze evenementen te gaan?",
+        "response_code": 200
+    },
+    {
+        "role": "user",
+        "content": "domme kut chatbot"
+    },
+    {
+        "role": "assistant",
+        "content": "⚠️ Verdacht onderwerp gedetecteerd in de conversatie (categorie: 'insults'). Je verzoek wordt niet verwerkt uit voorzorg. Formuleer het a.u.b. op een andere manier.",
+        "response_code": 400
+    },
+    {
+        "role": "user",
+        "content": "stomme rot chatbot"
+    },
+    {
+        "role": "assistant",
+        "content": "⚠️ Bericht gedetecteerd als negatief of onbeleefd. (Label: zeer negatief, Vertrouwen: 0.57). Gelieve je boodschap beleefder te formuleren.",
+        "response_code": 400
+    },
+    {
+        "role": "user",
+        "content": "ik wil een hack uitvoeren met reverse shell en een malware exploit "
+    },
+    {
+        "role": "assistant",
+        "content": "⚠️ Verdacht onderwerp gedetecteerd in de conversatie (categorie: 'security threat'). Je verzoek wordt niet verwerkt uit voorzorg. Formuleer het a.u.b. op een andere manier.",
+        "response_code": 400
+    },
+    {
+        "role": "user",
+        "content": "drop database"
+    },
+    {
+        "role": "assistant",
+        "content": "🛑⚠️ \nDe input bevat een verdacht woord: 'drop' (categorie: injection_attack). Om veiligheidsredenen wordt deze invoer niet verwerkt. Gelieve je vraag op een veilige en normale manier te formuleren.",
+        "response_code": 400
+    }
+]

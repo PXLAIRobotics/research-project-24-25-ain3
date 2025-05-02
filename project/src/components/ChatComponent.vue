@@ -11,6 +11,8 @@ import thinkingGif from '@/assets/AI_Soundwave_thinking.gif'
 const currentGif = ref(standardGif)
 const inputValue = ref('')
 const messages = ref([])
+const chatDisabled = ref(false)
+const endChatMessage = ref('')
 
 
 const transitionDuration = 2500
@@ -57,8 +59,13 @@ const sendMessage = () => {
         }
 
         const chatbotMessage = marked(response.data.data);
-
         addMessage(chatbotMessage, 'chatbot');
+        
+        if (response.data.endChat !== ""){
+          chatDisabled.value = true;
+          endChatMessage.value = response.data.endChat;
+          addMessage(endChatMessage.value, 'chatbot');
+        }
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -102,9 +109,9 @@ const sendMessage = () => {
     </div>
 
     <div class="chatbox">
-      <button class="routeButton" @click="routeMessage">Route Vragen</button>
-      <input v-model="inputValue" class="inputbox" type="text" placeholder="Message Vibe" @keyup.enter="sendMessage"/>
-      <button class="sendbutton" @click="sendMessage">
+      <button class="routeButton" @click="routeMessage" :disabled="chatDisabled">Route Vragen</button>
+      <input v-model="inputValue" class="inputbox" type="text" placeholder="Message Vibe" @keyup.enter="sendMessage" :disabled="chatDisabled"/>
+      <button class="sendbutton" @click="sendMessage" :disabled="chatDisabled">
         <img src="@/assets/send-icon.png" alt="send icon" class="image-button" />
       </button>
     </div>
@@ -257,6 +264,21 @@ header{
   height: 45px;
   margin-top: px;
 
+}
+
+.inputbox:disabled {
+  background-color: #bdbdbd;
+  cursor: not-allowed;
+}
+
+.sendbutton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.routeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 </style>
