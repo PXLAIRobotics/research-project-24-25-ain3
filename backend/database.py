@@ -3,8 +3,11 @@ import numpy as np
 import json
 from openai import OpenAI
 import os
+import bcrypt
 from psycopg2.extensions import AsIs
+from dotenv import load_dotenv
 
+load_dotenv()
 
 client = OpenAI(api_key="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")
 
@@ -18,7 +21,7 @@ def get_database_connection():
         port=os.getenv("DATABASE_PORT", "5432")
     )
 
-def create_table_if_not_exists(conn):
+def create_events_table_if_not_exists(conn):
     """Create the 'events' table if it does not exist."""
     cursor = conn.cursor()
     cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
@@ -33,6 +36,75 @@ def create_table_if_not_exists(conn):
     """)
     conn.commit()
     cursor.close()
+
+def create_users_table_if_not_exists(conn):
+    """Create the 'users' table if it does not exist."""
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            is_admin BOOLEAN DEFAULT FALSE
+        );
+    """)
+    conn.commit()
+    cursor.close()
+
+def hash_password(plain_text_password):
+    return bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def check_password(plain_text_password, hashed_password):
+    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_password.encode('utf-8'))
+
+def create_user(username, password, is_admin, conn):
+    hashed = hash_password(password)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO users (username, password_hash, is_admin)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (username) DO NOTHING;
+    """, (username, hashed, is_admin))
+    conn.commit()
+    cursor.close()
+
+def authenticate_user(username, password, conn):
+    cursor = conn.cursor()
+    cursor.execute("SELECT password_hash, is_admin FROM users WHERE username = %s;", (username,))
+    result = cursor.fetchone()
+    cursor.close()
+    if result:
+        stored_hash, is_admin = result
+        if check_password(password, stored_hash):
+            return {"authenticated": True, "is_admin": is_admin}
+    return {"authenticated": False}
+
+def create_default_admin():
+    conn = get_database_connection()
+    cursor = conn.cursor()
+
+    username = os.getenv("DEFAULT_ADMIN_USERNAME")
+    password = os.getenv("DEFAULT_ADMIN_PASSWORD")
+
+    if not username or not password:
+        print("Default admin credentials not set in .env file")
+        return
+
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    existing_admin = cursor.fetchone()
+
+    if not existing_admin:
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        cursor.execute(
+            "INSERT INTO users (username, password_hash, is_admin) VALUES (%s, %s, %s)",  # ✅ correct
+            (username, hashed_password.decode('utf-8'), True)
+        )
+        print("Default admin account created.")
+    else:
+        print("Admin account already exists.")
+
+    conn.commit()
+    conn.close()
 
 def get_embedding(text):
     """Generate an embedding for the given text."""

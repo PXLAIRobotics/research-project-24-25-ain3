@@ -12,15 +12,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
-// Voorbeeld van een lijst van admins (dit kan later dynamisch worden geladen)
-const users = ref([
-  { name: 'Senne Reekmans', email: 'Senne.reekmans@student.pxl.be' },
-  { name: 'Abdulrahman Akil', email: 'Abdulrahman.akil@student.pxl.be' },
-  { name: 'Milan Frees', email: 'Milan.frees@student.pxl.be' },
-  { name: 'Xander Thijs', email: 'Xander.thijs2@student.pxl.be' }
-]);
+const users = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await fetch('http://localhost:8000/admins');
+    const data = await response.json();
+    users.value = data;
+  } catch (error) {
+    console.error('Failed to fetch admins:', error);
+  }
+});
+
 </script>
 
 <style scoped>

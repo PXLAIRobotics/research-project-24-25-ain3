@@ -11,6 +11,7 @@ ENV NLTK_DATA=/usr/share/nltk_data
 
 RUN python -c "import os; from transformers import AutoModelForSequenceClassification, AutoTokenizer; os.environ['TRANSFORMERS_CACHE'] = '/app/.cache/huggingface'; AutoModelForSequenceClassification.from_pretrained('nlptown/bert-base-multilingual-uncased-sentiment'); AutoTokenizer.from_pretrained('nlptown/bert-base-multilingual-uncased-sentiment');"
 
+COPY .env .
 COPY . .
 
 EXPOSE 8000

@@ -84,12 +84,25 @@ onMounted(() => {
   showModal.value = true
 })
 
-function handleLogin() {
-  if (email.value === correctEmail && password.value === correctPassword) {
-    showModal.value = false
-    router.push('/admin')
-  } else {
-    alert('Invalid credentials')
+async function handleLogin() {
+  try {
+    const response = await fetch('http://localhost:8000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: email.value, password: password.value }),
+    });
+
+    if (!response.ok) throw new Error('Login failed');
+
+    const data = await response.json();
+
+    // Save token or admin flag locally (or implement proper token handling)
+    localStorage.setItem('isAdmin', data.is_admin);
+    showModal.value = false;
+    router.push('/admin');
+  } catch (error) {
+    alert('Invalid credentials');
+    console.error(error);
   }
 }
 
@@ -98,8 +111,8 @@ function closeModal() {
 }
 
 function logout() {
-  localStorage.removeItem('userToken')
-  router.push('/')
+  localStorage.removeItem('isAdmin');
+  router.push('/');
 }
 
 const handleClick = () => {

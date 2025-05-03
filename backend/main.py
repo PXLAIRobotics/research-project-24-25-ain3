@@ -3,10 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
 from chatbot.pathplanning import calculate_path
-from database import get_database_connection, create_table_if_not_exists, insert_events, get_embedding, clear_event_table, delete_event
+from database import authenticate_user, create_default_admin, create_user, get_database_connection, create_events_table_if_not_exists, create_users_table_if_not_exists, insert_events, get_embedding, clear_event_table, delete_event
 import json
 import numpy as np
 import os
+import bcrypt
 from typing import Dict, List
 from chatbot.input_sanitizer import topic_modelling
 
@@ -26,8 +27,11 @@ app.add_middleware(
 def startup_event():
     """Initialize the database and insert events on app startup."""
     conn = get_database_connection()
-    create_table_if_not_exists(conn)
+    create_events_table_if_not_exists(conn)
+    create_users_table_if_not_exists(conn)
     conn.close()
+
+    create_default_admin()
 
 @app.get("/pixie")
 async def generateResponse(message: str):
@@ -52,7 +56,7 @@ class EventRequest(BaseModel):
 def get_events():
     try:
         conn = get_database_connection()
-        create_table_if_not_exists(conn)
+        create_events_table_if_not_exists(conn)
 
         cursor = conn.cursor()
         cursor.execute("SELECT id, event_name, event_date, event_description FROM events")
@@ -76,7 +80,7 @@ def get_events():
 def add_event(request: EventRequest):
     try:
         conn = get_database_connection()
-        create_table_if_not_exists(conn)
+        create_events_table_if_not_exists(conn)
 
         insert_events(request.events, conn)
 
@@ -106,19 +110,75 @@ async def delete_event(request: DeleteEventRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+class UserCredentials(BaseModel):
+    username: str
+    password: str
+
+@app.post("/register-admin")
+def register_admin(credentials: UserCredentials):
+    try:
+        conn = get_database_connection()
+        create_user(credentials.username, credentials.password, True, conn)
+        conn.close()
+        return {"status": "success", "message": f"Admin {credentials.username} created."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/login")
+def login(credentials: UserCredentials):
+    try:
+        conn = get_database_connection()
+        auth_result = authenticate_user(credentials.username, credentials.password, conn)
+        conn.close()
+
+        if auth_result["authenticated"]:
+            return {"status": "success", "is_admin": auth_result["is_admin"]}
+        else:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+    except HTTPException as e:
+        # Let FastAPI handle known HTTP errors like 401
+        raise e
+
+    except Exception as e:
+        print(f"Login error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/admins")
+def list_admins():
+    try:
+        conn = get_database_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM users WHERE is_admin = TRUE;")
+        rows = cursor.fetchall()
+        conn.close()
+
+        admins = [{"name": row[0], "email": f"{row[0]}@admin.fake"} for row in rows]
+        return admins
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/logs")
 async def getLogs():
     logs_data = []
     print("Request received")
     
-    for log in os.listdir("logs"):  # List all files in the "logs" directory
-        if log.endswith(".json"):  # Only process JSON log files
-            with open(os.path.join("logs", log), "r") as f:
-                log_content = json.load(f)
-                logs_data.append(log_content)
-                print("Sending logs")
+    for log_filename in os.listdir("logs"):
+        if log_filename.endswith(".json"):
+            log_path = os.path.join("logs", log_filename)
+            try:
+                with open(log_path, "r") as f:
+                    log_content = json.load(f)
+                    logs_data.append(log_content)
+                    print(f"Loaded {log_filename}")
+            except json.JSONDecodeError:
+                print(f"Skipping malformed log file: {log_filename}")
+            except Exception as e:
+                print(f"Error reading {log_filename}: {e}")
 
     return {"logs": logs_data}
+
 
 @app.post("/clear-logs")
 async def clearLogs():
