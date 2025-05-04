@@ -1,5 +1,12 @@
 import networkx as nx
 
+import folium
+import requests
+import os
+
+
+
+
 G = nx.Graph()
 
 G.add_node("Corda 1", pos=(50.95172313144371, 5.352094844226686)) # pos = coordinaten
@@ -19,7 +26,7 @@ G.add_node("Corda bar", pos=(50.95249971666138, 5.352156110611767))
 G.add_node("Bushalte", pos=(50.952629250889025, 5.348729340739601))
 G.add_node("Treinstation", pos=(50.95451179958787, 5.349206509818355))
 
-G.add_edge("Corda 9", "Corda 1", weight=393) #weight = afstand
+G.add_edge("Corda 9", "Corda 1", weight=393) 
 G.add_edge("Corda 1", "Corda 2", weight=60)
 G.add_edge("Corda 2", "Corda 3", weight=57)
 G.add_edge("Corda 3", "Corda 4", weight=50)
@@ -42,6 +49,35 @@ G.add_edge("Corda 7", "Corda 8", weight=58)
 G.add_edge("Corda 8", "Corda 9", weight=233)
 
 
+def generate_map(start, destination, api_key):
+    start_coords = G.nodes[start]['pos']
+    destination_coords = G.nodes[destination]['pos']
+
+    url = (
+        f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
+        f"pin-s-a+000000({start_coords[1]},{start_coords[0]}),"
+        f"pin-s-b+ff0000({destination_coords[1]},{destination_coords[0]})/"
+        f"{start_coords[1]},{start_coords[0]},15,0/800x600"
+        f"?access_token={api_key}"
+    )
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_path = os.path.abspath(os.path.join(script_dir, "..", "project", "public", "maps"))
+    os.makedirs(output_path, exist_ok=True)
+
+    full_map_path = os.path.join(output_path, "map.png")
+    print("Saving map to:", full_map_path)
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(full_map_path, "wb") as f:
+            f.write(response.content)
+
+        return "/maps/map.png"
+    else:
+        raise Exception(f"Failed to fetch map: {response.status_code}, {response.text}")
+
+
 def heuristic(source, destination):
     pos_source = G.nodes[source]["pos"]
     pos_destination = G.nodes[destination]["pos"]
@@ -50,6 +86,11 @@ def heuristic(source, destination):
 # A* algoritme voor pathfinding
 def calculate_path(start, destination):
     # Mapping van lowercase naar echte node namen
+    api_key = "pk.eyJ1IjoiZmFzdGFtZXJyYSIsImEiOiJjbThzbHlzZmIwMWlsMm1zZDIwcWZtYmprIn0.NnOKCTjBJfavxl9n9KNDig"
+
+    image_path = generate_map( start, destination, api_key)
+
+
     location_mapping = {loc.lower(): loc for loc in G.nodes}
 
     start_normalized = start.lower().strip()
@@ -71,4 +112,4 @@ def calculate_path(start, destination):
     path_string = " -> ".join(path)
 
     # Return netjes geformatteerd: echte nodes (start_node en destination_node)
-    return {"path": path_string, "total_distance": str(total_distance) + " meter", "start_node": start_node, "destination_node": destination_node}
+    return {"path": path_string, "total_distance": str(total_distance) + " meter", "start_node": start_node, "destination_node": destination_node, "image_path" : image_path}
