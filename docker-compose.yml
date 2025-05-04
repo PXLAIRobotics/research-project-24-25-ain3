@@ -18,6 +18,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+      - ./project/public/maps:/app/project/public/maps
     environment:
       - ENV=production
       - DATABASE_HOST=postgres
