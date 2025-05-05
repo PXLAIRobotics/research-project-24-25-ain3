@@ -3,6 +3,7 @@ import networkx as nx
 import folium
 import requests
 import os
+import urllib.parse
 
 
 
@@ -49,34 +50,55 @@ G.add_edge("Corda 7", "Corda 8", weight=58)
 G.add_edge("Corda 8", "Corda 9", weight=233)
 
 
-def generate_map(start, destination, api_key):
+def generate_map(start, destination, api_key, path):
+    import json
+    import urllib.parse
+
     start_coords = G.nodes[start]['pos']
     destination_coords = G.nodes[destination]['pos']
 
+    # Prepare GeoJSON LineString (coords in lon,lat order)
+    geojson = {
+        "type": "LineString",
+        "coordinates": [(lon, lat) for lat, lon in [G.nodes[node]['pos'] for node in path]]
+    }
+
+    # Encode GeoJSON as URL-safe string
+    geojson_encoded = urllib.parse.quote(json.dumps(geojson))
+
+    # Markers
+    start_marker = f"pin-s-a+000000({start_coords[1]},{start_coords[0]})"
+    end_marker = f"pin-s-b+ff0000({destination_coords[1]},{destination_coords[0]})"
+
+    # Center the map
+    center_lat = (start_coords[0] + destination_coords[0]) / 2
+    center_lon = (start_coords[1] + destination_coords[1]) / 2
+
+    # Final URL with geojson overlay
     url = (
         f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
-        f"pin-s-a+000000({start_coords[1]},{start_coords[0]}),"
-        f"pin-s-b+ff0000({destination_coords[1]},{destination_coords[0]})/"
-        f"{start_coords[1]},{start_coords[0]},15,0/800x600"
+        f"geojson({geojson_encoded}),{start_marker},{end_marker}/"
+        f"{center_lon},{center_lat},15/800x600"
         f"?access_token={api_key}"
     )
 
+    print("Generated Mapbox URL:", url)
+
+    # Save image
     script_dir = os.path.dirname(os.path.abspath(__file__))
     output_path = os.path.abspath(os.path.join(script_dir, "..", "project", "public", "maps"))
     os.makedirs(output_path, exist_ok=True)
-
     full_map_path = os.path.join(output_path, "map.png")
+
     print("Saving map to:", full_map_path)
 
     response = requests.get(url)
     if response.status_code == 200:
         with open(full_map_path, "wb") as f:
             f.write(response.content)
-
         return "/maps/map.png"
     else:
         raise Exception(f"Failed to fetch map: {response.status_code}, {response.text}")
-
 
 def heuristic(source, destination):
     pos_source = G.nodes[source]["pos"]
@@ -88,7 +110,6 @@ def calculate_path(start, destination):
     # Mapping van lowercase naar echte node namen
     api_key = "pk.eyJ1IjoiZmFzdGFtZXJyYSIsImEiOiJjbThzbHlzZmIwMWlsMm1zZDIwcWZtYmprIn0.NnOKCTjBJfavxl9n9KNDig"
 
-    image_path = generate_map( start, destination, api_key)
 
 
     location_mapping = {loc.lower(): loc for loc in G.nodes}
@@ -104,6 +125,7 @@ def calculate_path(start, destination):
 
     path = nx.astar_path(G, source=start_node, target=destination_node, weight="weight", heuristic=heuristic)
 
+    image_path = generate_map( start, destination,api_key, path)
     total_distance = 0
     for i in range(len(path) - 1):
         edge_weight = G[path[i]][path[i + 1]]["weight"]
