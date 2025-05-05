@@ -32,6 +32,9 @@ const handleClick = () => {
                 <v-divider></v-divider>
 
                 <v-list density="compact" nav>
+                  <v-list-subheader class="faq-header">Frequently Asked Questions:</v-list-subheader>
+
+
                     <NavigationItem
                         v-for="conversation in conversations"
                         :key="conversation.id"
@@ -135,6 +138,14 @@ v-navigation-drawer{
 .Navigation div {
     margin: auto;
     width: 85%;
+}
+
+.faq-header {
+  font-weight: bold;
+  font-size: 14px;
+  color: #ffffff;
+  padding-left: 16px;
+  padding-top: 12px;
 }
 
 /* Nav menu button for new chat */

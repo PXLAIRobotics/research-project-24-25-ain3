@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import axios from 'axios'
-import { marked } from 'marked';
+import { marked } from 'marked'
 
+import { useNavList } from '../stores/navList'
 
 import standardGif from '@/assets/AI_Soundwave_standard.gif'
 import transitionGif from '@/assets/AI_Soundwave_transition.gif'
@@ -12,6 +13,7 @@ const currentGif = ref(standardGif)
 const inputValue = ref('')
 const messages = ref([])
 
+const navList = useNavList()
 
 const transitionDuration = 2500
 
@@ -19,13 +21,11 @@ const addMessage = (message, sender) => {
   messages.value.push({ sender: sender, message: message })
 }
 
-const routeMessage = () =>{
-  inputValue.value = `Wat is de route van [Huidige locatie] naar [Eindbestemming]`;
+const routeMessage = () => {
+  inputValue.value = `Wat is de route van [Huidige locatie] naar [Eindbestemming]`
 }
 
 const sendMessage = () => {
-
-  
   console.log('sendMessage called')
   currentGif.value = transitionGif
 
@@ -33,48 +33,56 @@ const sendMessage = () => {
     currentGif.value = thinkingGif
   }, transitionDuration)
 
-
-
   if (inputValue.value.trim() !== '') {
     addMessage(inputValue.value, 'client')
 
-    const typingMessage = { sender: 'chatbot', message: '...' };
-    messages.value.push(typingMessage);
+    const typingMessage = { sender: 'chatbot', message: '...' }
+    messages.value.push(typingMessage)
 
-    const userMessage = inputValue.value;
-    inputValue.value = '';
-
+    const userMessage = inputValue.value
+    inputValue.value = ''
 
     axios
       .get('http://localhost:8000/pixie', {
-        params: { message: userMessage },
+        params: { message: userMessage }
       })
       .then((response) => {
-
-        const index = messages.value.findIndex(msg => msg.message === '...');
+        const index = messages.value.findIndex((msg) => msg.message === '...')
         if (index !== -1) {
-          messages.value.splice(index, 1);
+          messages.value.splice(index, 1)
         }
 
-        const chatbotMessage = marked(response.data.data);
-
-        addMessage(chatbotMessage, 'chatbot');
+        const chatbotMessage = marked(response.data.data)
+        addMessage(chatbotMessage, 'chatbot')
       })
       .catch((error) => {
         console.error('Error:', error)
 
-        const index = messages.value.findIndex(msg => msg.message === '...');
+        const index = messages.value.findIndex((msg) => msg.message === '...')
         if (index !== -1) {
-          messages.value.splice(index, 1);
+          messages.value.splice(index, 1)
         }
 
-        addMessage('Er is een fout opgetreden. Probeer het later opnieuw.', 'chatbot');
+        addMessage('Er is een fout opgetreden. Probeer het later opnieuw.', 'chatbot')
       })
   }
 
   inputValue.value = ''
 }
+
+// 🆕 Watch for a new selected conversation from navigation
+watch(
+  () => navList.activeQA,
+  (qa) => {
+    if (qa) {
+      addMessage(qa.question, 'client')
+      addMessage(qa.answer, 'chatbot')
+      navList.clearActiveQA()
+    }
+  }
+)
 </script>
+
 
 <template>
   <div class="container">
@@ -85,7 +93,7 @@ const sendMessage = () => {
         <h1>Arena</h1>
       </div>
     </header>
-    
+
 
     <div class="chat-messages">
       <div
@@ -214,7 +222,7 @@ header{
   max-height: 500px;
   overflow-y: auto;
   margin-top: 20px;
-  
+
   list-style-type: disc;
 
 }
