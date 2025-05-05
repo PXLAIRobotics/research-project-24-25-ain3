@@ -3,6 +3,9 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { marked } from 'marked';
 
+import { watch } from 'vue'
+import { useNavList } from '../stores/navList'
+
 
 import standardGif from '@/assets/AI_Soundwave_standard.gif'
 import transitionGif from '@/assets/AI_Soundwave_transition.gif'
@@ -13,6 +16,7 @@ const inputValue = ref('')
 const messages = ref([])
 const chatDisabled = ref(false)
 const endChatMessage = ref('')
+const navList = useNavList()
 
 
 const transitionDuration = 2500
@@ -27,7 +31,7 @@ const routeMessage = () =>{
 
 const sendMessage = () => {
 
-  
+
   console.log('sendMessage called')
   currentGif.value = transitionGif
 
@@ -60,7 +64,7 @@ const sendMessage = () => {
 
         const chatbotMessage = marked(response.data.data);
         addMessage(chatbotMessage, 'chatbot');
-        
+
         if (response.data.endChat !== ""){
           chatDisabled.value = true;
           endChatMessage.value = response.data.endChat;
@@ -81,6 +85,18 @@ const sendMessage = () => {
 
   inputValue.value = ''
 }
+
+
+watch(
+  () => navList.activeQA,
+  (qa) => {
+    if (qa) {
+      addMessage(qa.question, 'client')
+      addMessage(qa.answer, 'chatbot')
+      navList.clearActiveQA()
+    }
+  }
+)
 </script>
 
 <template>
@@ -92,7 +108,7 @@ const sendMessage = () => {
         <h1>Arena</h1>
       </div>
     </header>
-    
+
 
     <div class="chat-messages">
       <div
@@ -221,7 +237,7 @@ header{
   max-height: 500px;
   overflow-y: auto;
   margin-top: 20px;
-  
+
   list-style-type: disc;
 
 }
