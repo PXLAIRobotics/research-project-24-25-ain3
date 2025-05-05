@@ -77,9 +77,6 @@ const isSidebarVisible = ref(true)
 const activePanel = ref('dashboard');
 const router = useRouter()
 
-const correctEmail = 'admin@gmail.com'
-const correctPassword = 'admin'
-
 onMounted(() => {
   showModal.value = true
 })
@@ -89,7 +86,7 @@ async function handleLogin() {
     const response = await fetch('http://localhost:8000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: email.value, password: password.value }),
+      body: JSON.stringify({ email: email.value, password: password.value }),
     });
 
     if (!response.ok) throw new Error('Login failed');
@@ -107,7 +104,7 @@ async function handleLogin() {
 }
 
 function closeModal() {
-  router.push({ name: 'interfaceComponent' });
+  router.push('/');
 }
 
 function logout() {
@@ -128,6 +125,7 @@ const handleClick = () => {
 .formSubmit {
   margin-bottom: 10px;
 }
+
 form {
   display: flex;
   flex-direction: column;

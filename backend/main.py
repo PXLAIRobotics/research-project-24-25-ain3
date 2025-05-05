@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
 from chatbot.pathplanning import calculate_path
-from database import authenticate_user, create_default_admin, create_user, get_database_connection, create_events_table_if_not_exists, create_users_table_if_not_exists, insert_events, get_embedding, clear_event_table, delete_event
+from database import authenticate_admin, create_default_admin, create_admin, get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events, get_embedding, clear_event_table, delete_event
 import json
 import numpy as np
 import os
@@ -28,7 +28,7 @@ def startup_event():
     """Initialize the database and insert events on app startup."""
     conn = get_database_connection()
     create_events_table_if_not_exists(conn)
-    create_users_table_if_not_exists(conn)
+    create_admins_table_if_not_exists(conn)
     conn.close()
 
     create_default_admin()
@@ -110,29 +110,35 @@ async def delete_event(request: DeleteEventRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-class UserCredentials(BaseModel):
+
+class AdminCredentials(BaseModel):
     username: str
+    email: str
     password: str
 
 @app.post("/register-admin")
-def register_admin(credentials: UserCredentials):
+def register_admin(credentials: AdminCredentials):
     try:
         conn = get_database_connection()
-        create_user(credentials.username, credentials.password, True, conn)
+        create_admin(credentials.username, credentials.email, credentials.password, conn)
         conn.close()
         return {"status": "success", "message": f"Admin {credentials.username} created."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+class LoginCredentials(BaseModel):
+    email: str
+    password: str
+
 @app.post("/login")
-def login(credentials: UserCredentials):
+def login(credentials: LoginCredentials):
     try:
         conn = get_database_connection()
-        auth_result = authenticate_user(credentials.username, credentials.password, conn)
+        auth_result = authenticate_admin(credentials.email, credentials.password, conn)
         conn.close()
 
         if auth_result["authenticated"]:
-            return {"status": "success", "is_admin": auth_result["is_admin"]}
+            return {"status": "success", "message": "Login successful"}
         else:
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
@@ -149,12 +155,30 @@ def list_admins():
     try:
         conn = get_database_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT username FROM users WHERE is_admin = TRUE;")
+        cursor.execute("SELECT username, email FROM admins;")
         rows = cursor.fetchall()
         conn.close()
 
-        admins = [{"name": row[0], "email": f"{row[0]}@admin.fake"} for row in rows]
+        admins = [{"name": row[0], "email": f"{row[1]}"} for row in rows]
         return admins
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+class DeleteAdminRequest(BaseModel):
+    email: str
+    
+@app.post("/delete-admin")
+async def delete_event(request: DeleteAdminRequest):
+    try:
+        conn = get_database_connection()
+        cursor = conn.cursor()
+
+        # Verwijder de admin met de juiste email
+        cursor.execute("DELETE FROM admins WHERE email = %s", (request.email,))
+        conn.commit()
+        conn.close()
+
+        return {"status": "success", "message": f"Event '{request.email}' deleted."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

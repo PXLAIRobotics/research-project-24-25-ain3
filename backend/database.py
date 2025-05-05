@@ -37,15 +37,15 @@ def create_events_table_if_not_exists(conn):
     conn.commit()
     cursor.close()
 
-def create_users_table_if_not_exists(conn):
-    """Create the 'users' table if it does not exist."""
+def create_admins_table_if_not_exists(conn):
+    """Create the 'adminss' table if it does not exist."""
     cursor = conn.cursor()
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS admins (
             id SERIAL PRIMARY KEY,
-            username TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            is_admin BOOLEAN DEFAULT FALSE
+            username TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
         );
     """)
     conn.commit()
@@ -57,26 +57,26 @@ def hash_password(plain_text_password):
 def check_password(plain_text_password, hashed_password):
     return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
-def create_user(username, password, is_admin, conn):
+def create_admin(username, email, password, conn):
     hashed = hash_password(password)
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO users (username, password_hash, is_admin)
+        INSERT INTO admins (username, email, password_hash)
         VALUES (%s, %s, %s)
-        ON CONFLICT (username) DO NOTHING;
-    """, (username, hashed, is_admin))
+        ON CONFLICT (email) DO NOTHING;
+    """, (username, email , hashed))
     conn.commit()
     cursor.close()
 
-def authenticate_user(username, password, conn):
+def authenticate_admin(email, password, conn):
     cursor = conn.cursor()
-    cursor.execute("SELECT password_hash, is_admin FROM users WHERE username = %s;", (username,))
+    cursor.execute("SELECT password_hash FROM admins WHERE email = %s;", (email,))
     result = cursor.fetchone()
     cursor.close()
     if result:
-        stored_hash, is_admin = result
+        stored_hash = result[0]
         if check_password(password, stored_hash):
-            return {"authenticated": True, "is_admin": is_admin}
+            return {"authenticated": True}
     return {"authenticated": False}
 
 def create_default_admin():
@@ -84,20 +84,21 @@ def create_default_admin():
     cursor = conn.cursor()
 
     username = os.getenv("DEFAULT_ADMIN_USERNAME")
+    email = os.getenv("DEFAULT_ADMIN_EMAIL")
     password = os.getenv("DEFAULT_ADMIN_PASSWORD")
 
-    if not username or not password:
+    if not username or not email or not password:
         print("Default admin credentials not set in .env file")
         return
 
-    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    cursor.execute("SELECT * FROM admins WHERE email = %s", (email,))
     existing_admin = cursor.fetchone()
 
     if not existing_admin:
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         cursor.execute(
-            "INSERT INTO users (username, password_hash, is_admin) VALUES (%s, %s, %s)",  # ✅ correct
-            (username, hashed_password.decode('utf-8'), True)
+            "INSERT INTO admins (username, email, password_hash) VALUES (%s, %s, %s)",
+            (username, email, hashed_password.decode('utf-8'))
         )
         print("Default admin account created.")
     else:
