@@ -38,7 +38,7 @@ def create_events_table_if_not_exists(conn):
     cursor.close()
 
 def create_admins_table_if_not_exists(conn):
-    """Create the 'adminss' table if it does not exist."""
+    """Create the 'admins' table if it does not exist."""
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS admins (
@@ -106,6 +106,22 @@ def create_default_admin():
 
     conn.commit()
     conn.close()
+
+def delete_admin_from_table(email):
+    print(f"Deleting admin with email: {email}")
+    try:
+        conn = get_database_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM admins WHERE email = %s", (email,))
+
+        conn.commit()
+        conn.close()
+
+    except Exception as e:
+        print(f"Error during delete admin operation: {e}")
+        raise
+
 
 def get_embedding(text):
     """Generate an embedding for the given text."""
@@ -178,23 +194,3 @@ def search_similar_event(message, conn):
     except Exception as e:
         print(f"Error in search_similar_event: {e}")
         raise
-
-def clear_event_table(conn):
-    """Delete all records from the events table."""
-    try:
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM events;")
-        conn.commit()
-        cursor.close()
-        print("Event table cleared successfully.")
-    except Exception as e:
-        print(f"Error clearing event table: {e}")
-
-def delete_event(conn, event_name):
-        conn = get_database_connection()
-        cursor = conn.cursor()
-
-
-        cursor.execute("DELETE FROM events WHERE event_name = ?", (event_name,))
-        conn.commit()
-        conn.close()

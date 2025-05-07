@@ -2,8 +2,7 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
-from chatbot.pathplanning import calculate_path
-from database import authenticate_admin, create_default_admin, create_admin, get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events, get_embedding, clear_event_table, delete_event
+from database import delete_admin_from_table, authenticate_admin, create_default_admin, create_admin, get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events
 import json
 import numpy as np
 import os
@@ -119,12 +118,17 @@ class AdminCredentials(BaseModel):
 @app.post("/register-admin")
 def register_admin(credentials: AdminCredentials):
     try:
+        # E-mail opslaan in lowercase
+        email_lower = credentials.email.lower()
+        
         conn = get_database_connection()
-        create_admin(credentials.username, credentials.email, credentials.password, conn)
+        create_admin(credentials.username, email_lower, credentials.password, conn)
         conn.close()
+        
         return {"status": "success", "message": f"Admin {credentials.username} created."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 class LoginCredentials(BaseModel):
     email: str
@@ -133,8 +137,11 @@ class LoginCredentials(BaseModel):
 @app.post("/login")
 def login(credentials: LoginCredentials):
     try:
+        # Zet e-mail in lowercase om te vergelijken
+        email_lower = credentials.email.lower()
+        
         conn = get_database_connection()
-        auth_result = authenticate_admin(credentials.email, credentials.password, conn)
+        auth_result = authenticate_admin(email_lower, credentials.password, conn)
         conn.close()
 
         if auth_result["authenticated"]:
@@ -143,7 +150,7 @@ def login(credentials: LoginCredentials):
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
     except HTTPException as e:
-        # Let FastAPI handle known HTTP errors like 401
+        # Laat FastAPI bekende HTTP-fouten zoals 401 behandelen
         raise e
 
     except Exception as e:
@@ -168,19 +175,16 @@ class DeleteAdminRequest(BaseModel):
     email: str
     
 @app.post("/delete-admin")
-async def delete_event(request: DeleteAdminRequest):
+async def delete_admin(request: DeleteAdminRequest):
     try:
-        conn = get_database_connection()
-        cursor = conn.cursor()
+        # Zet e-mail in lowercase
+        email_lower = request.email.lower()
 
-        # Verwijder de admin met de juiste email
-        cursor.execute("DELETE FROM admins WHERE email = %s", (request.email,))
-        conn.commit()
-        conn.close()
-
-        return {"status": "success", "message": f"Event '{request.email}' deleted."}
+        delete_admin_from_table(email_lower)
+        
+        return {"status": "success", "message": f"Admin {email_lower} deleted."}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Failed to delete admin: {str(e)}")
 
 
 @app.get("/logs")

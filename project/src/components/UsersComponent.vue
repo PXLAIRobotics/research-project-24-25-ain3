@@ -49,7 +49,7 @@
         <i class="fas fa-admin-circle admin-icon"></i> <!-- Account icon -->
         <span class="admin-name">{{ admin.name }}</span>
         <span class="admin-email">{{ admin.email }}</span>
-        <button class="delete-btn" @click="requestDeleteAdmin(admin.name)">
+        <button class="delete-btn" @click="requestDeleteAdmin(admin.email)">
                 Delete
         </button>
       </div>
@@ -59,6 +59,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
 
 const admins = ref([]);
 
@@ -75,16 +77,20 @@ onMounted(async () => {
 const adminToDelete = ref(null);
 const showConfirmDialog = ref(false);
 
-const requestDeleteAdmin = (adminName) => {
-  adminToDelete.value = adminName;
+const requestDeleteAdmin = (adminEmail) => {
+  adminToDelete.value = adminEmail;
   showConfirmDialog.value = true;
 };
 
 const confirmDeleteAdmin = async () => {
   if (!adminToDelete.value) return;
   try {
-    await axios.post('http://localhost:8000/delete-admin', { email: adminToDelete.value });
-    admin.value = admin.value.filter(admin => admin.email !== adminToDelete.value);
+    const response = await axios.post('http://localhost:8000/delete-admin', { email: adminToDelete.value });
+    // Herlaad lijst
+    const res = await fetch('http://localhost:8000/admins');
+    const data = await res.json();
+    admins.value = data;
+    alert(response.data.message);
   } catch (err) {
     console.error('Error deleting admin:', err);
     alert('Failed to delete admin.');
