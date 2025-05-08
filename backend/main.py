@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Depends, Request
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
 from database import delete_admin_from_table, authenticate_admin, create_default_admin, create_admin, get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events
@@ -9,6 +11,8 @@ import os
 import bcrypt
 from typing import Dict, List
 from chatbot.input_sanitizer import topic_modelling
+from auth import create_access_token
+from auth import verify_token
 
 app = FastAPI()
 
@@ -19,6 +23,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"], 
 )
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = verify_token(token)
+    if payload is None:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return payload
 
 
 
@@ -76,7 +88,7 @@ def get_events():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/events")
-def add_event(request: EventRequest):
+def add_event(request: EventRequest, user=Depends(get_current_user)):
     try:
         conn = get_database_connection()
         create_events_table_if_not_exists(conn)
@@ -95,12 +107,11 @@ class DeleteEventRequest(BaseModel):
     name: str
     
 @app.post("/delete-event")
-async def delete_event(request: DeleteEventRequest):
+async def delete_event(request: DeleteEventRequest, user=Depends(get_current_user)):
     try:
         conn = get_database_connection()
         cursor = conn.cursor()
 
-        # Verwijder het event met de juiste naam
         cursor.execute("DELETE FROM events WHERE event_name = %s", (request.name,))
         conn.commit()
         conn.close()
@@ -116,9 +127,8 @@ class AdminCredentials(BaseModel):
     password: str
 
 @app.post("/register-admin")
-def register_admin(credentials: AdminCredentials):
+def register_admin(credentials: AdminCredentials, user=Depends(get_current_user)):
     try:
-        # E-mail opslaan in lowercase
         email_lower = credentials.email.lower()
         
         conn = get_database_connection()
@@ -145,7 +155,14 @@ def login(credentials: LoginCredentials):
         conn.close()
 
         if auth_result["authenticated"]:
-            return {"status": "success", "message": "Login successful"}
+            access_token = create_access_token(data={"sub": credentials.email})
+            return {
+                "status": "success",
+                "message": "Login successful",
+                "access_token": access_token,
+                "token_type": "bearer"
+            }
+
         else:
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
@@ -158,7 +175,7 @@ def login(credentials: LoginCredentials):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/admins")
-def list_admins():
+def list_admins(user=Depends(get_current_user)):
     try:
         conn = get_database_connection()
         cursor = conn.cursor()
@@ -166,29 +183,27 @@ def list_admins():
         rows = cursor.fetchall()
         conn.close()
 
-        admins = [{"name": row[0], "email": f"{row[1]}"} for row in rows]
+        admins = [{"name": row[0], "email": row[1]} for row in rows]
         return admins
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
     
 class DeleteAdminRequest(BaseModel):
     email: str
     
 @app.post("/delete-admin")
-async def delete_admin(request: DeleteAdminRequest):
+async def delete_admin(request: DeleteAdminRequest, user=Depends(get_current_user)):
     try:
-        # Zet e-mail in lowercase
         email_lower = request.email.lower()
-
         delete_admin_from_table(email_lower)
-        
         return {"status": "success", "message": f"Admin {email_lower} deleted."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete admin: {str(e)}")
 
 
 @app.get("/logs")
-async def getLogs():
+async def getLogs(user=Depends(get_current_user)):
     logs_data = []
     print("Request received")
     
@@ -209,14 +224,13 @@ async def getLogs():
 
 
 @app.post("/clear-logs")
-async def clearLogs():
+async def clearLogs(user=Depends(get_current_user)):
     logs_folder = "logs"
     try:
-        # Loop through all files in the logs folder
         for log_file in os.listdir(logs_folder):
             file_path = os.path.join(logs_folder, log_file)
             if log_file.endswith(".json") and os.path.isfile(file_path):
-                os.remove(file_path)  # Delete the log file
+                os.remove(file_path)
         
         print("All log files cleared.")
         return {"message": "Logs cleared successfully."}

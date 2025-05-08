@@ -20,7 +20,7 @@
         <form @submit.prevent="submitForm">
           <div class="input-form">
             <label for="username">Username</label>
-            <input type="username" v-model="newAdmin.username" required />
+            <input type="text" v-model="newAdmin.username" required />
           </div>
 
           <div class="input-form">
@@ -34,14 +34,14 @@
           </div>
 
           <div class="input-form">
-            <label for="password">Confirm Password</label>
+            <label for="confirmPassword">Confirm Password</label>
             <input type="password" v-model="confirmPassword" required />
           </div>
+
           <p v-if="passwordMismatch && submitted" style="color: red;">Passwords do not match.</p>
 
-          
           <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
-          <button @click="cancelForm">Close</button>
+          <button type="button" @click="cancelForm">Close</button>
         </form>
       </div>
     </div>
@@ -53,113 +53,140 @@
 
     <div class="admin-list">
       <div class="admin-item" v-for="(admin, index) in admins" :key="index">
-        <i class="fas fa-admin-circle admin-icon"></i> <!-- Account icon -->
+        <i class="fas fa-admin-circle admin-icon"></i>
         <span class="admin-name">{{ admin.name }}</span>
         <span class="admin-email">{{ admin.email }}</span>
-        <button class="delete-btn" @click="requestDeleteAdmin(admin.email)">
-                Delete
-        </button>
+        <button class="delete-btn" @click="requestDeleteAdmin(admin.email)">Delete</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
 
+// Helpers
+function getToken() {
+  return localStorage.getItem('token')
+}
 
-const admins = ref([]);
-
-onMounted(async () => {
-  try {
-    const response = await fetch('http://localhost:8000/admins');
-    const data = await response.json();
-    admins.value = data;
-  } catch (error) {
-    console.error('Failed to fetch admins:', error);
+async function authFetch(url, options = {}) {
+  const token = getToken()
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
   }
-});
-
-const adminToDelete = ref(null);
-const showConfirmDialog = ref(false);
-
-const requestDeleteAdmin = (adminEmail) => {
-  adminToDelete.value = adminEmail;
-  showConfirmDialog.value = true;
-};
-
-const confirmDeleteAdmin = async () => {
-  if (!adminToDelete.value) return;
-  try {
-    const response = await axios.post('http://localhost:8000/delete-admin', { email: adminToDelete.value });
-    // Herlaad lijst
-    const res = await fetch('http://localhost:8000/admins');
-    const data = await res.json();
-    admins.value = data;
-    alert(response.data.message);
-  } catch (err) {
-    console.error('Error deleting admin:', err);
-    alert('Failed to delete admin.');
-  } finally {
-    showConfirmDialog.value = false;
-    adminToDelete.value = null;
+  const response = await fetch(url, { ...options, headers })
+  if (response.status === 401) {
+    alert('Session expired or unauthorized.')
+    throw new Error('Unauthorized')
   }
-};
+  return response
+}
 
-const cancelDelete = () => {
-  showConfirmDialog.value = false;
-  adminToDelete.value = null;
-};
+// State
+const admins = ref([])
+const adminToDelete = ref(null)
+const showConfirmDialog = ref(false)
+const showAdminForm = ref(false)
+const confirmPassword = ref('')
+const submitted = ref(false)
 
-const showAdminForm = ref(false);
 const newAdmin = ref({
   username: '',
   email: '',
   password: ''
-});
+})
 
-const requestAddAdmin = () => {
-  showAdminForm.value = true;
-};
+// Computed
+const passwordMismatch = computed(() => newAdmin.value.password !== confirmPassword.value)
+const isFormFilled = computed(() =>
+  newAdmin.value.username && newAdmin.value.email && newAdmin.value.password && confirmPassword.value
+)
 
-const cancelForm = () => {
-  showAdminForm.value = false;
-  newAdmin.value = { username: '', email: '', password: '' };
-};
+// Lifecycle
+onMounted(async () => {
+  await fetchAdmins()
+})
 
-const confirmPassword = ref('');
-const passwordMismatch = computed(() => newAdmin.value.password !== confirmPassword.value);
-const isFormFilled = computed(() => {
-  return newAdmin.value.username && newAdmin.value.email && newAdmin.value.password && confirmPassword.value;
-});
-const submitted = ref(false);
-
-const submitForm = async () => {
-  submitted.value = true;
-
-  if (passwordMismatch.value) {
-    return;
+// Functions
+async function fetchAdmins() {
+  try {
+    const response = await authFetch('http://localhost:8000/admins')
+    const data = await response.json()
+    admins.value = data
+  } catch (error) {
+    console.error('Failed to fetch admins:', error)
   }
+}
+
+function requestDeleteAdmin(email) {
+  adminToDelete.value = email
+  showConfirmDialog.value = true
+}
+
+async function confirmDeleteAdmin() {
+  if (!adminToDelete.value) return
+  try {
+    const token = getToken()
+    const response = await axios.post(
+      'http://localhost:8000/delete-admin',
+      { email: adminToDelete.value },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+
+    await fetchAdmins()
+    alert(response.data.message)
+  } catch (err) {
+    console.error('Error deleting admin:', err)
+    alert('Failed to delete admin.')
+  } finally {
+    showConfirmDialog.value = false
+    adminToDelete.value = null
+  }
+}
+
+function cancelDelete() {
+  showConfirmDialog.value = false
+  adminToDelete.value = null
+}
+
+function requestAddAdmin() {
+  showAdminForm.value = true
+}
+
+function cancelForm() {
+  showAdminForm.value = false
+  newAdmin.value = { username: '', email: '', password: '' }
+  confirmPassword.value = ''
+  submitted.value = false
+}
+
+async function submitForm() {
+  submitted.value = true
+
+  if (passwordMismatch.value) return
 
   try {
-    const response = await axios.post('http://localhost:8000/register-admin', newAdmin.value);
-    alert(response.data.message);
-    showAdminForm.value = false;
-    newAdmin.value = { username: '', email: '', password: '' };
-    confirmPassword.value = '';
-    submitted.value = false; // reset
+    const token = getToken()
+    const response = await axios.post(
+      'http://localhost:8000/register-admin',
+      newAdmin.value,
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
 
-    const res = await fetch('http://localhost:8000/admins');
-    const data = await res.json();
-    admins.value = data;
+    alert(response.data.message)
+    cancelForm()
+    await fetchAdmins()
   } catch (err) {
-    console.error('Error adding admin:', err);
-    alert('Failed to add admin.');
+    console.error('Error adding admin:', err)
+    alert('Failed to add admin.')
   }
-};
-
+}
 </script>
+
 
 <style scoped>
 .admins-component {

@@ -20,7 +20,7 @@
   </div>
 
   <div v-if="!showModal" class="admin-panel">
-    <header >
+    <header>
       <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
       <div>
@@ -50,7 +50,6 @@
         <UsersComponent v-else-if="activePanel === 'users'" class="expanded" />
         <SettingsComponent v-else-if="activePanel === 'settings'" class="expanded" />
         <LogsComponent v-else-if="activePanel === 'logs'" class="expanded" />
-        <ReportsComponent v-else-if="activePanel === 'reports'" class="expanded" />
         <AllEventsComponent v-else-if="activePanel === 'all_events'" class="expanded" />
         <addeventsComponent v-else-if="activePanel === 'event adder'" class="expanded" />
       </main>
@@ -61,61 +60,97 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import UsersComponent from '../components/UsersComponent.vue';
-import SettingsComponent from '../components/SettingsComponent.vue';
-import LogsComponent from '../components/LogsComponent.vue';
+import jwt_decode from 'jwt-decode'
 
-import AllEventsComponent from '../components/AllEventsComponent.vue';
-import addeventsComponent from './addeventsComponent.vue';
+import UsersComponent from '../components/UsersComponent.vue'
+import SettingsComponent from '../components/SettingsComponent.vue'
+import LogsComponent from '../components/LogsComponent.vue'
+import AllEventsComponent from '../components/AllEventsComponent.vue'
+import addeventsComponent from './addeventsComponent.vue'
 
 const email = ref('')
 const password = ref('')
 const showModal = ref(true)
-
-const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 const isSidebarVisible = ref(true)
-const activePanel = ref('dashboard');
+const activePanel = ref('dashboard')
+
 const router = useRouter()
 
+const isFormFilled = computed(() => email.value !== '' && password.value !== '')
+
 onMounted(() => {
-  showModal.value = true
+  const token = localStorage.getItem('token')
+  if (token) {
+    const decoded = jwt_decode(token)
+    const now = Date.now() / 1000
+    if (decoded.exp > now) {
+      showModal.value = false
+      email.value = decoded.sub
+    } else {
+      logout()
+    }
+  }
 })
+
+// Universele fetch met token
+async function globalFetch(url, options = {}) {
+  const token = localStorage.getItem('token')
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+
+  const response = await fetch(url, { ...options, headers })
+  if (response.status === 401) {
+    logout()
+    throw new Error('Unauthorized')
+  }
+  return response
+}
 
 async function handleLogin() {
   try {
     const response = await fetch('http://localhost:8000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value, password: password.value }),
-    });
+      body: JSON.stringify({ email: email.value, password: password.value })
+    })
 
-    if (!response.ok) throw new Error('Login failed');
+    if (!response.ok) throw new Error('Login failed')
 
-    const data = await response.json();
+    const data = await response.json()
+    localStorage.setItem('token', data.access_token)
 
-    // Save token or admin flag locally (or implement proper token handling)
-    localStorage.setItem('isAdmin', data.is_admin);
-    localStorage.setItem('adminEmail', data.email);
-    showModal.value = false;
-    router.push('/admin');
+    const decoded = jwt_decode(data.access_token)
+    const now = Date.now() / 1000
+
+    if (decoded.exp < now) throw new Error('Token expired')
+
+    email.value = decoded.sub
+    localStorage.setItem('adminEmail', decoded.sub)
+
+    showModal.value = false
+    router.push('/admin')
   } catch (error) {
-    alert('Invalid credentials');
-    console.error(error);
+    alert('Invalid credentials or session expired')
+    console.error(error)
   }
 }
 
 function closeModal() {
-  router.push('/');
+  router.push('/')
 }
 
 function logout() {
-  localStorage.removeItem('isAdmin');
-  router.push('/');
+  localStorage.removeItem('token')
+  localStorage.removeItem('adminEmail')
+  router.push('/')
 }
 
 const handleClick = () => {
-  router.push({ name: 'interfaceComponent' });
-};
+  router.push({ name: 'interfaceComponent' })
+}
 </script>
 
 <style>

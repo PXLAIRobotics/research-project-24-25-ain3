@@ -28,6 +28,27 @@ const router = createRouter({
   routes,
 })
 
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  const isProtected = to.path.startsWith('/admin', '/users', '/settings', '/logs')
+
+  if (isProtected && !token) {
+    return next('/')
+  }
+
+  try {
+    const decoded = jwt_decode(token)
+    const now = Date.now() / 1000
+    if (decoded.exp < now) {
+      localStorage.removeItem('token')
+      return next('/')
+    }
+  } catch (e) {
+    return next('/')
+  }
+
+  next()
+})
 
 
 export default router
