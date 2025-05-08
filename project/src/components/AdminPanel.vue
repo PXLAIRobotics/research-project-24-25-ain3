@@ -95,6 +95,7 @@ async function handleLogin() {
 
     // Save token or admin flag locally (or implement proper token handling)
     localStorage.setItem('isAdmin', data.is_admin);
+    localStorage.setItem('adminEmail', data.email);
     showModal.value = false;
     router.push('/admin');
   } catch (error) {

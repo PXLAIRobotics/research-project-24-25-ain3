@@ -33,6 +33,13 @@
             <input type="password" v-model="newAdmin.password" required />
           </div>
 
+          <div class="input-form">
+            <label for="password">Confirm Password</label>
+            <input type="password" v-model="confirmPassword" required />
+          </div>
+          <p v-if="passwordMismatch && submitted" style="color: red;">Passwords do not match.</p>
+
+          
           <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
           <button @click="cancelForm">Close</button>
         </form>
@@ -58,7 +65,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 
 
@@ -121,14 +128,28 @@ const cancelForm = () => {
   newAdmin.value = { username: '', email: '', password: '' };
 };
 
+const confirmPassword = ref('');
+const passwordMismatch = computed(() => newAdmin.value.password !== confirmPassword.value);
+const isFormFilled = computed(() => {
+  return newAdmin.value.username && newAdmin.value.email && newAdmin.value.password && confirmPassword.value;
+});
+const submitted = ref(false);
+
 const submitForm = async () => {
+  submitted.value = true;
+
+  if (passwordMismatch.value) {
+    return;
+  }
+
   try {
     const response = await axios.post('http://localhost:8000/register-admin', newAdmin.value);
     alert(response.data.message);
     showAdminForm.value = false;
     newAdmin.value = { username: '', email: '', password: '' };
+    confirmPassword.value = '';
+    submitted.value = false; // reset
 
-    // Reload admins list
     const res = await fetch('http://localhost:8000/admins');
     const data = await res.json();
     admins.value = data;
