@@ -1,16 +1,22 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
+from chatbot.pathplanning import calculate_path
 from database import delete_admin_from_table, authenticate_admin, create_default_admin, create_admin, get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events
 import json
-import numpy as np
 import os
 import bcrypt
 from typing import Dict, List
 from chatbot.input_sanitizer import topic_modelling
+from fastapi.responses import FileResponse
+from gtts import gTTS
+import uuid
+import re
+import html
+from faster_whisper import WhisperModel
 from auth import create_access_token
 from auth import verify_token
 
@@ -18,11 +24,13 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173"], 
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"], 
+    allow_methods=["*"], 
+    allow_headers=["*"],  
 )
+
+whisperModel = WhisperModel("small", compute_type="int8")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -239,3 +247,43 @@ async def clearLogs(user=Depends(get_current_user)):
     except Exception as e:
         print("Error clearing logs:", e)
         raise HTTPException(status_code=500, detail="Failed to clear logs.")
+    
+
+def clean_text(text: str) -> str:
+    # Decode HTML entities zoals &amp; -> &
+    text = html.unescape(text)
+
+    # Verwijder alle HTML-tags
+    text = re.sub(r'<[^>]+>', '', text)
+
+    # Verwijder Markdown-symbolen zoals **, *, __, _
+    text = re.sub(r'[*_`#\-~]', '', text)
+
+    # Verwijder dubbele of overbodige spaties
+    text = re.sub(r'\s+', ' ', text).strip()
+
+    return text
+
+@app.get("/tts")
+async def tts(text: str = Query(..., min_length=1)):
+    """
+    Endpoint om tekst om te zetten naar spraak en terug te sturen als MP3-bestand.
+    """
+    clean = clean_text(text)
+
+    filename = f"/tmp/{uuid.uuid4()}.mp3"
+    tts = gTTS(text=clean, lang='nl')
+    tts.save(filename)
+    return FileResponse(filename, media_type="audio/mpeg", filename="speech.mp3")
+
+
+@app.post("/transcribe")
+async def transcribe(audio: UploadFile = File(...)):
+    contents = await audio.read()
+    with open("temp_audio.wav", "wb") as f:
+        f.write(contents)
+
+    # Voeg 'language' toe en eventueel 'beam_size' voor betere kwaliteit
+    segments, _ = whisperModel.transcribe("temp_audio.wav", language="nl", beam_size=5)
+    transcript = "".join([segment.text for segment in segments])
+    return {"text": transcript}

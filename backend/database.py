@@ -3,6 +3,7 @@ import numpy as np
 import json
 from openai import OpenAI
 import os
+from psycopg2.extensions import AsIs
 import bcrypt
 from psycopg2.extensions import AsIs
 from dotenv import load_dotenv
@@ -139,25 +140,31 @@ def get_embedding(text):
 
 def insert_events(events, conn):
     """Insert events into the database with embeddings."""
-    cursor = conn.cursor()
-    for category, event_list in events.items():
-        for event in event_list:
-            event_name = event.name
-            event_date = event.date
-            event_description = event.description
+    try :
+        cursor = conn.cursor()
+        for category, event_list in events.items():
+            for event in event_list:
+                event_name = event.name
+                event_date = event.date
+                event_description = event.description
 
-            embedding = get_embedding(event_description)
-            if embedding is None:
-                print(f"Skipping insert for event '{event_name}' due to missing embedding.")
-                continue
+                embedding = get_embedding(f"{event_description} {event_date}")
+                if embedding is None:
+                    print(f"Skipping insert for event '{event_name}' due to missing embedding.")
+                    continue
 
-            cursor.execute("""
-                INSERT INTO events (event_name, event_date, event_description, embedding)
-                VALUES (%s, %s, %s, %s)
-            """, (event_name, event_date, event_description, embedding))
+                cursor.execute("""
+                    INSERT INTO events (event_name, event_date, event_description, embedding)
+                    VALUES (%s, %s, %s, %s)
+                """, (event_name, event_date, event_description, embedding))
 
-    conn.commit()
-    cursor.close()
+        conn.commit()
+        cursor.close()
+    except Exception as e:
+        print(f"Error insterting event: {e}")
+        return None
+
+    
 
 def search_similar_event(message, conn):
     """Search for the most similar event in the database based on the message embedding."""
