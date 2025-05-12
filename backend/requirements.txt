@@ -1,12 +1,12 @@
 fastapi
 uvicorn
-gradio
-tiktoken
 dotenv
 openai
 networkx
 psycopg2-binary
-textblob
 scikit-learn
-torch
 transformers
+gtts
+faster-whisper
+torch
+python-multipart

@@ -9,16 +9,11 @@ import torch.nn.functional as F
 import os
 
 # Set cache path (must match Dockerfile ENV)
-os.environ['TRANSFORMERS_CACHE'] = '/app/.cache/huggingface'
+os.environ['HF_HOME'] = '/app/.cache/huggingface'
 
-# Model info
-MODEL_NAME = "nlptown/bert-base-multilingual-uncased-sentiment"
-
-# Load tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForSequenceClassification.from_pretrained(
-    "nlptown/bert-base-multilingual-uncased-sentiment", num_labels=5
-)
+model_name = "nlptown/bert-base-multilingual-uncased-sentiment"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSequenceClassification.from_pretrained(model_name)
 
 # Sentiment analysis function
 def robbert_sentiment_analysis(message: str):
