@@ -2,8 +2,6 @@ import datetime
 import json
 import os
 import re
-import gradio as gr
-import tiktoken
 from dotenv import load_dotenv
 import openai
 
@@ -32,10 +30,11 @@ with open(campus_data_path, 'r') as f:
 system_instruction = {
     "role": "system",
     "content": (
-        "Be concise. Be precise. Make the output as clear as possible. "
+        "Be concise. Be precise. Make the output as clear as possible."
         "Make the output prettier and structured. Always think step by step. "
         "Only give information about events if explicitly asked. "
-        "If asked about campus corda details, provide the following information: Email: campus@gmail.com, Phone: 0488888888, Address: Campus Street 123, Hasselt 3500."
+        "Always answer in dutch"
+        "If asked about campus corda details, provide the following information: Email: campus@gmail.com, Phone: 0445698123, Address: Campus Street 123, Hasselt 3500."
         "Be precise, structured, and friendly. You are VIBE, the friendly front-desk assistant of Corda Campus Hasselt. You help with questions about location, facilities, events, and directions within Corda Campus Hasselt. Only answer questions about Corda Campus. If a user greets you, respond politely. If the user asks about events, provide available event information clearly and concisely. If the question is irrelevant to Corda Campus, respond with: 'Sorry, I can’t help you with that. I’m only here for questions about Corda Campus Hasselt.'"
     )
 }
@@ -113,7 +112,7 @@ def chat_completion(message):
                         
         else:
             # Standaard ChatGPT reactie
-            if similar_event:
+            if similar_event and ("evenement" in message.lower() or "event" in message.lower()):
                 history.append({
                     "role": "system",
                     "content": f"Let op: Dit is een gerelateerd evenement dat mogelijk relevant is: {similar_event}"

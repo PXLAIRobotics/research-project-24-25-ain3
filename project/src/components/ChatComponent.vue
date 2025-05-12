@@ -13,9 +13,22 @@ const inputValue = ref('')
 const messages = ref([])
 const chatDisabled = ref(false)
 const endChatMessage = ref('')
-
+const audioUrl = ref('')
+const mediaRecorder = ref(null);
+let chunks = [];
+const isRecording = ref(false)
+const isTtsStarted = ref(false);
 
 const transitionDuration = 2500
+
+const toggleRecording = async () => {
+  if (isRecording.value) {
+    await stopRecording()
+  } else {
+    await startRecording()
+  }
+}
+
 
 const addMessage = (message, sender) => {
   messages.value.push({ sender: sender, message: message })
@@ -26,19 +39,15 @@ const routeMessage = () =>{
 }
 
 const sendMessage = () => {
-
-  
-  console.log('sendMessage called')
-  currentGif.value = transitionGif
+  console.log('sendMessage called');
+  currentGif.value = transitionGif;
 
   setTimeout(() => {
-    currentGif.value = thinkingGif
-  }, transitionDuration)
-
-
+    currentGif.value = thinkingGif;
+  }, transitionDuration);
 
   if (inputValue.value.trim() !== '') {
-    addMessage(inputValue.value, 'client')
+    addMessage(inputValue.value, 'client');
 
     const typingMessage = { sender: 'chatbot', message: '...' };
     messages.value.push(typingMessage);
@@ -46,29 +55,60 @@ const sendMessage = () => {
     const userMessage = inputValue.value;
     inputValue.value = '';
 
-
     axios
       .get('http://localhost:8000/pixie', {
         params: { message: userMessage },
       })
       .then((response) => {
-
-        const index = messages.value.findIndex(msg => msg.message === '...');
-        if (index !== -1) {
-          messages.value.splice(index, 1);
-        }
-
         const chatbotMessage = marked(response.data.data);
-        addMessage(chatbotMessage, 'chatbot');
         
-        if (response.data.endChat !== ""){
+        // 🔊 TTS hier uitvoeren
+        const plainText = response.data.data
+          .replace(/<[^>]*>/g, '')         // Verwijdert HTML-tags
+          .replace(/[\r\n]+/g, '. '); // punten ipv doorlopende tekst
+        // Start de TTS pas af wanneer we de chatbotmessage kunnen tonen
+        axios
+          .get('http://localhost:8000/tts', {
+            params: { text: plainText },
+            responseType: 'blob'
+          })
+          .then((response) => {
+            // Maak een blob van het audiobestand
+            const blob = new Blob([response.data], { type: 'audio/mp3' });
+            const url = URL.createObjectURL(blob);
+            audioUrl.value = url;
+
+            // Speel de audio af
+            const audio = new Audio(url);
+
+            audio.play().then(() => {
+              console.log('Audio is playing');
+              isTtsStarted.value = true; // Markeer dat de TTS is gestart
+              const index = messages.value.findIndex(msg => msg.message === '...');
+              if (index !== -1) {
+                messages.value.splice(index, 1);
+              }
+
+              // Voeg de chatbot message pas toe als de TTS is begonnen
+              addMessage(chatbotMessage, 'chatbot');
+            }).catch(error => {
+              console.error('Error playing audio:', error);
+              alert('Er is een fout opgetreden bij het afspelen van de audio.');
+            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('Er is een fout opgetreden bij het ophalen van de spraak.');
+          });
+
+        if (response.data.endChat !== "") {
           chatDisabled.value = true;
           endChatMessage.value = response.data.endChat;
           addMessage(endChatMessage.value, 'chatbot');
         }
       })
       .catch((error) => {
-        console.error('Error:', error)
+        console.error('Error:', error);
 
         const index = messages.value.findIndex(msg => msg.message === '...');
         if (index !== -1) {
@@ -76,10 +116,64 @@ const sendMessage = () => {
         }
 
         addMessage('Er is een fout opgetreden. Probeer het later opnieuw.', 'chatbot');
-      })
+      });
   }
 
-  inputValue.value = ''
+  inputValue.value = '';
+};
+
+
+
+const startRecording = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    mediaRecorder.value = new MediaRecorder(stream)
+    chunks.length = 0 // reset chunks
+
+    mediaRecorder.value.ondataavailable = e => {
+      if (e.data.size > 0) chunks.push(e.data)
+    }
+
+    mediaRecorder.value.onstop = async () => {
+      const blob = new Blob(chunks, { type: 'audio/webm' })
+      chunks.length = 0
+
+      const formData = new FormData()
+      formData.append('audio', blob, 'speech.webm')
+
+      try {
+        const res = await fetch('http://localhost:8000/transcribe', {
+          method: 'POST',
+          body: formData,
+        })
+
+        const data = await res.json()
+        if (data.text) {
+          console.log('Transcript:', data.text)
+          inputValue.value = data.text
+          sendMessage()
+        } else {
+          alert('Geen tekst herkend.')
+        }
+      } catch (err) {
+        console.error('Transcribe error:', err)
+        alert('Fout bij spraakherkenning.')
+      }
+    }
+
+    mediaRecorder.value.start()
+    isRecording.value = true
+  } catch (err) {
+    console.error('Microfoon toegang geweigerd of niet beschikbaar.', err)
+    alert('Microfoon niet beschikbaar of geweigerd.')
+  }
+}
+
+const stopRecording = async () => {
+  if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
+    mediaRecorder.value.stop()
+    isRecording.value = false
+  }
 }
 </script>
 
@@ -111,8 +205,8 @@ const sendMessage = () => {
     <div class="chatbox">
       <button class="routeButton" @click="routeMessage" :disabled="chatDisabled">Route Vragen</button>
       <input v-model="inputValue" class="inputbox" type="text" placeholder="Message Vibe" @keyup.enter="sendMessage" :disabled="chatDisabled"/>
-      <button class="sendbutton" @click="sendMessage" :disabled="chatDisabled">
-        <img src="@/assets/send-icon.png" alt="send icon" class="image-button" />
+      <button @click="toggleRecording" class="sendbutton" :class="{ recording: isRecording }" :disabled="chatDisabled" > 
+        <img src="@/assets/sound-waves.png" alt="speak icon" class="speak-image" /> 
       </button>
     </div>
   </div>
@@ -281,4 +375,16 @@ header{
   cursor: not-allowed;
 }
 
+
+.speak-image{
+  background-color: white;
+  height: 40px;
+  margin: 0;
+  border-radius: 20px;
+  padding: 5px;
+}
+
+.sendbutton.recording .speak-image {
+  background-color: #2196f3; /* blauw */
+}
 </style>
