@@ -27,12 +27,9 @@
 
     <div class="error-state" :style="{ minHeight: '24px' }">
   <p v-if="error">{{ error }}</p>
-</div>
-
-
+  </div>
     <button @click="submitEvents" class="submit-btn">Submit Events</button>
   </div>
-
   
 </template>
 
@@ -143,6 +140,7 @@ input {
   color: white;
   border-radius: 5px;
   cursor: pointer;
+  margin-left: 0px;
 }
 
 .submit-btn:hover {

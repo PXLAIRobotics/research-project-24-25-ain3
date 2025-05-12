@@ -250,7 +250,7 @@ function showSuccess(message) {
 .admin-item {
   background-color: #333333;
   padding: 10px;
-  margin-bottom: 10px;
+  margin: 5px 0px;
   border-radius: 5px;
   display: flex;
   align-items: center;
