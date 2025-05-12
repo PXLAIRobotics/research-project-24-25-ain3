@@ -55,57 +55,87 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue'
 
-const events = ref([]);
-const loading = ref(true);
-const error = ref(null);
+// Helpers
+function getToken() {
+  return localStorage.getItem('token')
+}
 
-const fetchEvents = async () => {
-  try {
-    const response = await axios.get('http://localhost:8000/allEvents');
-    events.value = response.data.events; 
-    console.log('Fetched events:', events.value);
-  } catch (err) {
-    error.value = 'Failed to load events.';
-  } finally {
-    loading.value = false;
+async function authFetch(url, options = {}) {
+  const token = getToken()
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
   }
-};
+  const response = await fetch(url, { ...options, headers })
+  if (response.status === 401) {
+    alert('Session expired or unauthorized.')
+    throw new Error('Unauthorized')
+  }
+  return response
+}
 
-const eventToDelete = ref(null);
-const showConfirmDialog = ref(false);
+// State
+const events = ref([])
+const loading = ref(true)
+const error = ref(null)
+const eventToDelete = ref(null)
+const showConfirmDialog = ref(false)
 
+// Fetch events with token
+const fetchEvents = async () => {
+  loading.value = true
+  try {
+    const response = await authFetch('http://localhost:8000/allEvents')
+    const data = await response.json()
+    events.value = data.events
+  } catch (err) {
+    console.error(err)
+    error.value = 'Failed to load events.'
+  } finally {
+    loading.value = false
+  }
+}
+
+// Delete logic
 const requestDeleteEvent = (eventName) => {
-  eventToDelete.value = eventName;
-  showConfirmDialog.value = true;
-};
+  eventToDelete.value = eventName
+  showConfirmDialog.value = true
+}
 
 const confirmDeleteEvent = async () => {
-  if (!eventToDelete.value) return;
+  if (!eventToDelete.value) return
   try {
-    await axios.post('http://localhost:8000/delete-event', { name: eventToDelete.value });
-    events.value = events.value.filter(event => event.event_name !== eventToDelete.value);
+    const response = await authFetch('http://localhost:8000/delete-event', {
+      method: 'POST',
+      body: JSON.stringify({ name: eventToDelete.value })
+    })
+    const result = await response.json()
+    if (result.success || result.message) {
+      events.value = events.value.filter(event => event.event_name !== eventToDelete.value)
+    }
   } catch (err) {
-    console.error('Error deleting event:', err);
-    alert('Failed to delete event.');
+    console.error('Error deleting event:', err)
+    alert('Failed to delete event.')
   } finally {
-    showConfirmDialog.value = false;
-    eventToDelete.value = null;
+    showConfirmDialog.value = false
+    eventToDelete.value = null
   }
-};
+}
 
 const cancelDelete = () => {
-  showConfirmDialog.value = false;
-  eventToDelete.value = null;
-};
+  showConfirmDialog.value = false
+  eventToDelete.value = null
+}
 
-
+// Lifecycle
 onMounted(() => {
-  fetchEvents();
-});
+  fetchEvents()
+})
 </script>
+
 
 <style scoped>
 .events-panel {

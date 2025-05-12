@@ -56,8 +56,16 @@
         <i class="fas fa-admin-circle admin-icon"></i>
         <span class="admin-name">{{ admin.name }}</span>
         <span class="admin-email">{{ admin.email }}</span>
-        <button class="delete-btn" @click="requestDeleteAdmin(admin.email)">Delete</button>
+        <!-- Knop voor de huidige gebruiker -->
+        <button v-if="admin.email === currentUserEmail" class="current-btn">Current</button>
+        <!-- Delete knop alleen tonen als het NIET de huidige gebruiker is -->
+        <button v-if="admin.email !== currentUserEmail" class="delete-btn" @click="requestDeleteAdmin(admin.email)">Delete</button>
       </div>
+    </div>
+
+    <!-- Success message -->
+    <div v-if="successMessage" class="success-message">
+      {{ successMessage }}
     </div>
   </div>
 </template>
@@ -66,9 +74,12 @@
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 
-// Helpers
 function getToken() {
   return localStorage.getItem('token')
+}
+
+function getCurrentUserEmail() {
+  return localStorage.getItem('adminEmail')
 }
 
 async function authFetch(url, options = {}) {
@@ -86,13 +97,14 @@ async function authFetch(url, options = {}) {
   return response
 }
 
-// State
 const admins = ref([])
 const adminToDelete = ref(null)
 const showConfirmDialog = ref(false)
 const showAdminForm = ref(false)
 const confirmPassword = ref('')
 const submitted = ref(false)
+const successMessage = ref('')
+const currentUserEmail = ref(getCurrentUserEmail())
 
 const newAdmin = ref({
   username: '',
@@ -100,18 +112,15 @@ const newAdmin = ref({
   password: ''
 })
 
-// Computed
 const passwordMismatch = computed(() => newAdmin.value.password !== confirmPassword.value)
 const isFormFilled = computed(() =>
   newAdmin.value.username && newAdmin.value.email && newAdmin.value.password && confirmPassword.value
 )
 
-// Lifecycle
 onMounted(async () => {
   await fetchAdmins()
 })
 
-// Functions
 async function fetchAdmins() {
   try {
     const response = await authFetch('http://localhost:8000/admins')
@@ -123,6 +132,10 @@ async function fetchAdmins() {
 }
 
 function requestDeleteAdmin(email) {
+  if (email === currentUserEmail.value) {
+    alert("You cannot delete your own account.")
+    return
+  }
   adminToDelete.value = email
   showConfirmDialog.value = true
 }
@@ -136,12 +149,11 @@ async function confirmDeleteAdmin() {
       { email: adminToDelete.value },
       { headers: { Authorization: `Bearer ${token}` } }
     )
-
     await fetchAdmins()
-    alert(response.data.message)
+    showSuccess(response.data.message)
   } catch (err) {
     console.error('Error deleting admin:', err)
-    alert('Failed to delete admin.')
+    successMessage.value = 'Failed to delete admin.'
   } finally {
     showConfirmDialog.value = false
     adminToDelete.value = null
@@ -176,17 +188,22 @@ async function submitForm() {
       newAdmin.value,
       { headers: { Authorization: `Bearer ${token}` } }
     )
-
-    alert(response.data.message)
     cancelForm()
     await fetchAdmins()
+    showSuccess(response.data.message)
   } catch (err) {
     console.error('Error adding admin:', err)
-    alert('Failed to add admin.')
+    successMessage.value = 'Failed to add admin.'
   }
 }
-</script>
 
+function showSuccess(message) {
+  successMessage.value = message
+  setTimeout(() => {
+    successMessage.value = ''
+  }, 3000)
+}
+</script>
 
 <style scoped>
 .admins-component {
@@ -228,17 +245,17 @@ async function submitForm() {
 
 .admin-name {
   font-weight: bold;
-  flex: 1; /* Takes all available space, aligning email to the right */
+  flex: 1;
 }
 
 .admin-email {
   color: #aaa;
-  text-align: right; /* Ensures the email is aligned to the right */
+  text-align: right;
 }
 
 .admin-icon {
   font-size: 1.5em;
-  margin-right: 10px; /* Space between icon and text */
+  margin-right: 10px;
   color: #ffffff;
 }
 
@@ -266,7 +283,8 @@ async function submitForm() {
   background-color: #45087e;
 }
 
-.delete-btn {
+.delete-btn, .current-btn {
+  width: 100px;
   background-color: #e53935;
   border: none;
   color: white;
@@ -274,6 +292,14 @@ async function submitForm() {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.current-btn {
+  background-color: #680eee;
+}
+
+.current-btn:hover {
+  cursor: default;
 }
 
 .delete-btn:hover {
@@ -367,16 +393,16 @@ input {
 }
 
 .form button {
-  color: #ffffff;
+  background-color: #680eee;
   padding: 10px 15px;
   border: none;
   cursor: pointer;
-  margin-left: 10px;
+  margin-left: 0px;
   border-radius: 5px;
 }
 
 .form button:hover {
-  background-color: #680eee;
+  background-color: #45087e;
 }
 
 .active-submit {
@@ -393,4 +419,12 @@ form {
   justify-content: space-between;
 }
 
+.success-message {
+  margin-top: 1rem;
+  color: #4caf50;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 5px;
+  text-align: center;
+}
 </style>

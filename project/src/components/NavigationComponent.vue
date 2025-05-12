@@ -15,7 +15,7 @@ const newConversation = () =>{
 }
 
 const handleClick = () => {
-  router.push({ name: 'adminComponent' });
+  router.push({ name: 'loginComponent' });
 };
 </script>
 

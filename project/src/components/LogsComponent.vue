@@ -60,89 +60,107 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue'
 
-const logs = ref([]);
-const loading = ref(true);
-const error = ref(null);
-const showConfirmDialog = ref(false);
-const clearLogsSuccess = ref(false);
-const collapsedLogs = ref([]);
+// Helpers
+function getToken() {
+  return localStorage.getItem('token')
+}
 
-const fetchLogs = async () => {
-  loading.value = true;
-  try {
-    const response = await axios.get('http://localhost:8000/logs');
-    logs.value = response.data.logs;
-
-    // Auto-collapse all log files
-    collapsedLogs.value = logs.value.map((_, index) => index);
-  } catch (err) {
-    error.value = 'Failed to load logs.';
-  } finally {
-    loading.value = false;
+async function authFetch(url, options = {}) {
+  const token = getToken()
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
   }
-};
+  const response = await fetch(url, { ...options, headers })
+  if (response.status === 401) {
+    alert('Session expired or unauthorized.')
+    throw new Error('Unauthorized')
+  }
+  return response
+}
 
-const requestDeleteLogs = (eventName) => {
-  showConfirmDialog.value = true;
-};
+// State
+const logs = ref([])
+const loading = ref(true)
+const error = ref(null)
+const showConfirmDialog = ref(false)
+const clearLogsSuccess = ref(false)
+const collapsedLogs = ref([])
+const eventToDelete = ref(null)
 
+// Fetch logs from backend
+const fetchLogs = async () => {
+  loading.value = true
+  try {
+    const response = await authFetch('http://localhost:8000/logs')
+    const data = await response.json()
+    logs.value = data.logs
+    collapsedLogs.value = logs.value.map((_, index) => index)
+  } catch (err) {
+    console.error(err)
+    error.value = 'Failed to load logs.'
+  } finally {
+    loading.value = false
+  }
+}
+
+// Request confirmation
+const requestDeleteLogs = () => {
+  showConfirmDialog.value = true
+}
+
+// Confirm and delete logs
 const confirmDeleteLogs = async () => {
   try {
-    // Clear logs from backend (adjust the API call as per your backend setup)
-    await axios.post('http://localhost:8000/clear-logs');
-    
-    // Clear the logs in the frontend
-    logs.value = [];
-    clearLogsSuccess.value = true;
+    const response = await authFetch('http://localhost:8000/clear-logs', {
+      method: 'POST',
+    })
+    const result = await response.json()
+    logs.value = []
+    clearLogsSuccess.value = true
 
-    // Reset success state after 3 seconds
     setTimeout(() => {
-      clearLogsSuccess.value = false;
-    }, 3000);
-
+      clearLogsSuccess.value = false
+    }, 3000)
   } catch (err) {
-    console.error('Error deleting logs:', err);
-    alert('Failed to delete logs.');
+    console.error('Error deleting logs:', err)
+    alert('Failed to delete logs.')
   } finally {
-    showConfirmDialog.value = false;
-    eventToDelete.value = null;
+    showConfirmDialog.value = false
+    eventToDelete.value = null
   }
-};
+}
 
 const cancelDelete = () => {
-  showConfirmDialog.value = false;
-  eventToDelete.value = null;
-};
+  showConfirmDialog.value = false
+  eventToDelete.value = null
+}
 
-// Row class based on log role
 const rowClass = (log) => {
-  return log.role === "error" ? "error-row" : "";
-};
+  return log.role === 'error' ? 'error-row' : ''
+}
 
-// Response code color class
 const codeClass = (code) => {
-  if (code >= 400) return "code-red";
-  if (code >= 300) return "code-orange";
-  if (code >= 200) return "code-green";
-  return "code-gray";
-};
+  if (code >= 400) return 'code-red'
+  if (code >= 300) return 'code-orange'
+  if (code >= 200) return 'code-green'
+  return 'code-gray'
+}
 
-// Toggle collapse for log files
 const toggleCollapse = (fileIndex) => {
   if (collapsedLogs.value.includes(fileIndex)) {
-    collapsedLogs.value = collapsedLogs.value.filter(index => index !== fileIndex);
+    collapsedLogs.value = collapsedLogs.value.filter(index => index !== fileIndex)
   } else {
-    collapsedLogs.value.push(fileIndex);
+    collapsedLogs.value.push(fileIndex)
   }
-};
+}
 
-// Automatically load logs on mount
 onMounted(() => {
-  fetchLogs();
-});
+  fetchLogs()
+})
 </script>
 
 <style scoped>

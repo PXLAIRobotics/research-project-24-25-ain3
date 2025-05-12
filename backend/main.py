@@ -64,7 +64,7 @@ class EventRequest(BaseModel):
     events: Dict[str, List[Event]]
     
 @app.get("/allEvents")
-def get_events():
+def get_events(user=Depends(get_current_user)):
     try:
         conn = get_database_connection()
         create_events_table_if_not_exists(conn)

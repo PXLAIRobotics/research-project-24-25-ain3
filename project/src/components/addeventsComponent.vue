@@ -38,8 +38,28 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
 
+// Helpers
+function getToken() {
+  return localStorage.getItem('token')
+}
+
+async function authFetch(url, options = {}) {
+  const token = getToken()
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+  const response = await fetch(url, { ...options, headers })
+  if (response.status === 401) {
+    alert('Session expired or unauthorized.')
+    throw new Error('Unauthorized')
+  }
+  return response
+}
+
+// State
 const loading = ref(false)
 const error = ref('')
 const campusName = ref('Corda')
@@ -70,8 +90,12 @@ const submitEvents = async () => {
   }
 
   try {
-    const response = await axios.post('http://localhost:8000/events', payload)
-    console.log('Success:', response.data)
+    const response = await authFetch('http://localhost:8000/events', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    const result = await response.json()
+    console.log('Success:', result)
   } catch (err) {
     console.error('Error:', err)
     error.value = 'Failed to submit events.'
@@ -80,6 +104,7 @@ const submitEvents = async () => {
   }
 }
 </script>
+
 
 <style scoped>
 .addevents-panel {

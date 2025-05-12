@@ -1,25 +1,5 @@
 <template>
-  <div v-if="showModal" class="login-panel">
-    <div class="modal">
-      <div class="modal-content">
-        <h2>Login</h2>
-        <form @submit.prevent="handleLogin">
-          <div class="input-group">
-            <label for="email">Email</label>
-            <input type="email" v-model="email" required />
-          </div>
-          <div class="input-group">
-            <label for="password">Password</label>
-            <input type="password" v-model="password" required />
-          </div>
-          <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
-          <button @click="closeModal">Close</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="!showModal" class="admin-panel">
+  <div class="admin-panel">
     <header>
       <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
@@ -58,9 +38,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import jwt_decode from 'jwt-decode'
 
 import UsersComponent from '../components/UsersComponent.vue'
 import SettingsComponent from '../components/SettingsComponent.vue'
@@ -68,79 +47,18 @@ import LogsComponent from '../components/LogsComponent.vue'
 import AllEventsComponent from '../components/AllEventsComponent.vue'
 import addeventsComponent from './addeventsComponent.vue'
 
-const email = ref('')
-const password = ref('')
-const showModal = ref(true)
 const isSidebarVisible = ref(true)
 const activePanel = ref('dashboard')
-
 const router = useRouter()
-
-const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 
 onMounted(() => {
   const token = localStorage.getItem('token')
-  if (token) {
-    const decoded = jwt_decode(token)
-    const now = Date.now() / 1000
-    if (decoded.exp > now) {
-      showModal.value = false
-      email.value = decoded.sub
-    } else {
-      logout()
-    }
+  const adminEmail = localStorage.getItem('adminEmail')
+
+  if (!token || !adminEmail) {
+    router.push('/')
   }
 })
-
-// Universele fetch met token
-async function globalFetch(url, options = {}) {
-  const token = localStorage.getItem('token')
-  const headers = {
-    ...options.headers,
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  }
-
-  const response = await fetch(url, { ...options, headers })
-  if (response.status === 401) {
-    logout()
-    throw new Error('Unauthorized')
-  }
-  return response
-}
-
-async function handleLogin() {
-  try {
-    const response = await fetch('http://localhost:8000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value, password: password.value })
-    })
-
-    if (!response.ok) throw new Error('Login failed')
-
-    const data = await response.json()
-    localStorage.setItem('token', data.access_token)
-
-    const decoded = jwt_decode(data.access_token)
-    const now = Date.now() / 1000
-
-    if (decoded.exp < now) throw new Error('Token expired')
-
-    email.value = decoded.sub
-    localStorage.setItem('adminEmail', decoded.sub)
-
-    showModal.value = false
-    router.push('/admin')
-  } catch (error) {
-    alert('Invalid credentials or session expired')
-    console.error(error)
-  }
-}
-
-function closeModal() {
-  router.push('/')
-}
 
 function logout() {
   localStorage.removeItem('token')
@@ -262,8 +180,12 @@ button:hover {
   background-color: #680eee;
 }
 
+.logout {
+  background-color: #e53935;
+}
+
 .logout:hover {
-  background-color: red;
+  background-color: #c62828;
 }
 
 .main-content {
@@ -314,7 +236,6 @@ main {
   overflow-y: auto; /* Enable vertical scrolling */
   height: calc(100vh - 60px); /* Adjust this height if needed */
 }
-
 
 .dashboard-view {
   display: grid;
