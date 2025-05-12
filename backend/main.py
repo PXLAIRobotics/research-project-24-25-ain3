@@ -190,6 +190,7 @@ def list_admins(user=Depends(get_current_user)):
 
     
 class DeleteAdminRequest(BaseModel):
+    username: str
     email: str
     
 @app.post("/delete-admin")
@@ -197,7 +198,7 @@ async def delete_admin(request: DeleteAdminRequest, user=Depends(get_current_use
     try:
         email_lower = request.email.lower()
         delete_admin_from_table(email_lower)
-        return {"status": "success", "message": f"Admin {email_lower} deleted."}
+        return {"status": "success", "message": f"Admin {request.username} deleted."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete admin: {str(e)}")
 

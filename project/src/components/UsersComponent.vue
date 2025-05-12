@@ -5,7 +5,7 @@
     <!-- Confirm Dialog -->
     <div v-if="showConfirmDialog" class="confirm-dialog">
       <div class="confirm-dialog-content">
-        <p>Are you sure you want to delete <strong>{{ adminToDelete }}</strong>?</p>
+        <p>Are you sure you want to delete <strong>{{ adminToDelete.username }}</strong>?</p>
         <div class="confirm-dialog-buttons">
           <button @click="confirmDeleteAdmin" class="confirm-btn">Yes, delete</button>
           <button @click="cancelDelete" class="cancel-btn">Cancel</button>
@@ -38,7 +38,8 @@
             <input type="password" v-model="confirmPassword" required />
           </div>
 
-          <p v-if="passwordMismatch && submitted" style="color: red;">Passwords do not match.</p>
+          <p class="error-form" v-if="passwordMismatch && submitted" >Passwords do not match.</p>
+          <p class="error-form" v-if="duplicateEmail && submitted" >Email already in use.</p>
 
           <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
           <button type="button" @click="cancelForm">Close</button>
@@ -56,9 +57,7 @@
         <i class="fas fa-admin-circle admin-icon"></i>
         <span class="admin-name">{{ admin.name }}</span>
         <span class="admin-email">{{ admin.email }}</span>
-        <!-- Knop voor de huidige gebruiker -->
         <button v-if="admin.email === currentUserEmail" class="current-btn">Current</button>
-        <!-- Delete knop alleen tonen als het NIET de huidige gebruiker is -->
         <button v-if="admin.email !== currentUserEmail" class="delete-btn" @click="requestDeleteAdmin(admin.email)">Delete</button>
       </div>
     </div>
@@ -136,9 +135,13 @@ function requestDeleteAdmin(email) {
     alert("You cannot delete your own account.")
     return
   }
-  adminToDelete.value = email
-  showConfirmDialog.value = true
+  const admin = admins.value.find(a => a.email === email)
+  if (admin) {
+    adminToDelete.value = { username: admin.name, email: admin.email }
+    showConfirmDialog.value = true
+  }
 }
+
 
 async function confirmDeleteAdmin() {
   if (!adminToDelete.value) return
@@ -146,7 +149,10 @@ async function confirmDeleteAdmin() {
     const token = getToken()
     const response = await axios.post(
       'http://localhost:8000/delete-admin',
-      { email: adminToDelete.value },
+      {
+        username: adminToDelete.value.username,
+        email: adminToDelete.value.email
+      },
       { headers: { Authorization: `Bearer ${token}` } }
     )
     await fetchAdmins()
@@ -159,6 +165,7 @@ async function confirmDeleteAdmin() {
     adminToDelete.value = null
   }
 }
+
 
 function cancelDelete() {
   showConfirmDialog.value = false
@@ -174,12 +181,23 @@ function cancelForm() {
   newAdmin.value = { username: '', email: '', password: '' }
   confirmPassword.value = ''
   submitted.value = false
+  duplicateEmail.value = false
 }
+
+
+const duplicateEmail = ref(false)
 
 async function submitForm() {
   submitted.value = true
+  duplicateEmail.value = false
 
   if (passwordMismatch.value) return
+
+  const emailExists = admins.value.some(admin => admin.email === newAdmin.value.email)
+  if (emailExists) {
+    duplicateEmail.value = true
+    return
+  }
 
   try {
     const token = getToken()
@@ -427,4 +445,11 @@ form {
   border-radius: 5px;
   text-align: center;
 }
+
+.error-form {
+  color: #d9534f;
+  font-weight: bold;
+  margin: 5px;
+}
+
 </style>
