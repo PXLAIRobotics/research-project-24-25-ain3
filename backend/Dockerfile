@@ -19,7 +19,7 @@ RUN python -m nltk.downloader punkt punkt_tab stopwords && mkdir -p /usr/share/n
 # Download Hugging Face model during the build process to cache it
 RUN python -c "from transformers import AutoTokenizer, AutoModelForSequenceClassification; AutoModelForSequenceClassification.from_pretrained('nlptown/bert-base-multilingual-uncased-sentiment'); AutoTokenizer.from_pretrained('nlptown/bert-base-multilingual-uncased-sentiment')"
 
-COPY .env .
+
 COPY . .
 
 # Expose port for the backend app
