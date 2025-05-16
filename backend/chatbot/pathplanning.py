@@ -1,137 +1,167 @@
 import networkx as nx
-
-import folium
+import hashlib
 import requests
 import os
-import urllib.parse
+import json
+from geopy.distance import geodesic
 
+# Lees coördinaten uit geo.json
+with open("geo.json") as f:
+    data = json.load(f)
 
+nodes = {}
+for feature in data["features"]:
+    name = feature["properties"]["name"]
+    lon, lat = feature["geometry"]["coordinates"]
+    nodes[name] = (lat, lon)
 
+# Maak graaf en voeg knopen toe
+g = nx.Graph()
+for name, (lat, lon) in nodes.items():
+    g.add_node(name, pos=(lat, lon))
 
-G = nx.Graph()
+# Lijst met verbindingen (edges)
+edge_list = [
+    ("A", "Ab"),
+    ("Ab", "ingang corda bar"),
+    ("ingang corda bar", "corda bar"),
+    ("A", "Aba"),
+    ("Aba", "ingang corda 1"),
+    ("ingang corda 1", "corda 1"),
+    ("A", "Ac"),
+    ("Ac", "Aca"),
+    ("Aca", "corda 1"),
+    ("Aca", "B"),
+    ("B", "ingang corda 2"),
+    ("ingang corda 2", "corda 2"),
+    ("B", "Ba"),
+    ("Ba", "Baa"),
+    ("Baa", "ingang corda 1"),
+    ("A",  "Ad"),
+    ("Ad", "C"),
+    ("A", "Ae"),
+    ("Ae","D"),
+    ("D", "Ca"),
+    ("D", "corda 5 ingang"),
+    ("corda 5 ingang", "corda 5"),
+    ("C","Ca"),
+    ("Ca", "corda 5 ingang"),
+    ("corda 5 ingang", "corda 5"),
+    ("C","Cb"),
+    ("Cb","Cba"),
+    ("Cba", "corda 2"),
+    ("Cba","Cbb"),
+    ("Cbb", "corda 3"),
+    ("C", "Cc"),
+    ("Cc", "Ccb"),
+    ("Cc", "Cca"),
+    ("Cca","Ccc"),
+    ("Ccb","Ccc"),
+    ("Cca", "corda 4"),
+    ("Ccaa", "corda 4"),
+    ("Ccaa", "Cca"),
+    ("D", "ingang 6a a"),
+    ("ingang 6a a", "corda 6"),
+    ("Ae","Aea"),
+    ("corda 6a b","Aea"),
+    ("corda 6", "corda 6a b"),
+    ("Aea", "F"),
+    ("F","corda 7 ingang"),
+    ("corda 7 ingang","E"),
+    ("corda 7 ingang","corda 7"),
+    ("E","Ea"),
+    ("E","Eb"),
+    ("Eb","Eba"),
+    ("Eba", "corda 9 i"),
+    ("corda 9 i","corda 9"),
+    ("bushalte", "G"),
+    ("G","Ga"),
+    ("Ga","D")
+]
 
-G.add_node("Corda 1", pos=(50.95172313144371, 5.352094844226686)) # pos = coordinaten
-G.add_node("Corda 2", pos=(50.951626678583736, 5.351265521695136))
-G.add_node("Corda 3", pos=(50.95165882955858, 5.350433009461545))
-G.add_node("Corda 4", pos=(50.95200595607143, 5.350126082209007))
-G.add_node("Corda 5", pos=(50.952752101243064, 5.350403954268296))
-G.add_node("Corda 6", pos=(50.95302491524673, 5.351816284225618))
-G.add_node("Corda 7", pos=(50.95335244240987, 5.353433463162143))
-G.add_node("Corda 8", pos=(50.95383267745878, 5.353749243664546))
-G.add_node("Corda 9", pos=(50.953402505567155, 5.356952211206652))
-G.add_node("Corda A", pos=(50.953440154061774, 5.351114049143033))
-G.add_node("Corda B", pos=(50.953616977248466, 5.351946561376623))
-G.add_node("Corda C", pos=(50.95379580911118, 5.352728038377514))
-G.add_node("Corda D", pos=(50.95434636579674, 5.3534233934232))
-G.add_node("Corda bar", pos=(50.95249971666138, 5.352156110611767))
-G.add_node("Bushalte", pos=(50.952629250889025, 5.348729340739601))
-G.add_node("Treinstation", pos=(50.95451179958787, 5.349206509818355))
-
-G.add_edge("Corda 9", "Corda 1", weight=393) 
-G.add_edge("Corda 1", "Corda 2", weight=60)
-G.add_edge("Corda 2", "Corda 3", weight=57)
-G.add_edge("Corda 3", "Corda 4", weight=50)
-G.add_edge("Corda 4", "Corda 5", weight=75)
-G.add_edge("Corda 5", "Bushalte", weight=90)
-G.add_edge("Corda 5", "Treinstation", weight=218)
-G.add_edge("Corda 5", "Corda A", weight=112)
-G.add_edge("Corda 4", "Corda bar", weight=150)
-G.add_edge("Corda 2", "Corda bar", weight=112)
-G.add_edge("Corda 1", "Corda bar", weight=85)
-G.add_edge("Corda A", "Corda 6", weight=64)
-G.add_edge("Corda A", "Corda B", weight=64)
-G.add_edge("Corda B", "Corda 6", weight=54)
-G.add_edge("Corda B", "Corda C", weight=60)
-G.add_edge("Corda 7", "Corda bar", weight=132)
-G.add_edge("Corda C", "Corda D", weight=90)
-G.add_edge("Corda D", "Corda 8", weight=59)
-G.add_edge("Corda C", "Corda 8", weight=67)
-G.add_edge("Corda 7", "Corda 8", weight=58)
-G.add_edge("Corda 8", "Corda 9", weight=233)
+# Voeg edges toe met geodetische afstand als gewicht
+for u, v in edge_list:
+    pos_u = g.nodes[u]['pos']
+    pos_v = g.nodes[v]['pos']
+    distance = geodesic(pos_u, pos_v).meters
+    g.add_edge(u, v, weight=distance)
 
 
 def generate_map(start, destination, api_key, path):
     import json
     import urllib.parse
 
-    start_coords = G.nodes[start]['pos']
-    destination_coords = G.nodes[destination]['pos']
+    start_coords = g.nodes[start]['pos']
+    destination_coords = g.nodes[destination]['pos']
 
-    # Prepare GeoJSON LineString (coords in lon,lat order)
+    # Prepare GeoJSON LineString (lon,lat)
     geojson = {
         "type": "LineString",
-        "coordinates": [(lon, lat) for lat, lon in [G.nodes[node]['pos'] for node in path]]
+        "coordinates": [
+            (lon, lat) for lat, lon in [g.nodes[node]['pos'] for node in path]
+        ]
     }
 
-    # Encode GeoJSON as URL-safe string
     geojson_encoded = urllib.parse.quote(json.dumps(geojson))
-
-    # Markers
     start_marker = f"pin-s-a+000000({start_coords[1]},{start_coords[0]})"
     end_marker = f"pin-s-b+ff0000({destination_coords[1]},{destination_coords[0]})"
 
-    # Center the map
     center_lat = (start_coords[0] + destination_coords[0]) / 2
     center_lon = (start_coords[1] + destination_coords[1]) / 2
 
-    # Final URL with geojson overlay
     url = (
         f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
         f"geojson({geojson_encoded}),{start_marker},{end_marker}/"
         f"{center_lon},{center_lat},15/800x600"
         f"?access_token={api_key}"
     )
+    path_hash = hashlib.md5("->".join(path).encode()).hexdigest()
+    filename = f"map_{path_hash}.png"
 
-    print("Generated Mapbox URL:", url)
-
-    # Save image
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    output_path = os.path.abspath(os.path.join(script_dir, "..", "project", "public", "maps"))
-    os.makedirs(output_path, exist_ok=True)
-    full_map_path = os.path.join(output_path, "map.png")
-
-    print("Saving map to:", full_map_path)
+    output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "project", "public", "maps")
+    os.makedirs(output_dir, exist_ok=True)
+    full_path = os.path.join(output_dir, filename)
+    if os.path.exists(full_path):
+        os.remove(full_path)
 
     response = requests.get(url)
     if response.status_code == 200:
-        with open(full_map_path, "wb") as f:
-            f.write(response.content)
-        return "/maps/map.png"
+        with open(full_path, "wb") as img:
+            img.write(response.content)
+        return f"/public/maps/{filename}"
     else:
-        raise Exception(f"Failed to fetch map: {response.status_code}, {response.text}")
+        raise Exception(f"Failed to fetch map: {response.status_code}")
 
-def heuristic(source, destination):
-    pos_source = G.nodes[source]["pos"]
-    pos_destination = G.nodes[destination]["pos"]
-    return ((pos_source[0] - pos_destination[0]) ** 2 + (pos_source[1] - pos_destination[1]) ** 2) ** 0.5 # euclidische afstand
 
-# A* algoritme voor pathfinding
+def heuristic(u, v):
+    pos_u = g.nodes[u]['pos']
+    pos_v = g.nodes[v]['pos']
+    # Eenvoudige Euclidische heuristiek
+    return ((pos_u[0] - pos_v[0])**2 + (pos_u[1] - pos_v[1])**2)**0.5
+
+
 def calculate_path(start, destination):
-    # Mapping van lowercase naar echte node namen
     api_key = "pk.eyJ1IjoiZmFzdGFtZXJyYSIsImEiOiJjbThzbHlzZmIwMWlsMm1zZDIwcWZtYmprIn0.NnOKCTjBJfavxl9n9KNDig"
 
-
-
-    location_mapping = {loc.lower(): loc for loc in G.nodes}
-
-    start_normalized = start.lower().strip()
-    destination_normalized = destination.lower().strip()
-
-    if start_normalized not in location_mapping or destination_normalized not in location_mapping:
+    mapping = {loc.lower(): loc for loc in g.nodes}
+    s = start.lower().strip()
+    d = destination.lower().strip()
+    if s not in mapping or d not in mapping:
         raise ValueError("Onbekende locatie.")
 
-    start_node = location_mapping[start_normalized]
-    destination_node = location_mapping[destination_normalized]
+    start_node = mapping[s]
+    dest_node = mapping[d]
 
-    path = nx.astar_path(G, source=start_node, target=destination_node, weight="weight", heuristic=heuristic)
+    path = nx.astar_path(g, start_node, dest_node, weight='weight', heuristic=heuristic)
+    image = generate_map(start_node, dest_node, api_key, path)
 
-    image_path = generate_map( start, destination,api_key, path)
-    total_distance = 0
-    for i in range(len(path) - 1):
-        edge_weight = G[path[i]][path[i + 1]]["weight"]
-        total_distance += edge_weight
-
-    path_string = " -> ".join(path)
-
-    # Return netjes geformatteerd: echte nodes (start_node en destination_node)
-    return {"path": path_string, "total_distance": str(total_distance) + " meter", "start_node": start_node, "destination_node": destination_node, "image_path" : image_path}
+    total = sum(
+        g[path[i]][path[i+1]]['weight'] for i in range(len(path)-1)
+    )
+    return {
+        'path': ' -> '.join(path),
+        'total_distance': f"{total:.1f} meter",
+        'start_node': start_node,
+        'destination_node': dest_node,
+        'image_path': image
+    }

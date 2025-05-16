@@ -12,3 +12,4 @@ torch
 transformers
 folium 
 requests
+geopy
