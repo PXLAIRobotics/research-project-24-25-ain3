@@ -23,6 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./project
 
       - name: Run Vitest
         run: npm run test
