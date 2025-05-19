@@ -24,7 +24,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], 
+    allow_origins=["https://pxlairobotics.github.io/research-project-24-25-ain3/"], 
     allow_credentials=True,
     allow_methods=["*"], 
     allow_headers=["*"],  
@@ -40,7 +40,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     return payload
 
-
+@app.get("/healthz")
+def health_check():
+    return {"status": "ok"}
 
 @app.on_event("startup")
 def startup_event():
