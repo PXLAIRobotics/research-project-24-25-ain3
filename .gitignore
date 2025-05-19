@@ -9,7 +9,6 @@ project/    lerna-debug.log*
 
 project/node_modules
 project/.DS_Store
-project/dist
 project/dist-ssr
 project/coverage
 project/*.local
