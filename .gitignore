@@ -32,3 +32,4 @@ project/*.tsbuildinfo
 project/node_modules/
 node_modules/
 backend/.cache/
+backend/.env
