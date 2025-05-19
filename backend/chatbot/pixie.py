@@ -105,8 +105,12 @@ def chat_completion(message):
                 # Bereken het pad
                 path_info = calculate_path(start, destination)
 
-                response = f"Het pad van {path_info['start_node']} naar {path_info['destination_node']} is als volgt: {path_info['path']}.\n" \
-                f"De totale afstand is {path_info['total_distance']}."
+                response = (
+                    f"Het pad van {path_info['start_node']} naar {path_info['destination_node']} is als volgt: "
+                    f"{path_info['path']}.\n"
+                    f"De totale afstand is {path_info['total_distance']}.\n"
+                    f"![Routekaart]({path_info['image_path']})"
+                )
             else:
                 response = "Sorry, ik kan de start- en bestemminglocaties niet herkennen in je bericht. \nHier is een lijst met alle mogelijke locaties Corda 1, Corda 2, Corda 3, Corda 4, Corda 5, Corda 6, Corda 7, Corda 8, Corda 9, Corda A, Corda B, Corda C, Corda D, Corda bar, Bushalte, Treinstation"
                         
