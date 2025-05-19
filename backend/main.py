@@ -3,22 +3,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
-from chatbot.pixie import chat_completion
-from chatbot.pathplanning import calculate_path
-from database import delete_admin_from_table, authenticate_admin, create_default_admin, create_admin, get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events
+from backend.chatbot.pixie import chat_completion
+from backend.chatbot.pathplanning import calculate_path
+from backend.database import (
+    delete_admin_from_table, authenticate_admin, create_default_admin, create_admin, 
+    get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events
+)
+from backend.chatbot.input_sanitizer import topic_modelling
+from backend.auth import create_access_token, verify_token
 import json
 import os
 import bcrypt
 from typing import Dict, List
-from chatbot.input_sanitizer import topic_modelling
 from fastapi.responses import FileResponse
 from gtts import gTTS
 import uuid
 import re
 import html
 from faster_whisper import WhisperModel
-from auth import create_access_token
-from auth import verify_token
 
 app = FastAPI()
 
