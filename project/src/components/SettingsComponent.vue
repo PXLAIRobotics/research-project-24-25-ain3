@@ -165,6 +165,7 @@ button.submit-btn {
   width: 100%;
   transition: background-color 0.3s ease;
   position: relative;
+  margin-left: 0px;
 }
 
 button.submit-btn:hover {

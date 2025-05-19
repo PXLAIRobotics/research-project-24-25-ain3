@@ -15,7 +15,7 @@ const newConversation = () =>{
 }
 
 const handleClick = () => {
-  router.push({ name: 'adminComponent' });
+  router.push({ name: 'loginComponent' });
 };
 </script>
 
@@ -51,17 +51,6 @@ const handleClick = () => {
 
         </v-layout>
     </v-card>
-    <!-- <div class="Navigation">
-        <h1>Vibe</h1>
-        <button class="NewConversation" @click="navList.newConversation">New chat</button>
-        <ul>
-            <NavigationItem
-            v-for="conversation in conversations"
-            :key="conversation.id"
-            :conversation="conversation"
-            />
-        </ul>
-    </div> -->
 </template>
 
 <style scoped>

@@ -1,26 +1,6 @@
 <template>
-  <div v-if="showModal" class="login-panel">
-    <div class="modal">
-      <div class="modal-content">
-        <h2>Login</h2>
-        <form @submit.prevent="handleLogin">
-          <div class="input-group">
-            <label for="email">Email</label>
-            <input type="email" v-model="email" required />
-          </div>
-          <div class="input-group">
-            <label for="password">Password</label>
-            <input type="password" v-model="password" required />
-          </div>
-          <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
-          <button @click="closeModal">Close</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="!showModal" class="admin-panel">
-    <header >
+  <div class="admin-panel">
+    <header>
       <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
       <div>
@@ -50,7 +30,6 @@
         <UsersComponent v-else-if="activePanel === 'users'" class="expanded" />
         <SettingsComponent v-else-if="activePanel === 'settings'" class="expanded" />
         <LogsComponent v-else-if="activePanel === 'logs'" class="expanded" />
-        <ReportsComponent v-else-if="activePanel === 'reports'" class="expanded" />
         <AllEventsComponent v-else-if="activePanel === 'all_events'" class="expanded" />
         <addeventsComponent v-else-if="activePanel === 'event adder'" class="expanded" />
       </main>
@@ -59,52 +38,37 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import UsersComponent from '../components/UsersComponent.vue';
-import SettingsComponent from '../components/SettingsComponent.vue';
-import LogsComponent from '../components/LogsComponent.vue';
 
-import AllEventsComponent from '../components/AllEventsComponent.vue';
-import addeventsComponent from './addeventsComponent.vue';
+import UsersComponent from '../components/UsersComponent.vue'
+import SettingsComponent from '../components/SettingsComponent.vue'
+import LogsComponent from '../components/LogsComponent.vue'
+import AllEventsComponent from '../components/AllEventsComponent.vue'
+import addeventsComponent from './addeventsComponent.vue'
 
-const email = ref('')
-const password = ref('')
-const showModal = ref(true)
-
-const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 const isSidebarVisible = ref(true)
-const activePanel = ref('dashboard');
+const activePanel = ref('dashboard')
 const router = useRouter()
 
-const correctEmail = 'admin@gmail.com'
-const correctPassword = 'admin'
-
 onMounted(() => {
-  showModal.value = true
+  const token = localStorage.getItem('token')
+  const adminEmail = localStorage.getItem('adminEmail')
+
+  if (!token || !adminEmail) {
+    router.push('/')
+  }
 })
 
-function handleLogin() {
-  if (email.value === correctEmail && password.value === correctPassword) {
-    showModal.value = false
-    router.push('/admin')
-  } else {
-    alert('Invalid credentials')
-  }
-}
-
-function closeModal() {
-  router.push({ name: 'interfaceComponent' });
-}
-
 function logout() {
-  localStorage.removeItem('userToken')
+  localStorage.removeItem('token')
+  localStorage.removeItem('adminEmail')
   router.push('/')
 }
 
 const handleClick = () => {
-  router.push({ name: 'interfaceComponent' });
-};
+  router.push({ name: 'interfaceComponent' })
+}
 </script>
 
 <style>
@@ -115,6 +79,7 @@ const handleClick = () => {
 .formSubmit {
   margin-bottom: 10px;
 }
+
 form {
   display: flex;
   flex-direction: column;
@@ -215,8 +180,12 @@ button:hover {
   background-color: #680eee;
 }
 
+.logout {
+  background-color: #e53935;
+}
+
 .logout:hover {
-  background-color: red;
+  background-color: #c62828;
 }
 
 .main-content {
@@ -267,7 +236,6 @@ main {
   overflow-y: auto; /* Enable vertical scrolling */
   height: calc(100vh - 60px); /* Adjust this height if needed */
 }
-
 
 .dashboard-view {
   display: grid;

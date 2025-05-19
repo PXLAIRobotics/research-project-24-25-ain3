@@ -2,17 +2,20 @@
   <div class="log-container">
     <h2>System Logs</h2>
 
-    <!-- Clear Logs Button -->
-    <div class="input-group">
-      <button type="button" @click="promptClearLogs" class="clear-logs-btn">Clear Logs</button>
-      <div v-if="showClearLogsConfirmation" class="confirmation">
-        <p>Are you sure you want to clear the logs?</p>
-        <div class="confirmation-buttons">
-          <button @click="clearLogs" class="confirm-btn">Yes</button>
-          <button @click="cancelClearLogs" class="cancel-btn">No</button>
+    <!-- Confirm Dialog -->
+    <div v-if="showConfirmDialog" class="confirm-dialog">
+      <div class="confirm-dialog-content">
+        <p>Are you sure you want to delete <strong>ALL logs</strong>?</p>
+        <div class="confirm-dialog-buttons">
+          <button @click="confirmDeleteLogs" class="confirm-btn">Yes, delete</button>
+          <button @click="cancelDelete" class="cancel-btn">Cancel</button>
         </div>
       </div>
-      <p v-if="clearLogsSuccess" class="success-message">Logs cleared successfully!</p>
+    </div>
+
+    <!-- Clear Logs Button -->
+    <div class="input-group">
+      <button type="button" @click="requestDeleteLogs" class="delete-btn">Clear Logs</button>
     </div>
 
     <div class="table-wrapper">
@@ -57,89 +60,107 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue'
 
-const logs = ref([]);
-const loading = ref(true);
-const error = ref(null);
-const showClearLogsConfirmation = ref(false);
-const clearLogsSuccess = ref(false);
-const collapsedLogs = ref([]);
+// Helpers
+function getToken() {
+  return localStorage.getItem('token')
+}
 
+async function authFetch(url, options = {}) {
+  const token = getToken()
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+  const response = await fetch(url, { ...options, headers })
+  if (response.status === 401) {
+    alert('Session expired or unauthorized.')
+    throw new Error('Unauthorized')
+  }
+  return response
+}
+
+// State
+const logs = ref([])
+const loading = ref(true)
+const error = ref(null)
+const showConfirmDialog = ref(false)
+const clearLogsSuccess = ref(false)
+const collapsedLogs = ref([])
+const eventToDelete = ref(null)
+
+// Fetch logs from backend
 const fetchLogs = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await axios.get('http://localhost:8000/logs');
-    logs.value = response.data.logs;
-
-    // Auto-collapse all log files
-    collapsedLogs.value = logs.value.map((_, index) => index);
+    const response = await authFetch('http://localhost:8000/logs')
+    const data = await response.json()
+    logs.value = data.logs
+    collapsedLogs.value = logs.value.map((_, index) => index)
   } catch (err) {
-    error.value = 'Failed to load logs.';
+    console.error(err)
+    error.value = 'Failed to load logs.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
-// Prompt for clearing logs
-const promptClearLogs = () => {
-  showClearLogsConfirmation.value = true;
-};
+// Request confirmation
+const requestDeleteLogs = () => {
+  showConfirmDialog.value = true
+}
 
-// Cancel clearing logs
-const cancelClearLogs = () => {
-  showClearLogsConfirmation.value = false;
-};
-
-// Handle clear logs functionality
-const clearLogs = async () => {
+// Confirm and delete logs
+const confirmDeleteLogs = async () => {
   try {
-    // Clear logs from backend (adjust the API call as per your backend setup)
-    await axios.post('http://localhost:8000/clear-logs');
-    
-    // Clear the logs in the frontend
-    logs.value = [];
-    clearLogsSuccess.value = true;
+    const response = await authFetch('http://localhost:8000/clear-logs', {
+      method: 'POST',
+    })
+    const result = await response.json()
+    logs.value = []
+    clearLogsSuccess.value = true
 
-    // Reset success state after 3 seconds
     setTimeout(() => {
-      clearLogsSuccess.value = false;
-    }, 3000);
-
-    // Close confirmation modal
-    showClearLogsConfirmation.value = false;
+      clearLogsSuccess.value = false
+    }, 3000)
   } catch (err) {
-    error.value = 'Failed to clear logs.';
+    console.error('Error deleting logs:', err)
+    alert('Failed to delete logs.')
+  } finally {
+    showConfirmDialog.value = false
+    eventToDelete.value = null
   }
-};
+}
 
-// Row class based on log role
+const cancelDelete = () => {
+  showConfirmDialog.value = false
+  eventToDelete.value = null
+}
+
 const rowClass = (log) => {
-  return log.role === "error" ? "error-row" : "";
-};
+  return log.role === 'error' ? 'error-row' : ''
+}
 
-// Response code color class
 const codeClass = (code) => {
-  if (code >= 400) return "code-red";
-  if (code >= 300) return "code-orange";
-  if (code >= 200) return "code-green";
-  return "code-gray";
-};
+  if (code >= 400) return 'code-red'
+  if (code >= 300) return 'code-orange'
+  if (code >= 200) return 'code-green'
+  return 'code-gray'
+}
 
-// Toggle collapse for log files
 const toggleCollapse = (fileIndex) => {
   if (collapsedLogs.value.includes(fileIndex)) {
-    collapsedLogs.value = collapsedLogs.value.filter(index => index !== fileIndex);
+    collapsedLogs.value = collapsedLogs.value.filter(index => index !== fileIndex)
   } else {
-    collapsedLogs.value.push(fileIndex);
+    collapsedLogs.value.push(fileIndex)
   }
-};
+}
 
-// Automatically load logs on mount
 onMounted(() => {
-  fetchLogs();
-});
+  fetchLogs()
+})
 </script>
 
 <style scoped>
@@ -264,71 +285,72 @@ tr:hover {
   gap: 10px;
 }
 
-button.clear-logs-btn {
-  background-color: #c23c3c;
-  color: white;
-  padding: 10px 16px;
+.delete-btn {
+  background-color: #e53935;
   border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
   cursor: pointer;
-  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-button.clear-logs-btn:hover {
-  background-color: #9a2929;
+.delete-btn:hover {
+  background-color: #c62828;
 }
 
-.confirmation {
-  background-color: #333;
-  padding: 15px;
-  border-radius: 5px;
-  color: white;
-  margin-top: 5px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 250px;
-  position: absolute;
-  top: 60px; /* Adjust as needed */
+.confirm-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
   right: 0;
-  z-index: 1000; /* Make sure it stays on top */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-
-.confirmation-buttons {
-  margin-top: 10px;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.confirm-btn,
-.cancel-btn {
-  background-color: #680eee;
+.confirm-dialog-content {
+  background: #2c2c2c;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
   color: white;
-  padding: 6px 14px;
+  max-width: 300px;
+}
+
+.confirm-dialog-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.confirm-btn {
+  background-color: #d9534f;
+  color: white;
   border: none;
+  padding: 10px 15px;
   cursor: pointer;
   border-radius: 5px;
 }
 
 .confirm-btn:hover {
-  background-color: #45087e;
+  background-color: #c62828;
 }
 
 .cancel-btn {
-  background-color: #c23c3c;
+  background-color: #5bc0de;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 .cancel-btn:hover {
-  background-color: #9a2929;
+  background-color: #4ea2bc;
 }
 
-.success-message {
-  color: #28a745;
-  font-weight: bold;
-  margin-top: 8px;
-  text-align: center;
-  font-size: 1em;
-}
 </style>

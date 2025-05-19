@@ -10,3 +10,5 @@ gtts
 faster-whisper
 torch
 python-multipart
+bcrypt
+python-jose

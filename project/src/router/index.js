@@ -9,6 +9,7 @@ import ChatComponent from '../components/ChatComponent.vue'
 import HomePageComponent from '../components/homePage.vue'
 import InterfaceComponent from '../components/InterfaceComponent.vue'
 import AdminComponent from '../components/AdminPanel.vue'
+import LoginComponent from '../components/LoginComponent.vue'
 
 // Define routes
 const routes = [
@@ -20,6 +21,7 @@ const routes = [
   { path: '/',  component: HomePageComponent },
   { path: '/interface', name: "interfaceComponent",  component: InterfaceComponent },
   { path: '/admin', name: "adminComponent",  component: AdminComponent },
+  { path : '/login', name: "loginComponent",  component: LoginComponent },
 ]
 
 // Create router instance
@@ -27,7 +29,5 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 })
-
-
 
 export default router
