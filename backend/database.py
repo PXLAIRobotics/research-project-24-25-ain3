@@ -3,7 +3,6 @@ import numpy as np
 import json
 from openai import OpenAI
 import os
-from psycopg2.extensions import AsIs
 
 
 client = OpenAI(api_key="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")
@@ -50,25 +49,31 @@ def get_embedding(text):
 
 def insert_events(events, conn):
     """Insert events into the database with embeddings."""
-    cursor = conn.cursor()
-    for category, event_list in events.items():
-        for event in event_list:
-            event_name = event.name
-            event_date = event.date
-            event_description = event.description
+    try :
+        cursor = conn.cursor()
+        for category, event_list in events.items():
+            for event in event_list:
+                event_name = event.name
+                event_date = event.date
+                event_description = event.description
 
-            embedding = get_embedding(event_description)
-            if embedding is None:
-                print(f"Skipping insert for event '{event_name}' due to missing embedding.")
-                continue
+                embedding = get_embedding(f"{event_description} {event_date}")
+                if embedding is None:
+                    print(f"Skipping insert for event '{event_name}' due to missing embedding.")
+                    continue
 
-            cursor.execute("""
-                INSERT INTO events (event_name, event_date, event_description, embedding)
-                VALUES (%s, %s, %s, %s)
-            """, (event_name, event_date, event_description, embedding))
+                cursor.execute("""
+                    INSERT INTO events (event_name, event_date, event_description, embedding)
+                    VALUES (%s, %s, %s, %s)
+                """, (event_name, event_date, event_description, embedding))
 
-    conn.commit()
-    cursor.close()
+        conn.commit()
+        cursor.close()
+    except Exception as e:
+        print(f"Error insterting event: {e}")
+        return None
+
+    
 
 def search_similar_event(message, conn):
     """Search for the most similar event in the database based on the message embedding."""
@@ -118,10 +123,7 @@ def clear_event_table(conn):
         print(f"Error clearing event table: {e}")
 
 def delete_event(conn, event_name):
-        conn = get_database_connection()
         cursor = conn.cursor()
-
-
-        cursor.execute("DELETE FROM events WHERE event_name = ?", (event_name,))
+        cursor.execute("DELETE FROM events WHERE event_name = %s", (event_name,))
         conn.commit()
         conn.close()
