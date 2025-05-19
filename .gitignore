@@ -25,6 +25,7 @@ project/*.ntvs*
 project/*.njsproj
 project/*.sln
 project/*.sw?
+/project/dist/
 
 project/*.tsbuildinfo
 
