@@ -3,8 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
-from backend.chatbot.pixie import chat_completion
-from backend.chatbot.pathplanning import calculate_path
 from backend.database import (
     delete_admin_from_table, authenticate_admin, create_default_admin, create_admin, 
     get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events
@@ -43,7 +41,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     return payload
 
 
-
 @app.on_event("startup")
 def startup_event():
     """Initialize the database and insert events on app startup."""
@@ -54,14 +51,15 @@ def startup_event():
 
     create_default_admin()
 
+
 @app.get("/pixie")
 async def generateResponse(message: str):
-    print("Message received:", message)
+    # Import hier om problemen bij tests te voorkomen
+    from backend.chatbot.pixie import chat_completion
     response = chat_completion(message)
     bad_topic_warning = topic_modelling(message)
     if bad_topic_warning:
         return {"data": response, "endChat": bad_topic_warning} 
-    print("Response sent:", response, "\n")
     return {"data": response, "endChat": ""}
 
 class Event(BaseModel):
