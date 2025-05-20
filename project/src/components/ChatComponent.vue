@@ -61,7 +61,7 @@ const sendMessage = () => {
     inputValue.value = '';
 
     axios
-      .get('http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/pixie', {
+      .get('https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/pixie', {
         params: { message: userMessage },
       })
       .then((response) => {
@@ -73,7 +73,7 @@ const sendMessage = () => {
           .replace(/[\r\n]+/g, '. '); // punten ipv doorlopende tekst
         // Start de TTS pas af wanneer we de chatbotmessage kunnen tonen
         axios
-          .get('http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/tts', {
+          .get('https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/tts', {
             params: { text: plainText },
             responseType: 'blob'
           })
@@ -148,7 +148,7 @@ const startRecording = async () => {
       formData.append('audio', blob, 'speech.webm')
 
       try {
-        const res = await fetch('http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/transcribe', {
+        const res = await fetch('https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/transcribe', {
           method: 'POST',
           body: formData,
         })

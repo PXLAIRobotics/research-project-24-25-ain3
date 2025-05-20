@@ -122,7 +122,7 @@ onMounted(async () => {
 
 async function fetchAdmins() {
   try {
-    const response = await authFetch('http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/admins')
+    const response = await authFetch('https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/admins')
     const data = await response.json()
     admins.value = data
   } catch (error) {
@@ -148,7 +148,7 @@ async function confirmDeleteAdmin() {
   try {
     const token = getToken()
     const response = await axios.post(
-      'http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/delete-admin',
+      'https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/delete-admin',
       {
         username: adminToDelete.value.username,
         email: adminToDelete.value.email
@@ -202,7 +202,7 @@ async function submitForm() {
   try {
     const token = getToken()
     const response = await axios.post(
-      'http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/register-admin',
+      'https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/register-admin',
       newAdmin.value,
       { headers: { Authorization: `Bearer ${token}` } }
     )
