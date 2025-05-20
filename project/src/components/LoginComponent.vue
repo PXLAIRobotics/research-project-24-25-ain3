@@ -32,7 +32,7 @@ const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 
 async function handleLogin() {
   try {
-    const response = await fetch('http://localhost:8000/login', {
+    const response = await fetch('http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email.value, password: password.value })

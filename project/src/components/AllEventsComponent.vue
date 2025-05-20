@@ -88,7 +88,7 @@ const showConfirmDialog = ref(false)
 const fetchEvents = async () => {
   loading.value = true
   try {
-    const response = await authFetch('http://localhost:8000/allEvents')
+    const response = await authFetch('http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/allEvents')
     const data = await response.json()
     events.value = data.events
   } catch (err) {
@@ -108,7 +108,7 @@ const requestDeleteEvent = (eventName) => {
 const confirmDeleteEvent = async () => {
   if (!eventToDelete.value) return
   try {
-    const response = await authFetch('http://localhost:8000/delete-event', {
+    const response = await authFetch('http://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/delete-event', {
       method: 'POST',
       body: JSON.stringify({ name: eventToDelete.value })
     })
