@@ -88,7 +88,7 @@ async function authFetch(url, options = {}) {
     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json'
   }
-  const response = await fetch(url, { ...options, headers })
+  const response = await fetch(url, { ...options, headers, mode: 'cors' })
   if (response.status === 401) {
     alert('Session expired or unauthorized.')
     throw new Error('Unauthorized')
@@ -122,6 +122,7 @@ onMounted(async () => {
 
 async function fetchAdmins() {
   try {
+    console.log('TOKEN:', getToken())
     const response = await authFetch('https://wealthy-current-cat.ngrok-free.app/admins')
     const data = await response.json()
     admins.value = data
@@ -147,18 +148,14 @@ async function confirmDeleteAdmin() {
   if (!adminToDelete.value) return
   try {
     const token = getToken()
-    try {
-      const response = await axios.get('https://wealthy-current-cat.ngrok-free.app/admins', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      console.log("GET /admins:", response.data);
-    } catch (error) {
-      console.error("FOUT in GET /admins", error);
-      if (error.response) {
-        console.error("Status:", error.response.status);
-        console.error("Body:", error.response.data);
-      }
-    }
+    const response = await axios.post(
+      'https://wealthy-current-cat.ngrok-free.app/delete-admin',
+      {
+        username: adminToDelete.value.username,
+        email: adminToDelete.value.email
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
     await fetchAdmins()
     showSuccess(response.data.message)
   } catch (err) {
