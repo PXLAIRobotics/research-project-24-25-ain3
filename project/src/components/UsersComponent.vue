@@ -124,12 +124,20 @@ async function fetchAdmins() {
   try {
     console.log('TOKEN:', getToken())
     const response = await authFetch('https://wealthy-current-cat.ngrok-free.app/admins')
-    const data = await response.json()
-    admins.value = data
+    console.log('Response status:', response.status)
+    const text = await response.text()
+    console.log('Response body:', text)
+    // Probeer JSON pas als status 200
+    if (response.ok) {
+      admins.value = JSON.parse(text)
+    } else {
+      console.error('Failed to fetch admins, status:', response.status)
+    }
   } catch (error) {
     console.error('Failed to fetch admins:', error)
   }
 }
+
 
 function requestDeleteAdmin(email) {
   if (email === currentUserEmail.value) {
