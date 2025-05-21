@@ -1,9 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import axios from 'axios'
 import { marked } from 'marked';
 
-import { watch } from 'vue'
 import { useNavList } from '../stores/navList'
 
 
@@ -271,14 +270,14 @@ header{
 }
 
 .routeButton{
-  background-color: #e0e0e0;
+  background-color: #680eee;
   margin-right: 20px;
-  color: black;
+  color: white;
   padding: 0 10px 0 10px;
   width: 180px;
   border-radius: 20px;
   height: 45px;
-  margin-top: px;
+  margin-top: 5px;
 
 }
 

@@ -13,12 +13,11 @@
       <!-- Filters Enable/Disable (Slider Checkbox) -->
       <div class="input-group">
         <label for="filters" class="switch">
-          Enable Filters (In Development)
+          Enable Filters
           <input type="checkbox" id="filters" v-model="filtersEnabled" />
           <span class="slider"></span>
         </label>
       </div>
-
 
       <!-- Save Settings Button -->
       <button type="submit" class="submit-btn" :class="{'success': isSavedSuccessfully}">
@@ -31,7 +30,6 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
 
 // Saved values
 const savedIdleTimeout = ref(120);
@@ -75,6 +73,9 @@ if (localStorage.getItem('filtersEnabled')) {
   savedFiltersEnabled.value = storedFiltersEnabled;
   filtersEnabled.value = storedFiltersEnabled;
 }
+
+
+
 </script>
 
 <style scoped>

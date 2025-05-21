@@ -12,15 +12,23 @@
             <label for="password">Password</label>
             <input type="password" v-model="password" required />
           </div>
-          <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">Submit</button>
-          <button @click="closeModal">Close</button>
+          <button class="formSubmit" type="submit" :class="{ 'active-submit': isFormFilled }">
+            Submit
+          </button>
+
+          <!-- Button to trigger facial recognition -->
+          <button type="button" class="facial-recognition-btn" @click="handleFacialRecognition">
+            Use Facial Recognition
+          </button>
+
+          <button type="button" @click="closeModal">Close</button>
         </form>
       </div>
     </div>
   </div>
 
   <div v-if="!showModal" class="admin-panel">
-    <header >
+    <header>
       <img src="../assets/corda-logo.png" @click="handleClick" alt="Logo" class="header-logo" />
       <h1>VIBE</h1>
       <div>
@@ -56,6 +64,9 @@
       </main>
     </div>
   </div>
+
+  <!-- Facial Recognition Component -->
+  <FacialRecognition v-if="showFacialRecognition" @authenticated="handleFacialLogin" @cancel="showFacialRecognition = false" />
 </template>
 
 <script setup>
@@ -64,13 +75,14 @@ import { useRouter } from 'vue-router'
 import UsersComponent from '../components/UsersComponent.vue';
 import SettingsComponent from '../components/SettingsComponent.vue';
 import LogsComponent from '../components/LogsComponent.vue';
-
 import AllEventsComponent from '../components/AllEventsComponent.vue';
 import addeventsComponent from './addeventsComponent.vue';
+import FacialRecognition from '../components/FacialRecognition.vue';  // import FacialRecognition component
 
 const email = ref('')
 const password = ref('')
 const showModal = ref(true)
+const showFacialRecognition = ref(false)  // new ref to control facial recognition display
 
 const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 const isSidebarVisible = ref(true)
@@ -105,6 +117,21 @@ function logout() {
 const handleClick = () => {
   router.push({ name: 'interfaceComponent' });
 };
+
+// Handle the facial recognition logic
+function handleFacialRecognition() {
+  showFacialRecognition.value = true;  // show facial recognition component
+}
+
+// Handle facial login result
+function handleFacialLogin(label) {
+  if (label === 'admin@gmail.com') {
+    showModal.value = false
+    router.push('/admin')
+  } else {
+    alert('Face not recognized as an admin')
+  }
+}
 </script>
 
 <style>
@@ -306,4 +333,6 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+
 </style>
