@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'https://wise-singers-heal.loca.lt'
+export const API_BASE_URL = 'https://social-brooms-shave.loca.lt'

@@ -22,17 +22,12 @@ from auth import verify_token
 
 app = FastAPI()
 
-origins = [
-    "https://wise-singers-heal.loca.lt",
-    "https://pxlairobotics.github.io"
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins, 
+    allow_origin_regex=r"https://.*\.loca\.lt|https://pxlairobotics\.github\.io",
     allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 whisperModel = WhisperModel("small", compute_type="int8")
