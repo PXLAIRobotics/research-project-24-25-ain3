@@ -22,9 +22,14 @@ from auth import verify_token
 
 app = FastAPI()
 
+origins = [
+    "https://wealthy-current-cat.ngrok-free.app",
+    "https://pxlairobotics.github.io/research-project-24-25-ain3/"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://pxlairobotics.github.io/research-project-24-25-ain3/"], 
+    allow_origins=origins, 
     allow_credentials=True,
     allow_methods=["*"], 
     allow_headers=["*"],  

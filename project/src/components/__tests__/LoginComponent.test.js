@@ -37,7 +37,7 @@ describe('LoginComponent.vue', () => {
     await wrapper.find('form').trigger('submit.prevent')
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/login',
+      'https://wealthy-current-cat.ngrok-free.app/login',
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

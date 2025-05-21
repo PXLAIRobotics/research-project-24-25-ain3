@@ -87,7 +87,7 @@ const submitEvents = async () => {
   }
 
   try {
-    const response = await authFetch('https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/events', {
+    const response = await authFetch('https://wealthy-current-cat.ngrok-free.app/events', {
       method: 'POST',
       body: JSON.stringify(payload)
     })

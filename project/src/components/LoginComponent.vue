@@ -32,7 +32,7 @@ const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 
 async function handleLogin() {
   try {
-    const response = await fetch('https://ec2-16-171-142-19.eu-north-1.compute.amazonaws.com:8000/login', {
+    const response = await fetch('https://wealthy-current-cat.ngrok-free.app/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email.value, password: password.value })
