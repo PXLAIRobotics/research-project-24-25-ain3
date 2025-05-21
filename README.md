@@ -12,8 +12,8 @@ De applicatie bestaat uit een Vue.js frontend, een Python FastAPI backend en maa
 ## Kenmerken
 - **Vue.js Frontend**: Interactieve gebruikersinterface die draait op GitHub Pages (https://pxlairobotics.github.io/research-project-24-25-ain3/).  
 - **Python FastAPI Backend**: Verwerkt padvindverzoeken en communiceert met de frontend.  
-- **Database**: Wordt gehost op AWS (RDS PostgreSQL).  
-- **Dockerized**: Backend draait lokaal in een Docker container.  
+- **Database**: PostgreSQL database die standaard lokaal draait, maar ook geconfigureerd kan worden met een externe AWS RDS instantie.  
+- **Dockerized**: Zowel backend als database draaien lokaal in Docker containers.  
 - **CI/CD**: GitHub Actions draaien backend- en frontendtests en deployen de frontend automatisch bij pushes naar `main` en pull requests.  
 - **Model**: Gebaseerd op GPT-4o-mini, met geavanceerde pathplanning-algoritmes.  
 
@@ -22,7 +22,7 @@ De applicatie bestaat uit een Vue.js frontend, een Python FastAPI backend en maa
 ## Technologieën
 - Frontend: Vue.js, JavaScript, HTML, CSS  
 - Backend: Python, FastAPI  
-- Database: PostgreSQL (AWS RDS)  
+- Database: PostgreSQL  
 - Containerisatie: Docker, Docker Compose  
 - CI/CD: GitHub Actions  
 - Versiebeheer: Git, GitHub  
@@ -32,7 +32,7 @@ De applicatie bestaat uit een Vue.js frontend, een Python FastAPI backend en maa
 ## Installatie en Setup
 
 ### Vereisten
-- Docker en Docker Compose (voor backend container).  
+- Docker en Docker Compose (voor backend en database containers).  
 - Python 3.x (voor lokaal ontwikkelen en testen backend).  
 - Node.js & npm (voor frontend ontwikkeling en testen).  
 - [Ngrok](https://ngrok.com/) (voor extern publiekelijk toegankelijk maken van je backend).
@@ -41,12 +41,13 @@ De applicatie bestaat uit een Vue.js frontend, een Python FastAPI backend en maa
 
 ### Ngrok installeren en gebruiken
 
-1. Download en installeer ngrok via https://ngrok.com/download.  
-2. Voeg ngrok toe aan je systeem PATH zodat je het overal kunt aanroepen vanuit de terminal.  
-3. Maak een account aan bij ngrok en configureer een static domain (optioneel, maar aanbevolen voor een vast adres).  
+1. Download en installeer ngrok via https://ngrok.com/download  
+2. Voeg ngrok toe aan je systeem-PATH zodat je het overal kunt aanroepen vanuit de terminal  
+3. Maak een account aan bij ngrok en configureer een static domain (optioneel, maar aanbevolen voor een vast adres)  
 4. Start ngrok met je static domain en verbind deze met poort 8000, bijvoorbeeld:  
    ```bash
-   ngrok http --url=your-static-subdomain.ngrok-free.app 8000
+   ngrok http --domain=your-static-subdomain.ngrok-free.app 8000
+   ```
 5. Gebruik de verkregen ngrok URL in je frontend om API calls naar de backend te maken.
 
 ---
@@ -58,12 +59,12 @@ De applicatie bestaat uit een Vue.js frontend, een Python FastAPI backend en maa
    git clone https://github.com/PXLAIRobotics/research-project-24-25-ain3.git
    cd research-project-24-25-ain3/backend
    ```
-2. Zorg dat je .env-bestand in de root van de repository staat met de juiste AWS database credentials en API keys.
-3. Start de backend met het script:
+2. Zorg dat je .env-bestand in de root van de repository staat met de juiste databaseconfiguratie en API keys.
+3. Start de backend en database met het script:
    ```bash
    ./start_backend.sh
    ```
-   Dit script bouwt en start de Docker container met de backend en eventueel ngrok.
+   Dit script bouwt en start de backend en lokale PostgreSQL database in Docker, en start ook ngrok indien beschikbaar.
 4. De backend is nu bereikbaar op http://localhost:8000 lokaal, en via ngrok op je static domain.
 
 ---
