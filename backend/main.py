@@ -23,7 +23,7 @@ from auth import verify_token
 app = FastAPI()
 
 origins = [
-    "https://wealthy-current-cat.ngrok-free.app",
+    "https://wise-singers-heal.loca.lt",
     "https://pxlairobotics.github.io"
 ]
 

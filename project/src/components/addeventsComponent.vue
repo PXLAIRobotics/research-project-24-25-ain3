@@ -35,6 +35,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { API_BASE_URL } from '@/config.js'
 
 // Helpers
 function getToken() {
@@ -87,7 +88,7 @@ const submitEvents = async () => {
   }
 
   try {
-    const response = await authFetch('https://wealthy-current-cat.ngrok-free.app/events', {
+    const response = await authFetch(`${API_BASE_URL}/events`, {
       method: 'POST',
       body: JSON.stringify(payload)
     })

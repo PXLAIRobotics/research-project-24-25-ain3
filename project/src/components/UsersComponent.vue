@@ -72,6 +72,9 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+import { API_BASE_URL } from '@/config.js'
+
+console.log('Admin component geladen')
 
 function getToken() {
   return localStorage.getItem('token')
@@ -88,7 +91,9 @@ async function authFetch(url, options = {}) {
     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json'
   }
+  console.log('authFetch: url:', url, 'headers:', headers)
   const response = await fetch(url, { ...options, headers, mode: 'cors' })
+  console.log('authFetch: response status:', response.status)
   if (response.status === 401) {
     alert('Session expired or unauthorized.')
     throw new Error('Unauthorized')
@@ -117,27 +122,28 @@ const isFormFilled = computed(() =>
 )
 
 onMounted(async () => {
+  console.log('onMounted: fetchAdmins wordt aangeroepen')
   await fetchAdmins()
 })
 
 async function fetchAdmins() {
   try {
-    console.log('TOKEN:', getToken())
-    const response = await authFetch('https://wealthy-current-cat.ngrok-free.app/admins')
+    console.log('fetchAdmins gestart, token:', getToken())
+    const response = await authFetch(`${API_BASE_URL}/admins`)
     console.log('Response status:', response.status)
     const text = await response.text()
-    console.log('Response body:', text)
-    // Probeer JSON pas als status 200
+    console.log('Response text:', text)
+
     if (response.ok) {
       admins.value = JSON.parse(text)
+      console.log('Admins succesvol geladen:', admins.value)
     } else {
-      console.error('Failed to fetch admins, status:', response.status)
+      console.error('fetchAdmins fout status:', response.status)
     }
   } catch (error) {
-    console.error('Failed to fetch admins:', error)
+    console.error('fetchAdmins error:', error)
   }
 }
-
 
 function requestDeleteAdmin(email) {
   if (email === currentUserEmail.value) {
@@ -157,7 +163,7 @@ async function confirmDeleteAdmin() {
   try {
     const token = getToken()
     const response = await axios.post(
-      'https://wealthy-current-cat.ngrok-free.app/delete-admin',
+      `${API_BASE_URL}/delete-admin`,
       {
         username: adminToDelete.value.username,
         email: adminToDelete.value.email
@@ -211,7 +217,7 @@ async function submitForm() {
   try {
     const token = getToken()
     const response = await axios.post(
-      'https://wealthy-current-cat.ngrok-free.app/register-admin',
+      `${API_BASE_URL}/register-admin`,
       newAdmin.value,
       { headers: { Authorization: `Bearer ${token}` } }
     )
