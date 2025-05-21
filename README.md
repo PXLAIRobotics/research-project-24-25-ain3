@@ -60,11 +60,12 @@ De applicatie bestaat uit een Vue.js frontend, een Python FastAPI backend en maa
    cd research-project-24-25-ain3/backend
    ```
 2. Zorg dat je .env-bestand in de root van de repository staat met de juiste databaseconfiguratie en API keys.
-3. Start de backend en database met het script:
+3. Voer de volgende commando's uit om de backend te starten:
    ```bash
-   ./start_backend.sh
+   docker-compose up -d --build
+
+   ngrok http --domain=wealthy-current-cat.ngrok-free.app 8000
    ```
-   Dit script bouwt en start de backend en lokale PostgreSQL database in Docker, en start ook ngrok indien beschikbaar.
 4. De backend is nu bereikbaar op http://localhost:8000 lokaal, en via ngrok op je static domain.
 
 ---

@@ -147,14 +147,18 @@ async function confirmDeleteAdmin() {
   if (!adminToDelete.value) return
   try {
     const token = getToken()
-    const response = await axios.post(
-      'https://wealthy-current-cat.ngrok-free.app/delete-admin',
-      {
-        username: adminToDelete.value.username,
-        email: adminToDelete.value.email
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    try {
+      const response = await axios.get('https://wealthy-current-cat.ngrok-free.app/admins', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log("GET /admins:", response.data);
+    } catch (error) {
+      console.error("FOUT in GET /admins", error);
+      if (error.response) {
+        console.error("Status:", error.response.status);
+        console.error("Body:", error.response.data);
+      }
+    }
     await fetchAdmins()
     showSuccess(response.data.message)
   } catch (err) {

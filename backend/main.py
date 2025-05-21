@@ -24,7 +24,7 @@ app = FastAPI()
 
 origins = [
     "https://wealthy-current-cat.ngrok-free.app",
-    "https://pxlairobotics.github.io/research-project-24-25-ain3/"
+    "https://pxlairobotics.github.io"
 ]
 
 app.add_middleware(
