@@ -1,19 +1,15 @@
 import psycopg2
-import numpy as np
-import json
-from openai import OpenAI
 import os
-from psycopg2.extensions import AsIs
 import bcrypt
-from psycopg2.extensions import AsIs
 from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv()
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def get_database_connection():
-    """Establish and return a database connection using environment variables."""
+    """Maak en retourneer een databaseverbinding."""
     return psycopg2.connect(
         dbname=os.getenv("DATABASE_NAME", "mydatabase"),
         user=os.getenv("DATABASE_USER", "myuser"),
@@ -23,7 +19,6 @@ def get_database_connection():
     )
 
 def create_events_table_if_not_exists(conn):
-    """Create the 'events' table if it does not exist."""
     cursor = conn.cursor()
     cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
     cursor.execute("""
@@ -39,7 +34,6 @@ def create_events_table_if_not_exists(conn):
     cursor.close()
 
 def create_admins_table_if_not_exists(conn):
-    """Create the 'admins' table if it does not exist."""
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS admins (
@@ -65,7 +59,7 @@ def create_admin(username, email, password, conn):
         INSERT INTO admins (username, email, password_hash)
         VALUES (%s, %s, %s)
         ON CONFLICT (email) DO NOTHING;
-    """, (username, email , hashed))
+    """, (username, email, hashed))
     conn.commit()
     cursor.close()
 
@@ -74,10 +68,8 @@ def authenticate_admin(email, password, conn):
     cursor.execute("SELECT password_hash FROM admins WHERE email = %s;", (email,))
     result = cursor.fetchone()
     cursor.close()
-    if result:
-        stored_hash = result[0]
-        if check_password(password, stored_hash):
-            return {"authenticated": True}
+    if result and check_password(password, result[0]):
+        return {"authenticated": True}
     return {"authenticated": False}
 
 def create_default_admin():
@@ -88,7 +80,7 @@ def create_default_admin():
     email = os.getenv("DEFAULT_ADMIN_EMAIL")
     password = os.getenv("DEFAULT_ADMIN_PASSWORD")
 
-    if not username or not email or not password:
+    if not (username and email and password):
         print("Default admin credentials not set in .env file")
         return
 
@@ -96,36 +88,38 @@ def create_default_admin():
     existing_admin = cursor.fetchone()
 
     if not existing_admin:
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        hashed_password = hash_password(password)
         cursor.execute(
             "INSERT INTO admins (username, email, password_hash) VALUES (%s, %s, %s)",
-            (username, email, hashed_password.decode('utf-8'))
+            (username, email, hashed_password)
         )
         print("Default admin account created.")
     else:
         print("Admin account already exists.")
 
     conn.commit()
+    cursor.close()
     conn.close()
 
-def delete_admin_from_table(email):
+def delete_admin_from_table(email, conn=None):
     print(f"Deleting admin with email: {email}")
     try:
-        conn = get_database_connection()
+        close_conn = False
+        if conn is None:
+            conn = get_database_connection()
+            close_conn = True
+
         cursor = conn.cursor()
-
         cursor.execute("DELETE FROM admins WHERE email = %s", (email,))
-
         conn.commit()
-        conn.close()
-
+        cursor.close()
+        if close_conn:
+            conn.close()
     except Exception as e:
         print(f"Error during delete admin operation: {e}")
         raise
 
-
 def get_embedding(text):
-    """Generate an embedding for the given text."""
     try:
         response = client.embeddings.create(
             input=text,
@@ -139,8 +133,7 @@ def get_embedding(text):
         return None
 
 def insert_events(events, conn):
-    """Insert events into the database with embeddings."""
-    try :
+    try:
         cursor = conn.cursor()
         for category, event_list in events.items():
             for event in event_list:
@@ -161,13 +154,10 @@ def insert_events(events, conn):
         conn.commit()
         cursor.close()
     except Exception as e:
-        print(f"Error insterting event: {e}")
+        print(f"Error inserting event: {e}")
         return None
 
-    
-
 def search_similar_event(message, conn):
-    """Search for the most similar event in the database based on the message embedding."""
     try:
         print("Generating embedding for the message...")
         embedding = get_embedding(message)
@@ -193,8 +183,8 @@ def search_similar_event(message, conn):
                 "id": result[0],
                 "event_name": result[1],
                 "event_date": result[2],
-                "event_description": result[3] 
-                   }
+                "event_description": result[3]
+            }
 
         print("No matching events found.")
         return None

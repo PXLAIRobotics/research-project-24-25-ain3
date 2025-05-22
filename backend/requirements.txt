@@ -16,3 +16,7 @@ geopy
 python-multipart
 bcrypt
 python-jose
+pytest
+pytest-asyncio
+httpx
+nltk

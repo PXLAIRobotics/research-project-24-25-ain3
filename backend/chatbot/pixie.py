@@ -5,9 +5,9 @@ import re
 from dotenv import load_dotenv
 import openai
 
-from chatbot.pathplanning import calculate_path
-from database import get_database_connection, search_similar_event
-from chatbot.input_sanitizer import tokenization_with_ontology, robbert_sentiment_analysis
+from backend.chatbot.pathplanning import calculate_path
+from backend.database import get_database_connection, search_similar_event
+from backend.chatbot.input_sanitizer import tokenization_with_ontology, robbert_sentiment_analysis
 
 
 # Load environment variables
