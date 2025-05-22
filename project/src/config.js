@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'https://wealthy-current-cat.ngrok-free.app'
+export const API_BASE_URL = 'https://50a2-13-50-99-169.ngrok-free.app'
