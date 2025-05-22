@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'https://social-brooms-shave.loca.lt'
+export const API_BASE_URL = 'https://ec2-13-50-224-20.eu-north-1.compute.amazonaws.com:8000'
