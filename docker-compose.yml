@@ -17,9 +17,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - .:/app
     environment:
       - ENV=production
+      - PYTHONPATH=/app
       - DATABASE_HOST=postgres
       - DATABASE_PORT=5432
       - DATABASE_NAME=mydatabase

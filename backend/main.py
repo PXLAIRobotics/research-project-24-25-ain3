@@ -3,12 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
-from backend.database import (
+from .database import (
     delete_admin_from_table, authenticate_admin, create_default_admin, create_admin, 
     get_database_connection, create_events_table_if_not_exists, create_admins_table_if_not_exists, insert_events
 )
-from backend.chatbot.input_sanitizer import topic_modelling
-from backend.auth import create_access_token, verify_token
+from .chatbot.input_sanitizer import topic_modelling
+from .auth import (
+    create_access_token, verify_token
+)
 import json
 import os
 import bcrypt
@@ -215,10 +217,18 @@ async def delete_admin(request: DeleteAdminRequest, user=Depends(get_current_use
 async def getLogs(user=Depends(get_current_user)):
     logs_data = []
     print("Request received")
-    
-    for log_filename in os.listdir("logs"):
+
+    # Pad relatief t.o.v. deze file
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    logs_dir = os.path.join(base_dir, "logs")
+
+    if not os.path.exists(logs_dir):
+        print("Logs directory bestaat niet")
+        return {"logs": [], "message": "Logs directory bestaat niet"}
+
+    for log_filename in os.listdir(logs_dir):
         if log_filename.endswith(".json"):
-            log_path = os.path.join("logs", log_filename)
+            log_path = os.path.join(logs_dir, log_filename)
             try:
                 with open(log_path, "r") as f:
                     log_content = json.load(f)
@@ -234,7 +244,9 @@ async def getLogs(user=Depends(get_current_user)):
 
 @app.post("/clear-logs")
 async def clearLogs(user=Depends(get_current_user)):
-    logs_folder = "logs"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    logs_folder = os.path.join(base_dir, "logs")
+    
     try:
         for log_file in os.listdir(logs_folder):
             file_path = os.path.join(logs_folder, log_file)
