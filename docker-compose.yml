@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres:
     image: ankane/pgvector
@@ -18,33 +20,12 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
-      - ./project/public/maps:/app/project/public/maps
-    environment:
-      - ENV=production
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=mydatabase
-      - DATABASE_USER=myuser
-      - DATABASE_PASSWORD=mypassword
+    env_file:
+      - ./backend/.env
     depends_on:
-      - frontend
       - postgres
     networks:
       - app_network
-
-
-  frontend:
-    build: ./project
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./project:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-    networks:
-      - app_network
-    command: ["npm", "run", "dev", "--", "--host"]
 
 networks:
   app_network:

@@ -1,0 +1,1 @@
+export const API_BASE_URL = 'https://ec2-13-50-99-169.eu-north-1.compute.amazonaws.com:443'

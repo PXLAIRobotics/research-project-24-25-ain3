@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
 import LoginComponent from '@/components/LoginComponent.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import { API_BASE_URL } from '@/config.js'
 
 describe('LoginComponent.vue', () => {
   let router
@@ -37,7 +38,7 @@ describe('LoginComponent.vue', () => {
     await wrapper.find('form').trigger('submit.prevent')
 
     expect(fetch).toHaveBeenCalledWith(
-      'http://localhost:8000/login',
+      `${API_BASE_URL}/login`,
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

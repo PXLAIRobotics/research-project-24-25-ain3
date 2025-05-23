@@ -1,4 +1,5 @@
 import './assets/main.css'
+import router from './router'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -23,11 +24,4 @@ const vuetify = createVuetify({
 const app = createApp(App)
 
 app.use(createPinia())
-//app.use(router)
-
-app.mount('#app')
-
-import router from './router' // Correctly import the router
-
-createApp(App).use(router).use(vuetify).mount('#app')
-
+app.use(router).use(vuetify).mount('#app')

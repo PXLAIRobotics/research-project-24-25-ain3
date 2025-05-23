@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/research-project-24-25-ain3/',
   plugins: [
     vue()
   ],

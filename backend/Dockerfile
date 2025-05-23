@@ -5,7 +5,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy requirements file and install dependencies
-COPY requirements.txt .
+COPY . .
 RUN pip install --cache-dir=/tmp/pip-cache -r requirements.txt
 
 # Set the Hugging Face cache directory (this is where models will be cached)
@@ -18,9 +18,6 @@ RUN python -m nltk.downloader punkt punkt_tab stopwords && mkdir -p /usr/share/n
 
 # Download Hugging Face model during the build process to cache it
 RUN python -c "from transformers import AutoTokenizer, AutoModelForSequenceClassification; AutoModelForSequenceClassification.from_pretrained('nlptown/bert-base-multilingual-uncased-sentiment'); AutoTokenizer.from_pretrained('nlptown/bert-base-multilingual-uncased-sentiment')"
-
-
-COPY . .
 
 # Expose port for the backend app
 EXPOSE 8000

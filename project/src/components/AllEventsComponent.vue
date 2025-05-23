@@ -56,6 +56,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { API_BASE_URL } from '@/config.js'
 
 // Helpers
 function getToken() {
@@ -88,7 +89,7 @@ const showConfirmDialog = ref(false)
 const fetchEvents = async () => {
   loading.value = true
   try {
-    const response = await authFetch('http://localhost:8000/allEvents')
+    const response = await authFetch(`${API_BASE_URL}/allEvents`)
     const data = await response.json()
     events.value = data.events
   } catch (err) {
@@ -108,7 +109,7 @@ const requestDeleteEvent = (eventName) => {
 const confirmDeleteEvent = async () => {
   if (!eventToDelete.value) return
   try {
-    const response = await authFetch('http://localhost:8000/delete-event', {
+    const response = await authFetch(`${API_BASE_URL}/delete-event`, {
       method: 'POST',
       body: JSON.stringify({ name: eventToDelete.value })
     })

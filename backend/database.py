@@ -10,16 +10,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = OpenAI(api_key="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")
-
 def get_database_connection():
     """Establish and return a database connection using environment variables."""
     return psycopg2.connect(
-        dbname=os.getenv("DATABASE_NAME", "mydatabase"),
-        user=os.getenv("DATABASE_USER", "myuser"),
-        password=os.getenv("DATABASE_PASSWORD", "mypassword"),
-        host=os.getenv("DATABASE_HOST", "localhost"),
-        port=os.getenv("DATABASE_PORT", "5432")
+        dbname=os.environ["DATABASE_NAME"],
+        user=os.environ["DATABASE_USER"],
+        password=os.environ["DATABASE_PASSWORD"],
+        host=os.environ["DATABASE_HOST"],
+        port=os.environ["DATABASE_PORT"]
     )
 
 def create_events_table_if_not_exists(conn):

@@ -5,7 +5,7 @@ import { marked } from 'marked';
 
 import { watch } from 'vue'
 import { useNavList } from '../stores/navList'
-
+import { API_BASE_URL } from '@/config.js'
 
 import standardGif from '@/assets/AI_Soundwave_standard.gif'
 import transitionGif from '@/assets/AI_Soundwave_transition.gif'
@@ -61,7 +61,7 @@ const sendMessage = () => {
     inputValue.value = '';
 
     axios
-      .get('http://localhost:8000/pixie', {
+      .get(`${API_BASE_URL}/pixie`, {
         params: { message: userMessage },
       })
       .then((response) => {
@@ -73,7 +73,7 @@ const sendMessage = () => {
           .replace(/[\r\n]+/g, '. '); // punten ipv doorlopende tekst
         // Start de TTS pas af wanneer we de chatbotmessage kunnen tonen
         axios
-          .get('http://localhost:8000/tts', {
+          .get(`${API_BASE_URL}/tts`, {
             params: { text: plainText },
             responseType: 'blob'
           })
@@ -148,7 +148,7 @@ const startRecording = async () => {
       formData.append('audio', blob, 'speech.webm')
 
       try {
-        const res = await fetch('http://localhost:8000/transcribe', {
+        const res = await fetch(`${API_BASE_URL}/transcribe`, {
           method: 'POST',
           body: formData,
         })

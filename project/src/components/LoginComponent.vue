@@ -23,6 +23,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { API_BASE_URL } from '@/config.js'
 
 const email = ref('')
 const password = ref('')
@@ -32,7 +33,7 @@ const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 
 async function handleLogin() {
   try {
-    const response = await fetch('http://localhost:8000/login', {
+    const response = await fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email.value, password: password.value })

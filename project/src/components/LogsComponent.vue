@@ -61,6 +61,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { API_BASE_URL } from '@/config.js'
 
 // Helpers
 function getToken() {
@@ -95,7 +96,7 @@ const eventToDelete = ref(null)
 const fetchLogs = async () => {
   loading.value = true
   try {
-    const response = await authFetch('http://localhost:8000/logs')
+    const response = await authFetch(`${API_BASE_URL}/logs`)
     const data = await response.json()
     logs.value = data.logs
     collapsedLogs.value = logs.value.map((_, index) => index)
@@ -115,7 +116,7 @@ const requestDeleteLogs = () => {
 // Confirm and delete logs
 const confirmDeleteLogs = async () => {
   try {
-    const response = await authFetch('http://localhost:8000/clear-logs', {
+    const response = await authFetch(`${API_BASE_URL}/clear-logs`, {
       method: 'POST',
     })
     const result = await response.json()
