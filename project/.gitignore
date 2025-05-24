@@ -30,3 +30,5 @@ coverage
 *.tsbuildinfo
 
 node_modules/
+
+.env

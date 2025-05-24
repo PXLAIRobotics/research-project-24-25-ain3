@@ -26,6 +26,11 @@ let detectionInterval = null
 
 const startVideo = async () => {
   try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      errorMessage.value = 'Webcam not supported in this browser.'
+      return
+    }
+
     const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
     video.value.srcObject = stream
   } catch (err) {
@@ -34,27 +39,40 @@ const startVideo = async () => {
   }
 }
 
-// Take a snapshot from video
 const captureSnapshot = () => {
+  if (!video.value || !video.value.videoWidth || !video.value.videoHeight) {
+    console.warn("Video not ready")
+    return null
+  }
+
   const canvas = document.createElement('canvas')
   canvas.width = video.value.videoWidth
   canvas.height = video.value.videoHeight
   const ctx = canvas.getContext('2d')
   ctx.drawImage(video.value, 0, 0)
-  return canvas.toDataURL('image/jpeg') // returns base64
+  const base64 = canvas.toDataURL('image/jpeg')
+  console.log('[IMAGE LENGTH]', base64.length)
+  return base64
 }
 
-// Send image to backend
 const sendToBackend = async () => {
+  if (isProcessing.value || document.hidden) return
+
   isProcessing.value = true
   errorMessage.value = ''
 
   const base64Image = captureSnapshot()
+  if (!base64Image) {
+    isProcessing.value = false
+    return
+  }
 
   try {
-    const response = await axios.post('http://localhost:8000/facial-login', {
+    const response = await axios.post('http://localhost:8000/facial-recognition', {
       image: base64Image
     })
+
+    console.log('[RESPONSE]', response.data)
 
     const label = response.data.label
     if (label) {
@@ -76,7 +94,7 @@ const cancelRecognition = () => {
 
 onMounted(async () => {
   await startVideo()
-  detectionInterval = setInterval(sendToBackend, 2000) // Every 2 sec
+  detectionInterval = setInterval(sendToBackend, 2000)
 })
 
 onBeforeUnmount(() => {
@@ -86,7 +104,6 @@ onBeforeUnmount(() => {
   clearInterval(detectionInterval)
 })
 </script>
-
 
 <style scoped>
 .facial-recognition-container {

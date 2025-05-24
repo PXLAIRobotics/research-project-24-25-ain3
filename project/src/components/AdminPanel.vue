@@ -16,16 +16,11 @@
             Submit
           </button>
 
-          <!-- Button to trigger facial recognition -->
+          <!-- Trigger facial recognition component -->
           <button type="button" class="facial-recognition-btn" @click="handleFacialRecognition">
             Use Facial Recognition
           </button>
 
-           <div class="facial-recognition">
-            <video ref="video" autoplay playsinline></video>
-            <button @click="capture">Herken Gezicht</button>
-            <button @click="$emit('cancel')">Annuleer</button>
-          </div>
           <button type="button" @click="closeModal">Close</button>
         </form>
       </div>
@@ -71,35 +66,35 @@
   </div>
 
   <!-- Facial Recognition Component -->
-  <FacialRecognition v-if="showFacialRecognition" @authenticated="handleFacialLogin" @cancel="showFacialRecognition = false" />
+  <FacialRecognition
+    v-if="showFacialRecognition"
+    @authenticated="handleFacialLogin"
+    @cancel="showFacialRecognition = false"
+  />
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted  } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import UsersComponent from '../components/UsersComponent.vue';
-import SettingsComponent from '../components/SettingsComponent.vue';
-import LogsComponent from '../components/LogsComponent.vue';
-import AllEventsComponent from '../components/AllEventsComponent.vue';
-import addeventsComponent from './addeventsComponent.vue';
-import FacialRecognition from '../components/FacialRecognition.vue';  // import FacialRecognition component
+import UsersComponent from '../components/UsersComponent.vue'
+import SettingsComponent from '../components/SettingsComponent.vue'
+import LogsComponent from '../components/LogsComponent.vue'
+import AllEventsComponent from '../components/AllEventsComponent.vue'
+import addeventsComponent from './addeventsComponent.vue'
+import FacialRecognition from '../components/FacialRecognition.vue'
 
 const email = ref('')
 const password = ref('')
 const showModal = ref(true)
-const showFacialRecognition = ref(false)  // new ref to control facial recognition display
+const showFacialRecognition = ref(false)
 
 const isFormFilled = computed(() => email.value !== '' && password.value !== '')
 const isSidebarVisible = ref(true)
-const activePanel = ref('dashboard');
+const activePanel = ref('dashboard')
 const router = useRouter()
 
 const correctEmail = 'admin@gmail.com'
 const correctPassword = 'admin'
-
-onMounted(() => {
-  showModal.value = true
-})
 
 function handleLogin() {
   if (email.value === correctEmail && password.value === correctPassword) {
@@ -111,7 +106,7 @@ function handleLogin() {
 }
 
 function closeModal() {
-  router.push({ name: 'interfaceComponent' });
+  router.push({ name: 'interfaceComponent' })
 }
 
 function logout() {
@@ -120,15 +115,13 @@ function logout() {
 }
 
 const handleClick = () => {
-  router.push({ name: 'interfaceComponent' });
-};
-
-// Handle the facial recognition logic
-function handleFacialRecognition() {
-  showFacialRecognition.value = true;  // show facial recognition component
+  router.push({ name: 'interfaceComponent' })
 }
 
-// Handle facial login result
+function handleFacialRecognition() {
+  showFacialRecognition.value = true
+}
+
 function handleFacialLogin(label) {
   if (label === 'admin@gmail.com') {
     showModal.value = false
@@ -136,47 +129,6 @@ function handleFacialLogin(label) {
   } else {
     alert('Face not recognized as an admin')
   }
-}
-
-const video = ref(null)
-
-onMounted(async () => {
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-  video.value.srcObject = stream
-})
-
-onUnmounted(() => {
-  const stream = video.value?.srcObject
-  stream?.getTracks().forEach(track => track.stop())
-})
-
-function capture() {
-  const canvas = document.createElement('canvas')
-  canvas.width = video.value.videoWidth
-  canvas.height = video.value.videoHeight
-  const ctx = canvas.getContext('2d')
-  ctx.drawImage(video.value, 0, 0, canvas.width, canvas.height)
-  const imageData = canvas.toDataURL('image/jpeg')
-
-  // Stuur naar backend
-  fetch('http://localhost:8000/facial-recognition', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: imageData })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.label) {
-      // Emit event terug naar parent component
-      emit('authenticated', data.label)
-    } else {
-      alert('Gezicht niet herkend')
-    }
-  })
-  .catch(err => {
-    console.error(err)
-    alert('Er is iets fout gegaan bij herkenning')
-  })
 }
 </script>
 
