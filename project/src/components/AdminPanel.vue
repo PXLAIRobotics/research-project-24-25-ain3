@@ -21,6 +21,11 @@
             Use Facial Recognition
           </button>
 
+           <div class="facial-recognition">
+            <video ref="video" autoplay playsinline></video>
+            <button @click="capture">Herken Gezicht</button>
+            <button @click="$emit('cancel')">Annuleer</button>
+          </div>
           <button type="button" @click="closeModal">Close</button>
         </form>
       </div>
@@ -70,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted  } from 'vue'
 import { useRouter } from 'vue-router'
 import UsersComponent from '../components/UsersComponent.vue';
 import SettingsComponent from '../components/SettingsComponent.vue';
@@ -131,6 +136,47 @@ function handleFacialLogin(label) {
   } else {
     alert('Face not recognized as an admin')
   }
+}
+
+const video = ref(null)
+
+onMounted(async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+  video.value.srcObject = stream
+})
+
+onUnmounted(() => {
+  const stream = video.value?.srcObject
+  stream?.getTracks().forEach(track => track.stop())
+})
+
+function capture() {
+  const canvas = document.createElement('canvas')
+  canvas.width = video.value.videoWidth
+  canvas.height = video.value.videoHeight
+  const ctx = canvas.getContext('2d')
+  ctx.drawImage(video.value, 0, 0, canvas.width, canvas.height)
+  const imageData = canvas.toDataURL('image/jpeg')
+
+  // Stuur naar backend
+  fetch('http://localhost:8000/facial-recognition', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: imageData })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.label) {
+      // Emit event terug naar parent component
+      emit('authenticated', data.label)
+    } else {
+      alert('Gezicht niet herkend')
+    }
+  })
+  .catch(err => {
+    console.error(err)
+    alert('Er is iets fout gegaan bij herkenning')
+  })
 }
 </script>
 

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chatbot.pixie import chat_completion
@@ -9,6 +9,13 @@ import numpy as np
 import os
 from typing import Dict, List
 from chatbot.input_sanitizer import topic_modelling
+import insightface
+from insightface.app import FaceAnalysis
+import cv2
+import numpy as np
+import base64
+from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -136,3 +143,49 @@ async def clearLogs():
     except Exception as e:
         print("Error clearing logs:", e)
         raise HTTPException(status_code=500, detail="Failed to clear logs.")
+
+
+class ImageData(BaseModel):
+    image: str
+
+# Init face analyzer
+app_face = FaceAnalysis(name="buffalo_l", providers=['CPUExecutionProvider'])
+app_face.prepare(ctx_id=0)
+
+# Laden van referentiebeelden (bijv. admin.jpg)
+known_faces = {}
+def load_known_faces():
+    import os
+    for file in os.listdir("known_faces"):
+        img = cv2.imread(f"known_faces/{file}")
+        faces = app_face.get(img)
+        if faces:
+            known_faces[file.split(".")[0]] = faces[0].embedding
+
+load_known_faces()
+
+@app.post("/facial-recognition")
+def recognize_face(data: ImageData):
+    image_data = base64.b64decode(data.image.split(",")[1])
+    np_img = np.frombuffer(image_data, np.uint8)
+    frame = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+
+    faces = app_face.get(frame)
+    if not faces:
+        return { "label": None }
+
+    emb = faces[0].embedding
+    best_label = None
+    best_dist = float("inf")
+
+    for label, known_emb in known_faces.items():
+        dist = np.linalg.norm(emb - known_emb)
+        if dist < best_dist:
+            best_dist = dist
+            best_label = label
+
+    if best_dist < 1.0:  # drempelwaarde, meestal rond 0.8-1.0
+        return { "label": best_label }
+
+    return { "label": None }
+
